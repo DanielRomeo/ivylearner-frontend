@@ -1,0 +1,17 @@
+.container{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .box{
+        background-color: red;
+        color: white;
+
+        a{
+            &:hover{
+                text-decoration: dashed;
+                text-decoration: underline;
+            }
+        }
+    }
+}
