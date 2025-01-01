@@ -22,6 +22,9 @@ export default function HomeComponent() {
 
 				<div className={styles.box}>
 					<small>This is a private demonstration of the IVYlearner site. (unstyled)</small>
+					<hr/>
+					<small>This is demonstration of where you will see changes whenever releases are made. The login and signup buttons dont work yet</small>
+					<hr />
 					<h1>IVY LEARNER</h1>
 					<Link href={`/signin`}>Signin</Link>
 					<br/>

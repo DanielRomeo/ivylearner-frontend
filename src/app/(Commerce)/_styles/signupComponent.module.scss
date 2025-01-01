@@ -1,0 +1,83 @@
+@import './main.module.scss';
+
+.mainContainer {
+	justify-content: center;
+	text-align: center;
+	height: 100vh;
+
+	.primaryLabel {
+		font-size: 50px;
+	}
+	.secondaryLabel {
+	}
+
+	.mainForm {
+		.errorMessage {
+			color: $orange;
+		}
+
+		max-width: 100%;
+		// background-color: antiquewhite;
+
+		.input {
+			border-radius: 0px;
+			outline: none !important;
+			border: 1px solid black;
+			margin-bottom: 15px;
+
+			&::placeholder {
+				/* Chrome, Firefox, Opera, Safari 10.1+ */
+				color: black;
+				opacity: 1; /* Firefox */
+			}
+			&:-ms-input-placeholder {
+				/* Internet Explorer 10-11 */
+				color: black;
+			}
+
+			&::-ms-input-placeholder {
+				/* Microsoft Edge */
+				color: black;
+			}
+		}
+		.emailInput {
+		}
+		.passwordInput {
+			border-right: 0px;
+			margin-right: 0px;
+		}
+		.forgotPasswordButton {
+			border: 1px solid black;
+			background-color: white;
+			border-radius: 0px;
+			color: black;
+			border-left: 0px;
+			height: 40px;
+			margin: 15px;
+			margin-left: 0px;
+		}
+
+		.loginButton {
+			border: 1px solid black;
+			border-radius: 0px;
+			background-color: grey;
+			color: white;
+			width: 100%;
+			margin-bottom: 15px;
+
+			&:focus {
+				outline: none !important;
+				box-shadow: none;
+			}
+		}
+
+		.createAccountLink {
+			text-decoration: none;
+			color: black;
+
+			span {
+				color: grey;
+			}
+		}
+	}
+}

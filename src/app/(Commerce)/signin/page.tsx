@@ -1,6 +1,4 @@
 import { Metadata } from 'next';
-import MiniNavbar from '../_components/HeaderMini';
-import Footer from '../_components/Footer';
 import SigninComponent from './_signinComponent';
 
 export const metadata: Metadata = {
@@ -11,7 +9,6 @@ export const metadata: Metadata = {
 const SigninPage = () => {
 	return (
 		<div>
-			<MiniNavbar></MiniNavbar>
 			<SigninComponent></SigninComponent>
 			{/* <Footer></Footer> */}
 		</div>
