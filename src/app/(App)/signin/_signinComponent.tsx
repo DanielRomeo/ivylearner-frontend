@@ -32,8 +32,10 @@ const SigninComponent = () => {
 	};
 
 	return (
-		<div>
+		<div className={styles.main}>
 			<Container className={` ${styles.mainContainer} `}>
+
+				<div className={styles.box}>
 				<Row className={`${styles.primaryRow}`}>
 					<h2 className={` ${styles.primaryLabel}`}>Log in.</h2>
 					<label className={`${styles.secondaryLabel}`}>
@@ -41,7 +43,6 @@ const SigninComponent = () => {
 					</label>
 				</Row>
 
-			
 				<Row>
 					<form onSubmit={handleSubmit(onSubmit)} className={` ${styles.mainForm}`}>
 						{/* Email input field */}
@@ -85,9 +86,7 @@ const SigninComponent = () => {
 						</InputGroup>
 
 						{/* Login button */}
-						<Button  className={`${styles.loginButton}`}>
-							LOGIN
-						</Button>
+						<Button className={`${styles.loginButton}`}>LOGIN</Button>
 
 						<br />
 
@@ -98,6 +97,9 @@ const SigninComponent = () => {
 						</Link>
 					</form>
 				</Row>
+
+				</div>
+				
 			</Container>
 		</div>
 	);

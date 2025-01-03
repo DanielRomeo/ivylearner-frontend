@@ -129,9 +129,7 @@ const SignupComponent = () => {
 							/>
 						</Form.Group>
 
-						<Button className={`${styles.loginButton}`}>
-							SIGN UP
-						</Button>
+						<Button className={`${styles.loginButton}`}>SIGN UP</Button>
 
 						<br />
 

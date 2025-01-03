@@ -1,0 +1,93 @@
+// styles/Home.module.scss
+
+.container {
+	min-height: 100vh;
+	background: linear-gradient(135deg, #24570f 0%, #1a0f2e 100%);
+	color: white;
+}
+
+.navbar {
+	background-color: rgba(0, 0, 0, 0.1);
+	padding: 1rem 0;
+	margin-bottom: 2rem;
+
+	:global(.navbar-brand) {
+		font-weight: bold;
+		font-size: 1.5rem;
+	}
+
+	:global(.nav-link) {
+		color: rgba(255, 255, 255, 0.8) !important;
+
+		&:hover {
+			color: white !important;
+		}
+	}
+}
+
+.hero {
+	text-align: center;
+	padding: 6rem 0;
+	max-width: 800px;
+	margin: 0 auto;
+
+	h1 {
+		font-size: 3rem;
+		margin-bottom: 1rem;
+	}
+
+	p {
+		font-size: 1.2rem;
+		margin-bottom: 2rem;
+		opacity: 0.9;
+	}
+}
+
+.cta {
+	display: flex;
+	gap: 1rem;
+	justify-content: center;
+
+	:global(.btn) {
+		padding: 0.8rem 1.5rem;
+		transition: transform 0.2s;
+
+		&:hover {
+			transform: translateY(-2px);
+		}
+	}
+}
+
+.courses {
+	padding: 4rem 0;
+	text-align: center;
+	background-color: white;
+	color: #1a0f2e;
+	margin: 4rem -1rem 0;
+
+	h2 {
+		font-size: 2.5rem;
+		margin-bottom: 1rem;
+	}
+
+	p {
+		max-width: 800px;
+		margin: 0 auto 3rem;
+		line-height: 1.6;
+	}
+}
+
+// styles/CourseCard.module.scss
+.courseCard {
+	height: 100%;
+	transition: transform 0.2s;
+
+	&:hover {
+		transform: translateY(-5px);
+	}
+
+	:global(.card-img-top) {
+		height: 200px;
+		object-fit: cover;
+	}
+}
