@@ -28,7 +28,11 @@ export default function HomeComponent() {
 					<h1>Welcome to Ivy Learner</h1>
 					<p>Continuing education for Everyone.</p>
 					<div className={styles.cta}>
-						<Button variant="warning" size="lg" className={`me-3 ${styles.actionButtonLarge}`}>
+						<Button
+							variant="warning"
+							size="lg"
+							className={`me-3 ${styles.actionButtonLarge}`}
+						>
 							About Us
 						</Button>
 						<Button variant="outline-light" size="lg">
@@ -40,8 +44,9 @@ export default function HomeComponent() {
 				<section className={styles.courses}>
 					<h2>Browse the Courses</h2>
 					<p>
-						Each course consists of video-lectures, progression bars in order to track your progress and additional resources. Scroll down to read the curricula, and to watch
-						overviews and sample lectures.
+						Each course consists of video-lectures, progression bars in order to track
+						your progress and additional resources. Scroll down to read the curricula,
+						and to watch overviews and sample lectures.
 					</p>
 
 					<Row className="g-4"></Row>
