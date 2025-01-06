@@ -8,7 +8,7 @@ const CourseComponent = () => {
 	return (
 		<div>
             <Container>
-                This is the course page
+				<h1>This is where you see 1 course</h1>
             </Container>
 		</div>
 	);
