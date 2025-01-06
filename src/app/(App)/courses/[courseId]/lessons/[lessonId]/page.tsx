@@ -5,7 +5,8 @@ import { Container, Row, Col, ListGroup, Button } from 'react-bootstrap';
 import ReactPlayer from 'react-player';
 // import styles from '@/styles/coursePlayer.module.scss'
 // import styles from '../../../../_styles/coursePlayer.module.scss';
-import styles from '../../../../_styles/coursePlayer.module.scss'
+// import styles from '../../../../_styles/lessonPlayer.module.scss'
+import styles from '../../../../_styles/courses/lessonPlayer.module.scss'
 
 interface Lesson {
 	id: string;
