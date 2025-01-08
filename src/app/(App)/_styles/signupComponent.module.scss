@@ -1,9 +1,31 @@
 @import './main.module.scss';
 
+.main {
+	min-height: 100vh;
+	background: linear-gradient(135deg, #24570f 0%, #1a0f2e 100%);
+}
+
 .mainContainer {
+	display: flex;
+	flex-direction: row;
 	justify-content: center;
-	text-align: center;
+	align-items: center;
+	padding: 20px;
 	height: 100vh;
+
+	.box {
+		padding: 30px;
+		border-radius: 5px;
+		background-color: white;
+		align-self: flex-start;
+		margin-top: 20vh;
+
+		.primaryRow {
+			margin-bottom: 40px;
+			.primaryLabel {
+				font-size: 50px;
+			}
+		}
 
 	.primaryLabel {
 		font-size: 50px;
@@ -80,4 +102,5 @@
 			}
 		}
 	}
+	} // end of box
 }

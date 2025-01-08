@@ -47,8 +47,9 @@ const SignupComponent = () => {
 	};
 
 	return (
-		<div>
+		<div className={styles.main}>
 			<Container className={`${styles.mainContainer} `}>
+				<div className={styles.box}>
 				<Row>
 					<h2 className={` ${styles.primaryLabel}`}>Signup.</h2>
 					<label className={`${styles.secondaryLabel}`}>
@@ -140,6 +141,7 @@ const SignupComponent = () => {
 						</Link>
 					</form>
 				</Row>
+				</div>
 			</Container>
 		</div>
 	);
