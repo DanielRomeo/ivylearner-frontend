@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Form, Button, Container, Row, Col, InputGroup } from 'react-bootstrap';
@@ -8,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import axios from 'axios';
 
 // Schema:
 const schema = yup.object().shape({
@@ -24,12 +24,32 @@ const SigninComponent = () => {
 		formState: { errors },
 	} = useForm({ resolver: yupResolver(schema) });
 
-	const onSubmit = (data: any) => {
-		console.log(data);
-		// Handle form submission here
+	const onSubmit = async (data: any) => {
+		try {
+			setIsLoading(true);
+			console.log(data)
+			// Make Axios request to login
+			const response = await axios.post('http://localhost:5000/login', {
+			email: data.email,
+			password: data.password,
+			});
 
-		router.push('/commerce');
+			// Assuming the response contains an access token
+			const { access_token } = response.data;
+
+			// Store the token in localStorage or a global state
+			localStorage.setItem('access_token', access_token);
+
+			// Optionally, redirect to a protected page
+			router.push('/protected');
+		} catch (error) {
+			console.error('Login failed:', error);
+			alert('Login failed. Please check your credentials.');
+		} finally {
+			setIsLoading(false);
+		}
 	};
+
 
 	return (
 		<div className={styles.main}>
@@ -89,7 +109,7 @@ const SigninComponent = () => {
 							</InputGroup>
 
 							{/* Login button */}
-							<Button className={`${styles.loginButton}`}>LOGIN</Button>
+							<Button type='submit' className={`${styles.loginButton}`}>LOGIN</Button>
 
 							<br />
 
