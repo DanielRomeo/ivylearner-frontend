@@ -3,7 +3,7 @@ import React from 'react';
 // import styles from '../_styles/organisation/organisationComponent.module.scss';
 import styles from '../../_styles/organisationComponent.module.scss'
 // import CourseCard from '../_components/CourseCard';\
-import CourseComponent from '../../courses/coursesComponent';
+import CourseCard from '../../courses/courseCardComponent';
 import { FaGlobe, FaEnvelope, FaPhone, FaMapMarkerAlt, FaCheckCircle } from 'react-icons/fa';
 
 interface SocialMedia {
@@ -71,7 +71,62 @@ const OrganisationComponent = () => {
 
   // Mock courses - replace with actual API call
   const courses: Course[] = [
-    // Add mock courses here
+    {
+      id: 1,
+      title: "Introduction to Web Development",
+      duration: "8 hours",
+      instructor: "Sarah Johnson",
+      location: "Online",
+      certificate: true,
+      level: "Beginner",
+      categories: ["Programming", "Web Development", "HTML/CSS"],
+      isFree: true,
+      enrolledCount: 1250,
+      rating: 4.8,
+      imageUrl: "/web-dev-course.jpg"
+    },
+    {
+      id: 2,
+      title: "Advanced React & Redux",
+      duration: "12 hours",
+      instructor: "Michael Chen",
+      location: "Hybrid",
+      certificate: true,
+      level: "Advanced",
+      categories: ["Programming", "React", "JavaScript"],
+      isFree: false,
+      enrolledCount: 843,
+      rating: 4.6,
+      imageUrl: "/react-course.jpg"
+    },
+    {
+      id: 3,
+      title: "UI/UX Design Fundamentals",
+      duration: "6 hours",
+      instructor: "Emma Rodriguez",
+      location: "In Person",
+      certificate: true,
+      level: "Intermediate",
+      categories: ["Design", "UI/UX", "Figma"],
+      isFree: false,
+      enrolledCount: 567,
+      rating: 4.2,
+      imageUrl: "/uiux-course.jpg"
+    },
+    {
+      id: 4,
+      title: "Python for Data Science",
+      duration: "10 hours",
+      instructor: "David Kim",
+      location: "Online",
+      certificate: true,
+      level: "Intermediate",
+      categories: ["Programming", "Python", "Data Science"],
+      isFree: false,
+      enrolledCount: 982,
+      rating: 4.7,
+      imageUrl: "/python-course.jpg"
+    }
   ];
 
   const socialMediaLinks: SocialMedia = JSON.parse(organization.socialMedia);
@@ -156,7 +211,7 @@ const OrganisationComponent = () => {
             <h2>Courses</h2>
             <div className={styles.coursesGrid}>
               {courses.map(course => (
-                <CourseComponent key={course.id} {...course} />
+                <CourseCard key={course.id} {...course} />
               ))}
             </div>
           </div>
