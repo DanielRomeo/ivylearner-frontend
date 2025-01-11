@@ -1,0 +1,24 @@
+.container {
+	min-height: 100vh;
+	background: linear-gradient(135deg, #24570f 0%, #1a0f2e 100%);
+	color: white;
+}
+
+.navbar {
+	background: linear-gradient(135deg, #24570f 0%, #1a0f2e 100%);
+	padding: 1rem 0;
+	margin-bottom: 2rem;
+
+	:global(.navbar-brand) {
+		font-weight: bold;
+		font-size: 1.5rem;
+	}
+
+	:global(.nav-link) {
+		color: rgba(255, 255, 255, 0.8) !important;
+
+		&:hover {
+			color: white !important;
+		}
+	}
+}

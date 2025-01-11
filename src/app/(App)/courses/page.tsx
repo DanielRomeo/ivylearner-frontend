@@ -12,7 +12,6 @@ const CoursePage = () => {
 	return (
 		<div>
 			<CoursesComponent></CoursesComponent>
-           
 		</div>
 	);
 };
