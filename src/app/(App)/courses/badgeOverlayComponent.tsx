@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../_styles/courses/badgeOverlay.module.scss'
+import styles from '../_styles/courses/badgeOverlay.module.scss';
 import { Badge } from 'react-bootstrap';
 
 interface BadgeOverlayProps {

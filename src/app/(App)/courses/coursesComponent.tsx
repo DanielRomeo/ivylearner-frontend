@@ -4,75 +4,68 @@ import BadgeOverlay from './badgeOverlayComponent';
 import { Card, Button, Row, Col, Container } from 'react-bootstrap';
 import '../_styles/courses/courseComponent.module.scss';
 import MainNavbar from '../_components/MainNavbar';
+import CourseCard from './courseCardComponent'
 
-const mockCourses = [
-	{
-		id: 1,
-		title: 'Introduction to Programming with Java',
-		duration: '5 hours',
-		instructor: 'John Doe',
-		location: 'RoseBank',
-		level: 'Beginner',
-		category: ['Programming', 'Java'],
+
+
+const CourseList = () => {
+	const courseData = {
+	  title: "Introduction to Programming with Java",
+	  duration: "5 hours",
+	  instructor: "John Doe",
+	  location: "RoseBank",
+	  certificate: true,
+	  level: "Beginner",
+	  categories: ["Programming", "Java"],
+	  isFree: true,
+	  enrolledCount: 125,
+	  rating: 4.2
+	};
+
+	const courseData2 = {
+		title: "Introduction to Programming with Java",
+		duration: "5 hours",
+		instructor: "John Doe",
+		location: "RoseBank",
+		certificate: true,
+		level: "Beginner",
+		categories: ["Programming", "Java"],
 		isFree: true,
-		enrolled: 125,
-	},
-	{
-		id: 2,
-		title: 'Advanced JavaScript',
-		duration: '8 hours',
-		instructor: 'Jane Smith',
-		location: 'Sandton',
-		level: 'Intermediate',
-		category: ['Programming', 'JavaScript'],
-		isFree: false,
-		enrolled: 200,
-	},
-	// Add more mock courses if needed
-];
+		enrolledCount: 125,
+		rating: 4.2
+	  };
+  
+	return (
+	  <Container>
+		<Row>
+			<Col lg={4} md={6} sm={6} xs={12}>
+				<CourseCard {...courseData} />
+				<br />
+			</Col>
+			
+			<Col lg={4} md={6} sm={6} xs={12}>
+				<CourseCard {...courseData} />
+				<br />
+			</Col>
+			
+			<Col lg={4} md={6} sm={6} xs={12}>
+				<CourseCard {...courseData} />
+				<br />
+			</Col>
+			
+		</Row>
+		
+		
+	  </Container>
+	);
+};
 
 const CourseComponent: React.FC = () => {
 	return (
 		<div className="courses-container">
 			<MainNavbar></MainNavbar>
 
-			<Container>
-				<Row>
-					{mockCourses.map((course) => (
-						<Col key={course.id} md={6} lg={4} className="mb-4">
-							<Card className="course-card">
-								<div className="image-placeholder">
-									<BadgeOverlay label={course.isFree ? 'Free' : 'Paid'} variant={course.isFree ? 'success' : 'danger'} />
-								</div>
-								<Card.Body>
-									<Card.Title>{course.title}</Card.Title>
-									<Card.Text>
-										<span>⏱ {course.duration}</span>
-										<br />
-										<span>👨‍🏫 {course.instructor}</span>
-										<br />
-										<span>📍 {course.location}</span>
-										<br />
-										<span>🎓 {course.level}</span>
-										<div className="tags">
-											{course.category.map((tag, index) => (
-												<span key={index} className="tag">
-													{tag}
-												</span>
-											))}
-										</div>
-									</Card.Text>
-									<Button variant="success">Enroll</Button>
-								</Card.Body>
-								<Card.Footer>
-									<span>👥 {course.enrolled} enrolled</span>
-								</Card.Footer>
-							</Card>
-						</Col>
-					))}
-				</Row>
-			</Container>
-			
+			<CourseList></CourseList>
 		</div>
 	);
 };
