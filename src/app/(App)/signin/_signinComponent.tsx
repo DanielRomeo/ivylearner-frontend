@@ -27,11 +27,11 @@ const SigninComponent = () => {
 	const onSubmit = async (data: any) => {
 		try {
 			setIsLoading(true);
-			console.log(data)
+			console.log(data);
 			// Make Axios request to login
 			const response = await axios.post('http://localhost:5000/login', {
-			email: data.email,
-			password: data.password,
+				email: data.email,
+				password: data.password,
 			});
 
 			// Assuming the response contains an access token
@@ -49,7 +49,6 @@ const SigninComponent = () => {
 			setIsLoading(false);
 		}
 	};
-
 
 	return (
 		<div className={styles.main}>
@@ -109,7 +108,9 @@ const SigninComponent = () => {
 							</InputGroup>
 
 							{/* Login button */}
-							<Button type='submit' className={`${styles.loginButton}`}>LOGIN</Button>
+							<Button type="submit" className={`${styles.loginButton}`}>
+								LOGIN
+							</Button>
 
 							<br />
 

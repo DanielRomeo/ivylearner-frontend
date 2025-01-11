@@ -1,18 +1,20 @@
 import React from 'react';
-import './BadgeOverlay.scss';
+import styles from '../_styles/courses/badgeOverlay.module.scss'
 import { Badge } from 'react-bootstrap';
 
 interface BadgeOverlayProps {
-  label: string;
-  variant?: string;
+	label: string;
+	variant?: string;
 }
 
 const BadgeOverlay: React.FC<BadgeOverlayProps> = ({ label, variant = 'dark' }) => {
-  return (
-    <div className="badge-overlay">
-      <Badge bg={variant} className="badge-overlay-label">
-        {label}
-      </Badge>
-    </div>
-  );
+	return (
+		<div className="badge-overlay">
+			<Badge bg={variant} className="badge-overlay-label">
+				{label}
+			</Badge>
+		</div>
+	);
 };
+
+export default BadgeOverlay;

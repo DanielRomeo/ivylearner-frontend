@@ -7,7 +7,6 @@ export const metadata: Metadata = {
 	description: 'Course page',
 };
 
-
 const CoursePage = () => {
 	return (
 		<div>

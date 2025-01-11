@@ -1,15 +1,14 @@
-'use client'
+'use client';
 import { Metadata } from 'next';
 import { Container } from 'react-bootstrap';
 // import SigninComponent from './_signinComponent';
 
-
 const CourseComponent = () => {
 	return (
 		<div>
-            <Container>
+			<Container>
 				<h1>This is where you see 1 course</h1>
-            </Container>
+			</Container>
 		</div>
 	);
 };

@@ -1,11 +1,11 @@
 // pages/courses/[courseId]/lessons/[lessonId].tsx
-'use client'
+'use client';
 import { useState } from 'react';
 import { Container, Row, Col, ListGroup, Button } from 'react-bootstrap';
 import ReactPlayer from 'react-player';
 
 // styles:
-import styles from '../../../../_styles/courses/lessonPlayer.module.scss'
+import styles from '../../../../_styles/courses/lessonPlayer.module.scss';
 
 interface Lesson {
 	id: string;
