@@ -86,7 +86,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
         </div>
 
         {/* Enroll Button */}
-        <button className={styles.enrollButton}>Enroll</button>
+        <button className={styles.enrollButton}>View Course</button>
 
         {/* Footer */}
         <div className={styles.footer}>
