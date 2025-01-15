@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import axios from 'axios';
+import { useAuth } from '../../contexts/auth-context';
 
 // Schema:
 const schema = yup.object().shape({
@@ -16,6 +17,9 @@ const schema = yup.object().shape({
 });
 
 const SigninComponent = () => {
+	const { login } = useAuth();
+	const [error, setError] = useState('');
+
 	const router = useRouter();
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const {
@@ -26,28 +30,39 @@ const SigninComponent = () => {
 
 	const onSubmit = async (data: any) => {
 		try {
-			setIsLoading(true);
 			console.log(data);
-			// Make Axios request to login
-			const response = await axios.post('http://localhost:5000/login', {
-				email: data.email,
-				password: data.password,
-			});
 
-			// Assuming the response contains an access token
-			const { access_token } = response.data;
-
-			// Store the token in localStorage or a global state
-			localStorage.setItem('access_token', access_token);
-
-			// Optionally, redirect to a protected page
-			router.push('/protected');
-		} catch (error) {
-			console.error('Login failed:', error);
-			alert('Login failed. Please check your credentials.');
+			await login(data.email, data.password);
+		} catch (err) {
+			console.log('error');
+			setError(err instanceof Error ? err.message : 'Login failed');
 		} finally {
 			setIsLoading(false);
 		}
+
+		// try {
+		// 	setIsLoading(true);
+		// 	console.log(data);
+		// 	// Make Axios request to login
+		// 	const response = await axios.post('http://localhost:5000/login', {
+		// 		email: data.email,
+		// 		password: data.password,
+		// 	});
+
+		// 	// Assuming the response contains an access token
+		// 	const { access_token } = response.data;
+
+		// 	// Store the token in localStorage or a global state
+		// 	localStorage.setItem('access_token', access_token);
+
+		// 	// Optionally, redirect to a protected page
+		// 	router.push('/protected');
+		// } catch (error) {
+		// 	console.error('Login failed:', error);
+		// 	alert('Login failed. Please check your credentials.');
+		// } finally {
+		// 	setIsLoading(false);
+		// }
 	};
 
 	return (

@@ -5,104 +5,126 @@ import { useRouter } from 'next/navigation';
 import { Container, Row, Col } from 'react-bootstrap';
 import { motion } from 'framer-motion';
 
-// components imported:
+// Components
 import Sidebar from './_components/sidebar';
 import CoursesList from './_components/coursesList';
 import OrganizationsList from './_components/organisationList';
 import Profile from './_components/profile';
-import styles from '../_styles/dashboard/coursesList.module.scss'
+import styles from '../_styles/dashboard/coursesList.module.scss';
+
+// You might want to create an auth context or use your preferred auth solution
+import { useAuth } from '../../contexts/auth-context'; // Create this context
 
 // Types
 interface Instructor {
-  id: number;
-  firstName: string;
-  lastName: string;
-  profilePicture: string;
-  bio: string;
-  specialization: string;
+	id: number;
+	firstName: string;
+	lastName: string;
+	profilePicture: string;
+	bio: string;
+	specialization: string;
 }
 
 interface Course {
-  id: number;
-  title: string;
-  shortDescription: string;
-  publishStatus: 'draft' | 'published' | 'archived';
-  lastUpdated: Date;
+	id: number;
+	title: string;
+	shortDescription: string;
+	publishStatus: 'draft' | 'published' | 'archived';
+	lastUpdated: Date;
 }
 
 interface Organization {
-  id: number;
-  name: string;
-  logo: string;
+	id: number;
+	name: string;
+	logo: string;
 }
 
 export default function DashboardComponent() {
-  const router = useRouter();
-  const [instructor, setInstructor] = useState<Instructor | null>(null);
-  const [activeView, setActiveView] = useState<'courses' | 'organizations' | 'profile'>('courses');
+	const router = useRouter();
+	const { user, isAuthenticated, getToken } = useAuth(); // Get auth info from context
+	const [instructor, setInstructor] = useState<Instructor | null>(null);
+	const [activeView, setActiveView] = useState<'courses' | 'organizations' | 'profile'>(
+		'courses'
+	);
+	const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/signin');
-      return;
-    }
+	useEffect(() => {
+		// Check authentication first
+		if (!isAuthenticated) {
+			router.push('/signin');
+			return;
+		}
 
-    // Fetch instructor data
-    fetchInstructorData(token);
-  }, []);
+		const fetchInstructorData = async () => {
+			try {
+				setLoading(true);
+				const token = await getToken(); // Get fresh token from auth context
 
-  const fetchInstructorData = async (token: string) => {
-    try {
-      const response = await fetch('/api/instructor/me', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      
-      if (!response.ok) throw new Error('Failed to fetch instructor data');
-      
-      const data = await response.json();
-      setInstructor(data);
-    } catch (error) {
-      console.error('Error fetching instructor data:', error);
-      router.push('/signin');
-    }
-  };
+				if (!token || !user?.id) {
+					throw new Error('Authentication required');
+				}
 
-  if (!instructor) {
-    return <div className={styles.loading}>Loading...</div>;
-  }
+				const response = await fetch(`/api/instructors/${user.id}`, {
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				});
 
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className={styles.dashboard}
-    >
-      <Sidebar
-        instructor={instructor}
-        activeView={activeView}
-        onViewChange={setActiveView}
-      />
-      
-      <main className={styles.mainContent}>
-        <Container fluid>
-          <Row>
-            <Col>
-              {activeView === 'courses' && <CoursesList />}
-              {activeView === 'organizations' && <OrganizationsList />}
+				if (!response.ok) {
+					if (response.status === 404) {
+						// Handle case where instructor profile doesn't exist yet
+						router.push('/onboarding');
+						return;
+					}
+					throw new Error('Failed to fetch instructor data');
+				}
+
+				const data = await response.json();
+				setInstructor(data);
+			} catch (error) {
+				console.error('Error fetching instructor data:', error);
+				router.push('/signin');
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchInstructorData();
+	}, [isAuthenticated, user?.id, router, getToken]);
+
+	if (loading) {
+		return <div className={styles.loading}>Loading...</div>;
+	}
+
+	if (!instructor) {
+		return null;
+	}
+
+	return (
+		<motion.div
+			initial={{ opacity: 0 }}
+			animate={{ opacity: 1 }}
+			transition={{ duration: 0.5 }}
+			className={styles.dashboard}
+		>
+			<Sidebar instructor={instructor} activeView={activeView} onViewChange={setActiveView} />
+
+			<main className={styles.mainContent}>
+				<Container fluid>
+					<Row>
+						<Col>
+							{/* {activeView === 'courses' && <CoursesList instructorId={instructor.id} />}
+              {activeView === 'organizations' && <OrganizationsList instructorId={instructor.id} />}
               {activeView === 'profile' && (
                 <Profile 
                   instructor={instructor}
                   onUpdate={(updatedData) => setInstructor({ ...instructor, ...updatedData })}
                 />
-              )}
-            </Col>
-          </Row>
-        </Container>
-      </main>
-    </motion.div>
-  );
+              )} */}
+						</Col>
+					</Row>
+				</Container>
+			</main>
+		</motion.div>
+	);
 }

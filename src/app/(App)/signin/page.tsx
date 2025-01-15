@@ -2,8 +2,8 @@ import { Metadata } from 'next';
 import SigninComponent from './_signinComponent';
 
 export const metadata: Metadata = {
-	title: 'Signin to IvydaleFashion',
-	description: 'Sign in or Login here to access your Ivydalefashion account.',
+	title: 'Signin to ivylearner',
+	description: 'Sign in or Login here to access your ivylearner account.',
 };
 
 const SigninPage = () => {

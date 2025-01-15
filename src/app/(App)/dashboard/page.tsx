@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 // import DashboardComponent from './protectedComponent';
-import DashboardComponent from './dashboardComponent'
+import DashboardComponent from './dashboardComponent';
 
 export const metadata: Metadata = {
 	title: 'Signin to IvydaleFashion',

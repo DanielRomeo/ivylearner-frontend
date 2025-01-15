@@ -6,6 +6,14 @@ import { Container, Nav, Navbar, Button, Row, Col } from 'react-bootstrap';
 import { useRouter } from 'next/navigation';
 import styles from '../_styles/homeComponent.module.scss';
 
+// the following is how im gonna use my auth:
+
+// import { useAuth } from '@/contexts/auth-context';
+// function MyComponent() {
+//   const { user, isAuthenticated, logout } = useAuth();
+//   // Use auth data and methods
+// }
+
 export default function HomeComponent() {
 	return (
 		<div className={styles.container}>
