@@ -19,9 +19,6 @@ interface AuthContextType {
 	logout: () => void;
 }
 
-// Configure axios defaults
-axios.defaults.baseURL = 'http://localhost:5000';
-axios.defaults.headers.common['Content-Type'] = 'application/json';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -55,18 +52,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 	const checkAuth = async () => {
 		const token = localStorage.getItem('access_token');
-		if (!token) {
-			setUser(null);
-			return;
-		}
-
-		try {
-			const response = await axios.get('/auth/me');
-			setUser(response.data);
-		} catch (error) {
-			console.error('Auth check failed:', error);
-			localStorage.removeItem('access_token');
-			setUser(null);
+		if (token) {
+			try {
+				// Get the user ID first or from the token payload
+				// Then use it to fetch instructor data
+				const response = await axios.get(`/api/auth/me`, {
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				});
+	
+				if (response.status === 200) {
+					const userData = response.data;
+					console.log('userData from checkAuth is :'+userData)
+					setUser(userData);
+				} else {
+					localStorage.removeItem('access_token');
+					setUser(null);
+				}
+			} catch (error) {
+				console.error('Auth check failed:', error);
+				localStorage.removeItem('access_token');
+				setUser(null);
+			}
 		}
 	};
 
@@ -76,29 +84,65 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 	const login = async (email: string, password: string) => {
 		try {
-			const response = await axios.post('/instructors/login', {
+			// First, ensure we have the correct base URL for axios
+			const response = await axios.post('/api/instructors/login', {
 				email,
 				password,
-			});
-			console.log(response)
-
-			const { access_token, user: userData } = response.data;
-
-			if (!access_token || !userData) {
-				throw new Error('Invalid response from server');
-			}
-
-			localStorage.setItem('access_token', access_token);
-			setUser(userData);
-			router.push('/dashboard');
-		} catch (error) {
-			if (axios.isAxiosError(error)) {
-				if (error.response?.status === 401) {
-					throw new Error('Invalid email or password');
+			}, {
+				headers: {
+					'Content-Type': 'application/json'
 				}
-				throw new Error(error.response?.data?.message || 'Login failed');
+			});
+			// console.log('Login response:', response.data);
+			let accessToken = response.data.data.access_token;
+			// console.log('my token ins :'+ accessToken)
+			if (!accessToken) {
+				throw new Error('No access token received from server');
 			}
-			throw new Error('Network error');
+	
+			localStorage.setItem('access_token', accessToken);
+			if (user) {
+				console.log('the user is :' +user)
+				setUser(user);
+			} else {
+				const userResponse = await axios.get('/api/auth/me', {
+					headers: {
+						'Authorization': `Bearer ${accessToken}`
+					}
+				});
+				console.log('user Response is :'+ JSON.stringify(userResponse.data))
+				setUser(userResponse.data.id);
+				console.log(userResponse.data.id)
+			}
+	
+			// Navigate to dashboard
+			// router.push('/dashboard');
+	
+		} catch (error) {
+			console.error('Login error details:', error);
+	
+			if (axios.isAxiosError(error)) {
+				// Handle specific error cases
+				if (!error.response) {
+					throw new Error('Network error - No server response');
+				}
+	
+				switch (error.response.status) {
+					case 401:
+						throw new Error('Invalid email or password');
+					case 404:
+						throw new Error('Login service not found');
+					case 422:
+						throw new Error('Invalid input - Please check your email and password');
+					case 500:
+						throw new Error('Server error - Please try again later');
+					default:
+						throw new Error(error.response.data?.message || 'Login failed');
+				}
+			}
+	
+			// Handle non-axios errors
+			throw new Error('An unexpected error occurred during login');
 		}
 	};
 
