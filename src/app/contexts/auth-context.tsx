@@ -116,7 +116,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 			}
 	
 			// Navigate to dashboard
-			// router.push('/dashboard');
+			router.push('/dashboard');
 	
 		} catch (error) {
 			console.error('Login error details:', error);

@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Form, Button, Container, Row, Col, InputGroup } from 'react-bootstrap';
 import styles from '../_styles/signinComponent.module.scss';
@@ -27,6 +27,10 @@ const SigninComponent = () => {
 		handleSubmit,
 		formState: { errors },
 	} = useForm({ resolver: yupResolver(schema) });
+
+	// useEffect(()=>{
+		
+	// }, [])
 
 	const onSubmit = async (data: any) => {
 		try {

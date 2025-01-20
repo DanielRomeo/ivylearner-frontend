@@ -57,40 +57,40 @@ export default function DashboardComponent() {
 
 		const fetchInstructorData = async () => {
 			try {
-				setLoading(true);
-				const token = await getToken(); // Get fresh token from auth context
-
-				if (!token || !user?.id) {
-					throw new Error('Authentication required');
+			  setLoading(true);
+			  const token = await getToken();
+	  
+			  if (!token || !user?.id) {
+				throw new Error('Authentication required');
+			  }
+	  
+			  const response = await fetch(`/api/users/${user.id}`, {
+				headers: {
+				  Authorization: `Bearer ${token}`,
+				},
+			  });
+	  
+			  if (!response.ok) {
+				if (response.status === 404) {
+				  router.push('/onboarding');
+				  return;
 				}
-
-				const response = await fetch(`/api/instructors/${user.id}`, {
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				});
-
-				if (!response.ok) {
-					if (response.status === 404) {
-						// Handle case where instructor profile doesn't exist yet
-						router.push('/onboarding');
-						return;
-					}
-					throw new Error('Failed to fetch instructor data');
-				}
-
-				const data = await response.json();
-				setInstructor(data);
+				throw new Error('Failed to fetch instructor data');
+			  }
+	  
+			  const data = await response.json();
+			  setInstructor(data);
 			} catch (error) {
-				console.error('Error fetching instructor data:', error);
-				router.push('/signin');
+			  console.error('Error fetching instructor data:', error);
+			//   setError(error instanceof Error ? error.message : 'An error occurred');
+			  router.push('/signin');
 			} finally {
-				setLoading(false);
+			  setLoading(false);
 			}
-		};
-
-		fetchInstructorData();
-	}, [isAuthenticated, user?.id, router, getToken]);
+		  };
+	  
+		  fetchInstructorData();
+		}, [isAuthenticated, user?.id, router, getToken]);
 
 	if (loading) {
 		return <div className={styles.loading}>Loading...</div>;
