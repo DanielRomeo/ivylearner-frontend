@@ -1,9 +1,10 @@
 // app/dashboard/page.tsx
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Spinner } from 'react-bootstrap';
 import { motion } from 'framer-motion';
+import axios from 'axios';
 
 // Components
 import Sidebar from './_components/sidebar';
@@ -14,6 +15,7 @@ import styles from '../_styles/dashboard/coursesList.module.scss';
 
 // You might want to create an auth context or use your preferred auth solution
 import { useAuth } from '../../contexts/auth-context'; // Create this context
+import { getUserDetails } from '@/app/api/ID/StudentInstructor';
 
 // Types
 interface Instructor {
@@ -41,64 +43,87 @@ interface Organization {
 
 export default function DashboardComponent() {
 	const router = useRouter();
-	const { user, isAuthenticated, getToken } = useAuth(); // Get auth info from context
-	const [instructor, setInstructor] = useState<Instructor | null>(null);
-	const [activeView, setActiveView] = useState<'courses' | 'organizations' | 'profile'>(
-		'courses'
-	);
+	const { user, isAuthenticated, getToken } = useAuth();
+	const [instructor, setInstructor] = useState(null);
+	const [activeView, setActiveView] = useState('courses');
 	const [loading, setLoading] = useState(true);
 
+	// Remove authChecked state and handle auth status differently
+	const fetchInstructorData = useCallback(async () => {
+		try {
+			const token = await getToken();
+
+			// If no token, wait and retry once
+			if (!token) {
+				await new Promise((resolve) => setTimeout(resolve, 1000));
+				const retryToken = await getToken();
+				if (!retryToken) {
+					console.log('No token available after retry');
+					router.push('/signin');
+					return;
+				}
+			}
+
+			// Ensure we have user ID
+			if (!user?.id) {
+				console.log('No user ID available');
+				router.push('/signin');
+				return;
+			}
+
+			const userDetailsId = await getUserDetails(user.id);
+
+			const response = await axios.get('/api/instructors/getOne', {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+				params: {
+					id: userDetailsId,
+				},
+			});
+
+			if (response.status === 200) {
+				setInstructor(response.data);
+				setLoading(false);
+			} else if (response.status === 404) {
+				router.push('/onboarding');
+			}
+		} catch (error: any) {
+			console.error('Error fetching instructor data:', error);
+			if (error.response?.status === 401) {
+				router.push('/signin');
+			}
+		}
+	}, [user?.id, router, getToken]);
+
+	// Single useEffect that watches auth state
 	useEffect(() => {
-		// Check authentication first
+		// Only proceed if we have a definitive auth state
+		if (isAuthenticated === undefined) {
+			return;
+		}
+
 		if (!isAuthenticated) {
 			router.push('/signin');
 			return;
 		}
 
-		const fetchInstructorData = async () => {
-			try {
-			  setLoading(true);
-			  const token = await getToken();
-	  
-			  if (!token || !user?.id) {
-				throw new Error('Authentication required');
-			  }
-	  
-			  const response = await fetch(`/api/users/${user.id}`, {
-				headers: {
-				  Authorization: `Bearer ${token}`,
-				},
-			  });
-	  
-			  if (!response.ok) {
-				if (response.status === 404) {
-				  router.push('/onboarding');
-				  return;
-				}
-				throw new Error('Failed to fetch instructor data');
-			  }
-	  
-			  const data = await response.json();
-			  setInstructor(data);
-			} catch (error) {
-			  console.error('Error fetching instructor data:', error);
-			//   setError(error instanceof Error ? error.message : 'An error occurred');
-			  router.push('/signin');
-			} finally {
-			  setLoading(false);
-			}
-		  };
-	  
-		  fetchInstructorData();
-		}, [isAuthenticated, user?.id, router, getToken]);
+		// If authenticated, fetch instructor data
+		fetchInstructorData();
+	}, [isAuthenticated, fetchInstructorData, router]);
 
-	if (loading) {
-		return <div className={styles.loading}>Loading...</div>;
+	if (loading || !instructor) {
+		return (
+			<Container className="d-flex align-items-center justify-content-center min-vh-100">
+				<div className="text-center">
+					<Spinner animation="border" role="status" variant="primary" />
+					<p className="mt-3 text-muted">Loading your dashboard...</p>
+				</div>
+			</Container>
+		);
 	}
 
-	if (!instructor) {
-		return null;
-	}
+	// Error state
 
 	return (
 		<motion.div

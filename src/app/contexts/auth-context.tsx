@@ -4,11 +4,10 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
-// Define the User interface based on your API response
 interface User {
 	id: number;
 	email: string;
-	// Add other user properties that your API returns
+	// Add other user properties
 }
 
 interface AuthContextType {
@@ -19,18 +18,60 @@ interface AuthContextType {
 	logout: () => void;
 }
 
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
 	const [user, setUser] = useState<User | null>(null);
+	const [isLoading, setIsLoading] = useState(true);
 	const router = useRouter();
 
+	// Helper function to fetch user data
+	const fetchUserData = async (token: string): Promise<User | null> => {
+		try {
+			const response = await axios.get('/api/auth/me', {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+
+			if (response.status === 200 && response.data) {
+				// Ensure we're getting a properly structured user object
+				const userData: User = {
+					id: response.data.id,
+					email: response.data.email,
+					// Add other user properties as needed
+				};
+				return userData;
+			}
+			return null;
+		} catch (error) {
+			console.error('Error fetching user data:', error);
+			return null;
+		}
+	};
+
+	// Initial auth check
 	useEffect(() => {
-		checkAuth();
+		const initializeAuth = async () => {
+			setIsLoading(true);
+			const token = localStorage.getItem('access_token');
+
+			if (token) {
+				const userData = await fetchUserData(token);
+				if (userData) {
+					setUser(userData);
+				} else {
+					localStorage.removeItem('access_token');
+				}
+			}
+
+			setIsLoading(false);
+		};
+
+		initializeAuth();
 	}, []);
 
-	// Set up axios interceptor for token
+	// Axios interceptor
 	useEffect(() => {
 		const interceptor = axios.interceptors.request.use(
 			(config) => {
@@ -40,9 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 				}
 				return config;
 			},
-			(error) => {
-				return Promise.reject(error);
-			}
+			(error) => Promise.reject(error)
 		);
 
 		return () => {
@@ -50,98 +89,60 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		};
 	}, []);
 
-	const checkAuth = async () => {
-		const token = localStorage.getItem('access_token');
-		if (token) {
-			try {
-				// Get the user ID first or from the token payload
-				// Then use it to fetch instructor data
-				const response = await axios.get(`/api/auth/me`, {
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				});
-	
-				if (response.status === 200) {
-					const userData = response.data;
-					console.log('userData from checkAuth is :'+userData)
-					setUser(userData);
-				} else {
-					localStorage.removeItem('access_token');
-					setUser(null);
-				}
-			} catch (error) {
-				console.error('Auth check failed:', error);
-				localStorage.removeItem('access_token');
-				setUser(null);
-			}
-		}
-	};
-
 	const getToken = async () => {
 		return localStorage.getItem('access_token');
 	};
 
 	const login = async (email: string, password: string) => {
 		try {
-			// First, ensure we have the correct base URL for axios
-			const response = await axios.post('/api/auth/login', {
-				email,
-				password,
-			}, {
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			});
-			// console.log('Login response:', response.data);
-			let accessToken = response.data.data.access_token;
-			// console.log('my token ins :'+ accessToken)
+			const response = await axios.post(
+				'/api/auth/login',
+				{ email, password },
+				{ headers: { 'Content-Type': 'application/json' } }
+			);
+
+			const accessToken = response.data.data.access_token;
 			if (!accessToken) {
 				throw new Error('No access token received from server');
 			}
-	
+
+			// Save token first
 			localStorage.setItem('access_token', accessToken);
-			if (user) {
-				console.log('the user is :' +user)
-				setUser(user);
-			} else {
-				const userResponse = await axios.get('/api/auth/me', {
-					headers: {
-						'Authorization': `Bearer ${accessToken}`
-					}
-				});
-				console.log('user Response is :'+ JSON.stringify(userResponse.data))
-				setUser(userResponse.data.id);
-				console.log(userResponse.data.id)
+
+			// Fetch user data with new token
+			const userData = await fetchUserData(accessToken);
+			if (!userData) {
+				throw new Error('Failed to fetch user data after login');
 			}
-	
+
+			// Set user state
+			setUser(userData);
+
 			// Navigate to dashboard
 			router.push('/dashboard');
-	
 		} catch (error) {
-			console.error('Login error details:', error);
-	
+			console.error('Login error:', error);
+			localStorage.removeItem('access_token');
+
 			if (axios.isAxiosError(error)) {
-				// Handle specific error cases
 				if (!error.response) {
 					throw new Error('Network error - No server response');
 				}
-	
-				switch (error.response.status) {
-					case 401:
-						throw new Error('Invalid email or password');
-					case 404:
-						throw new Error('Login service not found');
-					case 422:
-						throw new Error('Invalid input - Please check your email and password');
-					case 500:
-						throw new Error('Server error - Please try again later');
-					default:
-						throw new Error(error.response.data?.message || 'Login failed');
-				}
+
+				const errorMessages: Record<number, string> = {
+					401: 'Invalid email or password',
+					404: 'Login service not found',
+					422: 'Invalid input - Please check your email and password',
+					500: 'Server error - Please try again later',
+				};
+
+				throw new Error(
+					errorMessages[error.response.status] ||
+						error.response.data?.message ||
+						'Login failed'
+				);
 			}
-	
-			// Handle non-axios errors
+
 			throw new Error('An unexpected error occurred during login');
 		}
 	};
@@ -151,6 +152,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		setUser(null);
 		router.push('/signin');
 	};
+
+	if (isLoading) {
+		return null; // Or a loading spinner
+	}
 
 	return (
 		<AuthContext.Provider

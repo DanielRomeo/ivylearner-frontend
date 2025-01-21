@@ -29,7 +29,7 @@ const SigninComponent = () => {
 	} = useForm({ resolver: yupResolver(schema) });
 
 	// useEffect(()=>{
-		
+
 	// }, [])
 
 	const onSubmit = async (data: any) => {
