@@ -30,7 +30,7 @@ const OrganizationsList = ({ instructorId }: OrganisationProps) => {
 
 	const fetchOrganizations = async () => {
 		try {
-			const response = await fetch('/api/organizations', {
+			const response = await fetch('/api/organisations/getAll', {
 				headers: {
 					Authorization: `Bearer ${localStorage.getItem('token')}`,
 				},
@@ -48,7 +48,7 @@ const OrganizationsList = ({ instructorId }: OrganisationProps) => {
 	};
 
 	if (loading) {
-		return <div className="text-center p-4">Loading organizations...</div>;
+		return <div className="text-center p-4">Loading organisations...</div>;
 	}
 
 	return (

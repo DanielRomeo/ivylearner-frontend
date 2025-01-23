@@ -1,12 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { FaSave, FaTimes } from 'react-icons/fa';
 import {useRouter} from 'next/navigation'
+import { useAuth } from '../../../contexts/auth-context';
+import { getUserDetails } from '@/app/api/ID/StudentInstructor';
+import axios from 'axios'
 
 // Validation schema
 const organisationSchema = yup.object().shape({
@@ -31,8 +34,25 @@ const organisationSchema = yup.object().shape({
 		.nullable(),
 });
 
+// Types
+interface Instructor {
+	id: number;
+	firstName: string;
+	lastName: string;
+	profilePicture: string;
+	bio: string;
+	specialization: string;
+}
+
+// main component:
 const CreateOrganisationComponent = () => {
+	const { user, isAuthenticated, getToken } = useAuth();
 	const router = useRouter();
+	const [instructor, setInstructor] = useState<Instructor | null>(null);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+
+
 	const [socialMediaLinks, setSocialMediaLinks] = useState({
 		facebook: '',
 		twitter: '',
@@ -58,28 +78,78 @@ const CreateOrganisationComponent = () => {
 		},
 	});
 
+	const fetchInstructorData = useCallback(async () => {
+		if (!user?.id) {
+			router.push('/signin');
+			return;
+		}
+
+		try {
+			const token = await getToken();
+			if (!token) {
+				router.push('/signin');
+				return;
+			}
+
+			// const userDetailsId = await getUserDetails(user.id);
+			// const response = await axios.get('/api/instructors/create', {
+			// 	headers: { Authorization: `Bearer ${token}` },
+			// 	params: { id: userDetailsId },
+			// });
+
+			// if (response.status === 200) {
+			// 	setInstructor(response.data);
+			// 	setLoading(false);
+			// } else if (response.status === 404) {
+			// 	router.push('/onboarding');
+			// }
+		} catch (error: any) {
+			console.error('Error fetching instructor data:', error);
+			setError('Failed to load instructor data');
+			setLoading(false);
+
+			if (error.response?.status === 401) {
+				router.push('/signin');
+			}
+		}
+	}, [user?.id, router, getToken]);
+
+	// submit function:
 	const onSubmit = async (data: any) => {
 		try {
-			// Combine social media links into a JSON string
-			const socialMediaJson = JSON.stringify(socialMediaLinks);
-
-			const finalData = {
-				...data,
-				socialMedia: socialMediaJson,
-				// Assuming createdBy would be set from current user context
-				createdBy: 1, // Replace with actual user ID
-			};
-
-			// TODO: Implement API call to create organisation
-			console.log('Organisation Data:', finalData);
-
-			// Reset form after successful submission
-			reset();
-			setSocialMediaLinks({ facebook: '', twitter: '', linkedin: '' });
+		  // Combine social media links into a JSON string
+		  const socialMediaJson = JSON.stringify(socialMediaLinks);
+		  
+		  const finalData = {
+			...data,
+			socialMedia: socialMediaJson,
+			createdBy: user?.id,
+		  };
+	  
+		  console.log('Organisation Data:', finalData);
+		  
+		  // Await the response and use the correct axios post syntax
+		  const response = await axios.post('/api/organisations/create', finalData);
+		  
+		  console.log(response.data);
+		  
+		  // Reset social media links
+		  setSocialMediaLinks({ facebook: '', twitter: '', linkedin: '' });
 		} catch (error) {
-			console.error('Error creating organisation:', error);
+		  console.error('Error creating organisation:', error);
 		}
-	};
+	  };
+
+	useEffect(() => {
+		if (isAuthenticated === false) {
+			router.push('/signin');
+			return;
+		}
+
+		if (isAuthenticated === true) {
+			fetchInstructorData();
+		}
+	}, [isAuthenticated, fetchInstructorData, router]);
 
 	return (
 		<Container>
