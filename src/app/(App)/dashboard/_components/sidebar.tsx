@@ -22,8 +22,6 @@ import SidebarMenu from 'react-bootstrap-sidebar-menu';
 // import styles from 'react-bootstrap-sidebar-menu/dist/sidebar-menu.scss';
 // import 'react-bootstrap-sidebar-menu/dist/sidebar-menu.scss';
 
-
-
 interface SidebarProps {
     instructor: {
         firstName: string;
