@@ -6,6 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { FaSave, FaTimes } from 'react-icons/fa';
+import {useRouter} from 'next/navigation'
 
 // Validation schema
 const organisationSchema = yup.object().shape({
@@ -31,6 +32,7 @@ const organisationSchema = yup.object().shape({
 });
 
 const CreateOrganisationComponent = () => {
+	const router = useRouter();
 	const [socialMediaLinks, setSocialMediaLinks] = useState({
 		facebook: '',
 		twitter: '',
@@ -82,6 +84,10 @@ const CreateOrganisationComponent = () => {
 	return (
 		<Container>
 			<h2 className="my-4">Create Organisation</h2>
+			<Button variant='dark' onClick={()=>{router.push('/dashboard')}}>Back to Dashboard</Button>
+			<br />
+			<br />
+			<br/>
 			<Form onSubmit={handleSubmit(onSubmit)}>
 				<Row>
 					<Col md={6}>

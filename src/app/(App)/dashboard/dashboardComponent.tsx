@@ -135,9 +135,9 @@ export default function DashboardPage() {
 								{activeView === 'courses' && (
 									<CoursesList instructorId={instructor.id} />
 								)}
-								{/* {activeView === 'organizations' && (
+								{activeView === 'organizations' && (
                                     <OrganizationsList instructorId={instructor.id} />
-                                )} */}
+                                )}
 								{activeView === 'profile' && (
 									<Profile
 										instructor={instructor}

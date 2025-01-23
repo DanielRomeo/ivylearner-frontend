@@ -1,8 +1,13 @@
 // components/OrganizationsList.tsx
+
+// For now, lets just have the instructor create one organisation only
+
 'use client';
 import { useState, useEffect } from 'react';
 import { Card, Button, Row, Col } from 'react-bootstrap';
 import { Plus } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+
 
 interface Organization {
 	id: number;
@@ -10,9 +15,14 @@ interface Organization {
 	logo: string;
 }
 
-const OrganizationsList = () => {
+interface OrganisationProps {
+	instructorId: number
+}
+
+const OrganizationsList = ({ instructorId }: OrganisationProps) => {
 	const [organizations, setOrganizations] = useState<Organization[]>([]);
 	const [loading, setLoading] = useState(true);
+	const router = useRouter();
 
 	useEffect(() => {
 		fetchOrganizations();
@@ -43,21 +53,20 @@ const OrganizationsList = () => {
 
 	return (
 		<div className="p-4">
-			<div className="flex justify-between items-center mb-6">
+			{/* <div className="flex justify-between items-center mb-6">
 				<h1 className="text-2xl font-bold">Organizations</h1>
 				<Button
 					className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
 					onClick={() => {
-						/* Implement new organization creation */
 					}}
 				>
 					<Plus size={20} />
 					New Organization
 				</Button>
-			</div>
+			</div> */}
 
-			<Row className="g-4">
-				{organizations.map((org) => (
+			 <Row className="g-4">
+				{/*{organizations.map((org) => (
 					<Col key={org.id} xs={12} md={6} lg={4}>
 						<Card className="h-100 shadow-sm hover:shadow-md transition-shadow duration-200">
 							<div className="p-4">
@@ -73,7 +82,7 @@ const OrganizationsList = () => {
 											variant="link"
 											className="p-0 text-blue-600 hover:text-blue-800"
 											onClick={() => {
-												/* Implement organization management */
+												
 											}}
 										>
 											Manage Organization
@@ -83,17 +92,20 @@ const OrganizationsList = () => {
 							</div>
 						</Card>
 					</Col>
-				))}
+				))} */}
 
 				{organizations.length === 0 && (
 					<Col xs={12}>
 						<div className="text-center p-8 bg-gray-50 rounded-lg">
-							<p className="text-gray-600 mb-4">No organizations found</p>
+							<h3 className="text-gray-600 mb-4">No organizations found</h3>
 							<Button
 								variant="primary"
 								className="flex items-center gap-2 mx-auto"
 								onClick={() => {
 									/* Implement new organization creation */
+									// Router.
+									// router.
+									router.push('/dashboard/createOrganisation');
 								}}
 							>
 								<Plus size={20} />
