@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import CreateCourseComponent from './createCourseComponent'
+import CreateCourseComponent from './createCourseComponent';
 import MainNavbar from '../../_components/MainNavbar';
 
 export const metadata: Metadata = {
@@ -11,8 +11,7 @@ const CreateCoursePage = () => {
 	return (
 		<div>
 			<MainNavbar></MainNavbar>
-            <CreateCourseComponent></CreateCourseComponent>
-
+			<CreateCourseComponent></CreateCourseComponent>
 		</div>
 	);
 };

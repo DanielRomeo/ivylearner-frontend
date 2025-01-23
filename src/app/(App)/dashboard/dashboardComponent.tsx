@@ -22,133 +22,137 @@ import MainNavbar from '../_components/MainNavbar';
 
 // Types
 interface Instructor {
-    id: number;
-    firstName: string;
-    lastName: string;
-    profilePicture: string;
-    bio: string;
-    specialization: string;
+	id: number;
+	firstName: string;
+	lastName: string;
+	profilePicture: string;
+	bio: string;
+	specialization: string;
 }
 
 export default function DashboardPage() {
-    const router = useRouter();
-    const { user, isAuthenticated, getToken } = useAuth();
-    
-    const [instructor, setInstructor] = useState<Instructor | null>(null);
-    const [activeView, setActiveView] = useState<'courses' | 'organizations' | 'profile'>('courses');
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+	const router = useRouter();
+	const { user, isAuthenticated, getToken } = useAuth();
 
-    const fetchInstructorData = useCallback(async () => {
-        if (!user?.id) {
-            router.push('/signin');
-            return;
-        }
+	const [instructor, setInstructor] = useState<Instructor | null>(null);
+	const [activeView, setActiveView] = useState<'courses' | 'organizations' | 'profile'>(
+		'courses'
+	);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
 
-        try {
-            const token = await getToken();
-            if (!token) {
-                router.push('/signin');
-                return;
-            }
+	const fetchInstructorData = useCallback(async () => {
+		if (!user?.id) {
+			router.push('/signin');
+			return;
+		}
 
-            const userDetailsId = await getUserDetails(user.id);
-            const response = await axios.get('/api/instructors/getOne', {
-                headers: { Authorization: `Bearer ${token}` },
-                params: { id: userDetailsId }
-            });
+		try {
+			const token = await getToken();
+			if (!token) {
+				router.push('/signin');
+				return;
+			}
 
-            if (response.status === 200) {
-                setInstructor(response.data);
-                setLoading(false);
-            } else if (response.status === 404) {
-                router.push('/onboarding');
-            }
-        } catch (error: any) {
-            console.error('Error fetching instructor data:', error);
-            setError('Failed to load instructor data');
-            setLoading(false);
+			const userDetailsId = await getUserDetails(user.id);
+			const response = await axios.get('/api/instructors/getOne', {
+				headers: { Authorization: `Bearer ${token}` },
+				params: { id: userDetailsId },
+			});
 
-            if (error.response?.status === 401) {
-                router.push('/signin');
-            }
-        }
-    }, [user?.id, router, getToken]);
+			if (response.status === 200) {
+				setInstructor(response.data);
+				setLoading(false);
+			} else if (response.status === 404) {
+				router.push('/onboarding');
+			}
+		} catch (error: any) {
+			console.error('Error fetching instructor data:', error);
+			setError('Failed to load instructor data');
+			setLoading(false);
 
-    useEffect(() => {
-        if (isAuthenticated === false) {
-            router.push('/signin');
-            return;
-        }
+			if (error.response?.status === 401) {
+				router.push('/signin');
+			}
+		}
+	}, [user?.id, router, getToken]);
 
-        if (isAuthenticated === true) {
-            fetchInstructorData();
-        }
-    }, [isAuthenticated, fetchInstructorData, router]);
+	useEffect(() => {
+		if (isAuthenticated === false) {
+			router.push('/signin');
+			return;
+		}
 
-    if (loading) {
-        return (
-            <Container className="d-flex align-items-center justify-content-center min-vh-100">
-                <div className="text-center">
-                    <Spinner animation="border" role="status" variant="primary" />
-                    <p className="mt-3 text-muted">Loading your dashboard...</p>
-                </div>
-            </Container>
-        );
-    }
+		if (isAuthenticated === true) {
+			fetchInstructorData();
+		}
+	}, [isAuthenticated, fetchInstructorData, router]);
 
-    if (error) {
-        return (
-            <Container className="d-flex align-items-center justify-content-center min-vh-100">
-                <div className="text-center text-danger">
-                    <p>{error}</p>
-                    {/* <button onClick={() => router.reload()}>Retry</button> */}
-                </div>
-            </Container>
-        );
-    }
+	if (loading) {
+		return (
+			<Container className="d-flex align-items-center justify-content-center min-vh-100">
+				<div className="text-center">
+					<Spinner animation="border" role="status" variant="primary" />
+					<p className="mt-3 text-muted">Loading your dashboard...</p>
+				</div>
+			</Container>
+		);
+	}
 
-    if (!instructor) {
-        router.push('/onboarding');
-        return null;
-    }
+	if (error) {
+		return (
+			<Container className="d-flex align-items-center justify-content-center min-vh-100">
+				<div className="text-center text-danger">
+					<p>{error}</p>
+					{/* <button onClick={() => router.reload()}>Retry</button> */}
+				</div>
+			</Container>
+		);
+	}
 
-    return (
+	if (!instructor) {
+		router.push('/onboarding');
+		return null;
+	}
+
+	return (
 		<>
-		<MainNavbar></MainNavbar>
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className={styles.dashboard}
-        >
-            <Sidebar 
-                instructor={instructor} 
-                activeView={activeView} 
-                onViewChange={setActiveView} 
-            >
-                    <Container fluid>
-                        <Row>
-                            <Col>
-                                {activeView === 'courses' && (
-                                    <CoursesList instructorId={instructor.id} />
-                                )}
-                                {/* {activeView === 'organizations' && (
+			<MainNavbar></MainNavbar>
+			<motion.div
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				transition={{ duration: 0.5 }}
+				className={styles.dashboard}
+			>
+				<Sidebar
+					instructor={instructor}
+					activeView={activeView}
+					onViewChange={setActiveView}
+				>
+					<Container fluid>
+						<Row>
+							<Col>
+								{activeView === 'courses' && (
+									<CoursesList instructorId={instructor.id} />
+								)}
+								{/* {activeView === 'organizations' && (
                                     <OrganizationsList instructorId={instructor.id} />
                                 )} */}
-                                {activeView === 'profile' && (
-                                    <Profile 
-                                        instructor={instructor}
-                                        onUpdate={(updatedData) => 
-                                            setInstructor(prev => prev ? { ...prev, ...updatedData } : null)
-                                        }
-                                    />
-                                )}
-                            </Col>
-                        </Row>
-                    </Container>
-            </Sidebar>
-        </motion.div>
+								{activeView === 'profile' && (
+									<Profile
+										instructor={instructor}
+										onUpdate={(updatedData) =>
+											setInstructor((prev) =>
+												prev ? { ...prev, ...updatedData } : null
+											)
+										}
+									/>
+								)}
+							</Col>
+						</Row>
+					</Container>
+				</Sidebar>
+			</motion.div>
 		</>
-    );
+	);
 }

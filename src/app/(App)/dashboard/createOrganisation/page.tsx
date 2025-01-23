@@ -11,8 +11,7 @@ const SigninPage = () => {
 	return (
 		<div>
 			<MainNavbar></MainNavbar>
-             <CreateOrganisationComponent></CreateOrganisationComponent>
-
+			<CreateOrganisationComponent></CreateOrganisationComponent>
 		</div>
 	);
 };
