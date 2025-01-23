@@ -50,7 +50,6 @@ async function getCourseFake(id: string) {
 	}
 }
 
-
 export default async function Page({ params }: { params: { id: string } }) {
 	// try {
 	// 	const course = await getCourse(params.id);
@@ -67,5 +66,4 @@ export default async function Page({ params }: { params: { id: string } }) {
 	} catch (error) {
 		redirect('/not-found');
 	}
-
 }

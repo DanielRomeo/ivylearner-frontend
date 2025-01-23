@@ -12,7 +12,11 @@ interface Course {
 	lastUpdated: Date;
 }
 
-export default function CoursesList() {
+interface CoursesListProps {
+	instructorId: number;
+}
+
+export default function CoursesList({ instructorId }: CoursesListProps) {
 	const [courses, setCourses] = useState<Course[]>([]);
 
 	useEffect(() => {

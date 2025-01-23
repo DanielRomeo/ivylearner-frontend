@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Form, Button, Alert, Row, Col } from 'react-bootstrap';
 import { Camera } from 'lucide-react';
+import styles from '../../_styles/dashboard/profile.module.scss'
 
 interface Instructor {
 	id: number;
@@ -62,17 +63,7 @@ const Profile = ({ instructor, onUpdate }: ProfileProps) => {
 	};
 
 	return (
-		<div className="max-w-2xl mx-auto p-4">
-			<div className="bg-white rounded-lg shadow p-6">
-				<div className="flex justify-between items-center mb-6">
-					<h1 className="text-2xl font-bold">Profile</h1>
-					{!editing && (
-						<Button variant="outline-primary" onClick={() => setEditing(true)}>
-							Edit Profile
-						</Button>
-					)}
-				</div>
-
+			<div>
 				{error && (
 					<Alert variant="danger" className="mb-4">
 						{error}
@@ -176,7 +167,6 @@ const Profile = ({ instructor, onUpdate }: ProfileProps) => {
 					)}
 				</Form>
 			</div>
-		</div>
 	);
 };
 

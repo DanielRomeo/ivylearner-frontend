@@ -1,4 +1,6 @@
-import './globals.css';
+import './globals.scss';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import { Montserrat } from 'next/font/google';
 import { AuthProvider } from './contexts/auth-context';
 
