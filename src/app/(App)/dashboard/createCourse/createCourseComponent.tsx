@@ -7,6 +7,9 @@ import * as yup from 'yup';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { FaSave, FaTimes } from 'react-icons/fa';
 
+// import styles:
+import styles from '@/app/(App)/_styles/dashboard/createCourseComponent.module.scss'
+
 // Validation schema
 const courseSchema = yup.object().shape({
 	title: yup.string().required('Course title is required'),
@@ -89,37 +92,42 @@ const CreateCourseComponent = () => {
 
 	return (
 		<div>
-			<Container>
+			<Container className={styles.container}>
 				<h2 className="my-4">Create Course</h2>
 				<Form onSubmit={handleSubmit(onSubmit)}>
 					<Row>
 						<Col md={8}>
 							<Form.Group className="mb-3">
-								<Form.Label>Course Title *</Form.Label>
+								<Form.Label className={styles.label}>Course Title *</Form.Label>
 								<Controller
+									
 									name="title"
 									control={control}
 									render={({ field }) => (
 										<Form.Control
+										className={styles.controller}
 											{...field}
 											isInvalid={!!errors.title}
 											placeholder="Enter course title"
 										/>
 									)}
 								/>
-								<Form.Control.Feedback type="invalid">
+								<Form.Control.Feedback type="invalid" className={styles.formFeedback}>
 									{errors.title?.message}
 								</Form.Control.Feedback>
 							</Form.Group>
 						</Col>
 						<Col md={4}>
 							<Form.Group className="mb-3">
-								<Form.Label>Course Level</Form.Label>
+								<Form.Label className={styles.label}>Course Level</Form.Label>
 								<Controller
+								
 									name="level"
 									control={control}
 									render={({ field }) => (
-										<Form.Select {...field}>
+										<Form.Select
+										className={styles.controller}
+										{...field}>
 											<option value="beginner">Beginner</option>
 											<option value="intermediate">Intermediate</option>
 											<option value="advanced">Advanced</option>
@@ -133,32 +141,36 @@ const CreateCourseComponent = () => {
 					<Row>
 						<Col md={6}>
 							<Form.Group className="mb-3">
-								<Form.Label>Short Description *</Form.Label>
+								<Form.Label className={styles.label}>Short Description *</Form.Label>
 								<Controller
+								
 									name="shortDescription"
 									control={control}
 									render={({ field }) => (
 										<Form.Control
 											{...field}
+											className={styles.controller}
 											as="textarea"
 											isInvalid={!!errors.shortDescription}
 											placeholder="Enter a brief course description"
 										/>
 									)}
 								/>
-								<Form.Control.Feedback type="invalid">
+								<Form.Control.Feedback type="invalid" className={styles.formFeedback}>
 									{errors.shortDescription?.message}
 								</Form.Control.Feedback>
 							</Form.Group>
 						</Col>
 						<Col md={6}>
 							<Form.Group className="mb-3">
-								<Form.Label>Full Description</Form.Label>
+								<Form.Label className={styles.label}>Full Description</Form.Label>
 								<Controller
+								
 									name="description"
 									control={control}
 									render={({ field }) => (
 										<Form.Control
+										className={styles.controller}
 											{...field}
 											as="textarea"
 											placeholder="Enter detailed course description"
@@ -170,14 +182,15 @@ const CreateCourseComponent = () => {
 					</Row>
 
 					<Row>
-						{/* <Col md={4}>
+						<Col md={4}>
 							<Form.Group className="mb-3">
-							<Form.Label>Price</Form.Label>
+							<Form.Label className={styles.label}>Price</Form.Label>
 							<Controller
 								name="price"
 								control={control}
 								render={({ field }) => (
 								<Form.Control 
+								className={styles.controller}
 									{...field} 
 									type="number"
 									isInvalid={!!errors.price}
@@ -185,11 +198,11 @@ const CreateCourseComponent = () => {
 								/>
 								)}
 							/>
-							<Form.Control.Feedback type="invalid">
+							<Form.Control.Feedback type="invalid" className={styles.formFeedback}>
 								{errors.price?.message}
 							</Form.Control.Feedback>
 							</Form.Group>
-						</Col> */}
+						</Col>
 						{/* <Col md={4}>
 							<Form.Group className="mb-3">
 							<Form.Label>Duration (minutes)</Form.Label>
@@ -211,29 +224,31 @@ const CreateCourseComponent = () => {
 							</Form.Group>
 						</Col> */}
 
-						{/* <Col md={4}>
+						
+
+						<Col md={4}>
 							<Form.Group className="mb-3">
-								<Form.Label>Language</Form.Label>
+								<Form.Label className={styles.label}>Language</Form.Label>
 								<Controller
 									name="language"
 									control={control}
 									render={({ field }) => (
 									<Form.Control 
 										{...field} 
+										className={styles.controller}
 										placeholder="Course language" 
 									/>
 									)}
 								/>
-								</Form.Group>
-								<Form.Control.Feedback type="invalid">
-									{errors.language?.message}
-								</Form.Control.Feedback>
+								<Form.Control.Feedback type="invalid" className={styles.formFeedback}>
+										{errors.language?.message}
+									</Form.Control.Feedback>
 							</Form.Group>
-						</Col> */}
+						</Col>
 					</Row>
 
 					<Form.Group className="mb-3">
-						<Form.Label>Prerequisites</Form.Label>
+						<Form.Label className={styles.label}>Prerequisites</Form.Label>
 						<Controller
 							name="prerequisites"
 							control={control}
@@ -248,12 +263,13 @@ const CreateCourseComponent = () => {
 					</Form.Group>
 
 					<Form.Group className="mb-3">
-						<Form.Label>Learning Objectives</Form.Label>
+						<Form.Label className={styles.label}>Learning Objectives</Form.Label>
 						<Controller
 							name="objectives"
 							control={control}
 							render={({ field }) => (
 								<Form.Control
+								className={styles.controller}
 									{...field}
 									as="textarea"
 									placeholder="What will students learn from this course?"
@@ -265,9 +281,10 @@ const CreateCourseComponent = () => {
 					<Row>
 						<Col md={6}>
 							<Form.Group className="mb-3">
-								<Form.Label>Tags</Form.Label>
+								<Form.Label className={styles.label}>Tags</Form.Label>
 								<div className="d-flex">
 									<Form.Control
+									className={styles.controller}
 										value={newTag}
 										onChange={(e) => setNewTag(e.target.value)}
 										placeholder="Add course tags"
@@ -294,13 +311,14 @@ const CreateCourseComponent = () => {
 
 						<Col md={6}>
 							<Form.Group className="mb-3">
-								<Form.Label>Additional Options</Form.Label>
+								<Form.Label className={styles.label}>Additional Options</Form.Label>
 								<div>
 									<Controller
 										name="certificateAvailable"
 										control={control}
 										render={({ field: { value, onChange } }) => (
 											<Form.Check
+											className={styles.controllerCheck}
 												type="checkbox"
 												label="Certificate Available"
 												checked={value}
@@ -313,6 +331,7 @@ const CreateCourseComponent = () => {
 										control={control}
 										render={({ field: { value, onChange } }) => (
 											<Form.Check
+											className={styles.controllerCheck}
 												type="checkbox"
 												label="Featured Course"
 												checked={value}
@@ -321,6 +340,33 @@ const CreateCourseComponent = () => {
 										)}
 									/>
 								</div>
+							</Form.Group>
+						</Col>
+					</Row>
+					<hr/>
+					<Row>
+						<Col>
+							<Form.Group className="mb-3">
+								<Form.Label className={styles.label}>Publish Status</Form.Label>
+								<Controller
+									name="publishStatus"
+									control={control}
+									render={({ field }) => (
+									<div>
+										{['draft', 'published', 'archived'].map((status) => (
+										<Form.Check
+											key={status}
+											type="radio"
+											label={status.charAt(0).toUpperCase() + status.slice(1)}
+											value={status}
+											checked={field.value === status}
+											onChange={() => field.onChange(status)}
+											className={styles.controllerCheck}
+										/>
+										))}
+									</div>
+									)}
+								/>
 							</Form.Group>
 						</Col>
 					</Row>
@@ -345,3 +391,5 @@ const CreateCourseComponent = () => {
 		</div>
 	);
 };
+
+export default CreateCourseComponent;
