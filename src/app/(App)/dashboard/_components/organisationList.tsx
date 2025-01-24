@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { FaPlus, FaPencilAlt } from 'react-icons/fa';
-import styles from '../../_styles/dashboard/organisationComponent.module.scss'
+import styles from '../../_styles/dashboard/organisationComponent.module.scss';
 
 interface Organization {
 	id: number;
@@ -46,53 +46,55 @@ const OrganizationsList = ({ instructorId }: OrganisationProps) => {
 
 	if (loading) {
 		return <div className={styles.loading}>Loading organization...</div>;
-	  }
-	
-	  if (organization) {
-		return (
-		  <div className={styles.container}>
-			<div className={styles.card}>
-			  <div className={styles.header}>
-				<img
-				  src={organization.logo || '/placeholder-logo.png'}
-				  alt={`${organization.name} logo`}
-				  className={styles.logo}
-				/>
-				<div>
-				  <h2 className={styles.name}>{organization.name}</h2>
-				  {organization.description && (
-					<p className={styles.description}>{organization.description}</p>
-				  )}
-				  <p className={styles.date}>
-					Created At: {new Date(organization.createdAt).toLocaleDateString()}
-				  </p>
-				</div>
-			  </div>
-			  <div className={styles.actions}>
-				<button
-				  className={styles.manageBtn}
-				  onClick={() => router.push(`/dashboard/manageOrganisation/${organization.id}`)}
-				>
-				  <FaPencilAlt className={styles.icon} /> Manage Organization
-				</button>
-			  </div>
-			</div>
-		  </div>
-		);
-	  }
-	
-	  return (
-		<div className={styles.container}>
-		  <div className={styles.empty}>
-			<h3>No organization found</h3>
-			<button
-			  className={styles.createBtn}
-			  onClick={() => router.push('/dashboard/createOrganisation')}
-			>
-			  <FaPlus className={styles.icon} /> Create Your First Organization
-			</button>
-		  </div>
-		</div>
-	  );
 	}
+
+	if (organization) {
+		return (
+			<div className={styles.container}>
+				<div className={styles.card}>
+					<div className={styles.header}>
+						<img
+							src={organization.logo || '/placeholder-logo.png'}
+							alt={`${organization.name} logo`}
+							className={styles.logo}
+						/>
+						<div>
+							<h2 className={styles.name}>{organization.name}</h2>
+							{organization.description && (
+								<p className={styles.description}>{organization.description}</p>
+							)}
+							<p className={styles.date}>
+								Created At: {new Date(organization.createdAt).toLocaleDateString()}
+							</p>
+						</div>
+					</div>
+					<div className={styles.actions}>
+						<button
+							className={styles.manageBtn}
+							onClick={() =>
+								router.push(`/dashboard/manageOrganisation/${organization.id}`)
+							}
+						>
+							<FaPencilAlt className={styles.icon} /> Manage Organization
+						</button>
+					</div>
+				</div>
+			</div>
+		);
+	}
+
+	return (
+		<div className={styles.container}>
+			<div className={styles.empty}>
+				<h3>No organization found</h3>
+				<button
+					className={styles.createBtn}
+					onClick={() => router.push('/dashboard/createOrganisation')}
+				>
+					<FaPlus className={styles.icon} /> Create Your First Organization
+				</button>
+			</div>
+		</div>
+	);
+};
 export default OrganizationsList;

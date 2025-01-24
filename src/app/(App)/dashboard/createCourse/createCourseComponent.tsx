@@ -1,11 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { FaSave, FaTimes } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../../../contexts/auth-context';
+import { getUserDetails } from '@/app/api/ID/StudentInstructor';
+import axios from 'axios';
 
 // import styles:
 import styles from '@/app/(App)/_styles/dashboard/createCourseComponent.module.scss';
@@ -29,9 +33,25 @@ const courseSchema = yup.object().shape({
 	featured: yup.boolean(),
 });
 
+// Types
+interface Instructor {
+	id: number;
+	firstName: string;
+	lastName: string;
+	profilePicture: string;
+	bio: string;
+	specialization: string;
+}
+
+// Main component:
 const CreateCourseComponent = () => {
 	const [tags, setTags] = useState([]);
 	const [newTag, setNewTag] = useState('');
+	const { user, isAuthenticated, getToken } = useAuth();
+	const router = useRouter();
+	const [instructor, setInstructor] = useState<Instructor | null>(null);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
 
 	const {
 		control,
@@ -79,7 +99,7 @@ const CreateCourseComponent = () => {
 				lastUpdated: new Date().toISOString(),
 			};
 
-			// TODO: Implement API call to create course
+			// : Implement API call to create course
 			console.log('Course Data:', finalData);
 
 			// Reset form after successful submission
@@ -89,6 +109,56 @@ const CreateCourseComponent = () => {
 			console.error('Error creating course:', error);
 		}
 	};
+
+	// fetch instructor data function:
+	const fetchInstructorData = useCallback(async () => {
+		if (!user?.id) {
+			router.push('/signin');
+			return;
+		}
+
+		try {
+			const token = await getToken();
+			if (!token) {
+				router.push('/signin');
+				return;
+			}
+
+			const userDetailsId = await getUserDetails(user.id);
+			const response = await axios.get('/api/instructors/getOne', {
+				headers: { Authorization: `Bearer ${token}` },
+				params: { id: userDetailsId },
+			});
+
+			if (response.status === 200) {
+				setInstructor(response.data.data);
+				console.log(response.data.data);
+				setLoading(false);
+			} else if (response.status === 404) {
+				router.push('/onboarding');
+			}
+		} catch (error: any) {
+			console.error('Error fetching instructor data:', error);
+			setError('Failed to load instructor data');
+			setLoading(false);
+
+			if (error.response?.status === 401) {
+				router.push('/signin');
+			}
+		}
+	}, [user?.id, router, getToken]);
+
+	// useEffect:
+	useEffect(() => {
+		if (isAuthenticated === false) {
+			router.push('/signin');
+			return;
+		}
+
+		if (isAuthenticated === true) {
+			fetchInstructorData();
+		}
+	}, [isAuthenticated, fetchInstructorData, router]);
 
 	return (
 		<div>
@@ -208,26 +278,6 @@ const CreateCourseComponent = () => {
 								</Form.Control.Feedback>
 							</Form.Group>
 						</Col>
-						{/* <Col md={4}>
-							<Form.Group className="mb-3">
-							<Form.Label>Duration (minutes)</Form.Label>
-							<Controller
-								name="duration"
-								control={control}
-								render={({ field }) => (
-								<Form.Control 
-									{...field} 
-									type="number"
-									isInvalid={!!errors.duration}
-									placeholder="Total course duration" 
-								/>
-								)}
-							/>
-							<Form.Control.Feedback type="invalid">
-								{errors.duration?.message}
-							</Form.Control.Feedback>
-							</Form.Group>
-						</Col> */}
 
 						<Col md={4}>
 							<Form.Group className="mb-3">
