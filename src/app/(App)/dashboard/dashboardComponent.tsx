@@ -67,7 +67,8 @@ export default function DashboardPage() {
 			});
 
 			if (response.status === 200) {
-				setInstructor(response.data);
+				setInstructor(response.data.data);
+				console.log(response.data.data)
 				setLoading(false);
 			} else if (response.status === 404) {
 				router.push('/onboarding');
@@ -143,26 +144,31 @@ export default function DashboardPage() {
 							<></>
 						)}
 
-						<Row>
-							<Col>
-								{activeView === 'courses' && (
-									<CoursesList instructorId={instructor.id} />
-								)}
-								{activeView === 'organizations' && (
-									<OrganizationsList instructorId={instructor.id} />
-								)}
-								{activeView === 'profile' && (
-									<Profile
-										instructor={instructor}
-										onUpdate={(updatedData) =>
-											setInstructor((prev) =>
-												prev ? { ...prev, ...updatedData } : null
-											)
-										}
-									/>
-								)}
-							</Col>
-						</Row>
+							{
+								instructor ? (
+									<Row>
+										<Col>
+											{activeView === 'courses' && (
+												<CoursesList instructorId={instructor.id} />
+											)}
+											{activeView === 'organizations' && instructor && (
+												<OrganizationsList instructorId={instructor.id} />
+											)}
+											{activeView === 'profile' && (
+												<Profile
+													instructor={instructor}
+													onUpdate={(updatedData) =>
+														setInstructor((prev) =>
+															prev ? { ...prev, ...updatedData } : null
+														)
+													}
+												/>
+											)}
+										</Col>
+									</Row>
+								) : <div></div>
+							}
+						
 					</Container>
 				</Sidebar>
 			</motion.div>
