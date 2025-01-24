@@ -6,10 +6,10 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { FaSave, FaTimes } from 'react-icons/fa';
-import {useRouter} from 'next/navigation'
+import { useRouter } from 'next/navigation';
 import { useAuth } from '../../../contexts/auth-context';
 import { getUserDetails } from '@/app/api/ID/StudentInstructor';
-import axios from 'axios'
+import axios from 'axios';
 
 // Validation schema
 const organisationSchema = yup.object().shape({
@@ -51,7 +51,6 @@ const CreateOrganisationComponent = () => {
 	const [instructor, setInstructor] = useState<Instructor | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
-
 
 	const [socialMediaLinks, setSocialMediaLinks] = useState({
 		facebook: '',
@@ -117,28 +116,31 @@ const CreateOrganisationComponent = () => {
 	// submit function:
 	const onSubmit = async (data: any) => {
 		try {
-		  // Combine social media links into a JSON string
-		  const socialMediaJson = JSON.stringify(socialMediaLinks);
-		  
-		  const finalData = {
-			...data,
-			socialMedia: socialMediaJson,
-			createdBy: user?.id,
-		  };
-	  
-		  console.log('Organisation Data:', finalData);
-		  
-		  // Await the response and use the correct axios post syntax
-		  const response = await axios.post('/api/organisations/create', finalData);
-		  
-		  console.log(response.data);
-		  
-		  // Reset social media links
-		  setSocialMediaLinks({ facebook: '', twitter: '', linkedin: '' });
+			// Combine social media links into a JSON string
+			const socialMediaJson = JSON.stringify(socialMediaLinks);
+
+			const finalData = {
+				...data,
+				socialMedia: socialMediaJson,
+				createdBy: user?.id,
+			};
+
+			//   console.log('Organisation Data:', finalData);
+
+			// Await the response and use the correct axios post syntax
+			const response = await axios.post('/api/organisations/create', finalData);
+
+			console.log(response.data);
+
+			// Reset social media links
+			//   setSocialMediaLinks({ facebook: '', twitter: '', linkedin: '' });
+
+			// send to the dashboard...
+			router.push('/dashboard?alert=success&message=Organisation%20created%20successfully');
 		} catch (error) {
-		  console.error('Error creating organisation:', error);
+			console.error('Error creating organisation:', error);
 		}
-	  };
+	};
 
 	useEffect(() => {
 		if (isAuthenticated === false) {
@@ -154,10 +156,17 @@ const CreateOrganisationComponent = () => {
 	return (
 		<Container>
 			<h2 className="my-4">Create Organisation</h2>
-			<Button variant='dark' onClick={()=>{router.push('/dashboard')}}>Back to Dashboard</Button>
+			<Button
+				variant="dark"
+				onClick={() => {
+					router.push('/dashboard');
+				}}
+			>
+				Back to Dashboard
+			</Button>
 			<br />
 			<br />
-			<br/>
+			<br />
 			<Form onSubmit={handleSubmit(onSubmit)}>
 				<Row>
 					<Col md={6}>

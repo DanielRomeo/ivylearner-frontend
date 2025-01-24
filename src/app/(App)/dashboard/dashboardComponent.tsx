@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Container, Row, Col, Spinner } from 'react-bootstrap';
 import { motion } from 'framer-motion';
 import axios from 'axios';
@@ -19,6 +19,7 @@ import styles from '../_styles/dashboard/coursesList.module.scss';
 import { useAuth } from '../../contexts/auth-context';
 import { getUserDetails } from '@/app/api/ID/StudentInstructor';
 import MainNavbar from '../_components/MainNavbar';
+import AlertDismissible from '../_components/DismissableAlert';
 
 // Types
 interface Instructor {
@@ -40,6 +41,11 @@ export default function DashboardPage() {
 	);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+
+	// params recieved from other pages to display alerts:
+	const searchParams = useSearchParams();
+	const alertType = searchParams.get('alert'); // 'success'
+	const message = searchParams.get('message'); // 'Organisation created successfully'
 
 	const fetchInstructorData = useCallback(async () => {
 		if (!user?.id) {
@@ -130,14 +136,21 @@ export default function DashboardPage() {
 					onViewChange={setActiveView}
 				>
 					<Container fluid>
+						{/* {alertType === 'success' && <div className="alert">{message}</div>} */}
+						{alertType ? (
+							<AlertDismissible type={alertType} message={message}></AlertDismissible>
+						) : (
+							<></>
+						)}
+
 						<Row>
 							<Col>
 								{activeView === 'courses' && (
 									<CoursesList instructorId={instructor.id} />
 								)}
 								{activeView === 'organizations' && (
-                                    <OrganizationsList instructorId={instructor.id} />
-                                )}
+									<OrganizationsList instructorId={instructor.id} />
+								)}
 								{activeView === 'profile' && (
 									<Profile
 										instructor={instructor}

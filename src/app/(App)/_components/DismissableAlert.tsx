@@ -1,14 +1,14 @@
 'use client';
 import React, { useState } from 'react';
 import { Alert, Button, Col, Row, Container } from 'react-bootstrap';
-import styles from './_styles_components/DismissableAlert.module.scss'; 
+import styles from './_styles/DismissableAlert.module.scss';
 
-type alertType = 'success' | 'error'
+type alertType = 'success' | 'error';
 
 export type alertProps = {
-	type: alertType;
+	type: string;
 	heading?: string;
-	information?: any;
+	message?: string | null;
 };
 
 const AlertDismissible = (props: alertProps) => {
@@ -24,14 +24,16 @@ const AlertDismissible = (props: alertProps) => {
 			>
 				<Alert.Heading>
 					{' '}
-					{props.heading ? (
-						<div>{props.heading}</div>
-					) : (
-						<div>Oops! Looks like we have an error</div>
-					)}{' '}
+					{props.heading ? <div>{props.heading}</div> : <div></div>}{' '}
 				</Alert.Heading>
-				<div>{props.information ? <div>{props.information}</div> : <div>{
-                    props.type === 'error'? <>There was an error!</>: <>Successful.</>}</div>}</div>
+
+				<p>
+					{props.message ? (
+						<>{props.message}</>
+					) : (
+						<>{props.type === 'error' ? <>There was an error!</> : <>Successful.</>}</>
+					)}
+				</p>
 			</Alert>
 		</div>
 	);

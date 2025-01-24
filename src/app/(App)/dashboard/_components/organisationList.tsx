@@ -1,120 +1,100 @@
 // components/OrganizationsList.tsx
 
-// For now, lets just have the instructor create one organisation only
-
 'use client';
 import { useState, useEffect } from 'react';
-import { Card, Button, Row, Col } from 'react-bootstrap';
-import { Plus } from 'lucide-react';
+import axios from 'axios';
 import { useRouter } from 'next/navigation';
-
+import { FaPlus, FaPencilAlt } from 'react-icons/fa';
+import './OrganizationsList.scss';
 
 interface Organization {
 	id: number;
 	name: string;
+	description?: string;
 	logo: string;
+	createdAt: string;
 }
 
 interface OrganisationProps {
-	instructorId: number
+	instructorId: number;
 }
 
 const OrganizationsList = ({ instructorId }: OrganisationProps) => {
-	const [organizations, setOrganizations] = useState<Organization[]>([]);
+	const [organization, setOrganization] = useState<Organization | null>(null);
 	const [loading, setLoading] = useState(true);
 	const router = useRouter();
 
 	useEffect(() => {
-		fetchOrganizations();
+		fetchOrganization();
 	}, []);
 
-	const fetchOrganizations = async () => {
+	const fetchOrganization = async () => {
 		try {
-			const response = await fetch('/api/organisations/getAll', {
+			const response = await axios.get(`/api/organisations/getByInstructor/${instructorId}`, {
 				headers: {
 					Authorization: `Bearer ${localStorage.getItem('token')}`,
 				},
 			});
-
-			if (!response.ok) throw new Error('Failed to fetch organizations');
-
-			const data = await response.json();
-			setOrganizations(data);
+			setOrganization(response.data);
 		} catch (error) {
-			console.error('Error fetching organizations:', error);
+			console.error('Error fetching organization:', error);
 		} finally {
 			setLoading(false);
 		}
 	};
 
 	if (loading) {
-		return <div className="text-center p-4">Loading organisations...</div>;
+		return <div className="organization-loading">Loading organization...</div>;
+	}
+
+	if (organization) {
+		return (
+			<div className="organization-container">
+				<div className="organization-card">
+					<div className="organization-header">
+						<img
+							src={organization.logo || '/placeholder-logo.png'}
+							alt={`${organization.name} logo`}
+							className="organization-logo"
+						/>
+						<div>
+							<h2 className="organization-name">{organization.name}</h2>
+							{organization.description && (
+								<p className="organization-description">
+									{organization.description}
+								</p>
+							)}
+							<p className="organization-date">
+								Created At: {new Date(organization.createdAt).toLocaleDateString()}
+							</p>
+						</div>
+					</div>
+					<div className="organization-actions">
+						<button
+							className="organization-manage-btn"
+							onClick={() =>
+								router.push(`/dashboard/manageOrganisation/${organization.id}`)
+							}
+						>
+							<FaPencilAlt className="organization-icon" /> Manage Organization
+						</button>
+					</div>
+				</div>
+			</div>
+		);
 	}
 
 	return (
-		<div className="p-4">
-			{/* <div className="flex justify-between items-center mb-6">
-				<h1 className="text-2xl font-bold">Organizations</h1>
-				<Button
-					className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
-					onClick={() => {
-					}}
+		<div className="organization-container">
+			<div className="organization-empty">
+				<h3>No organization found</h3>
+				<button
+					className="organization-create-btn"
+					onClick={() => router.push('/dashboard/createOrganisation')}
 				>
-					<Plus size={20} />
-					New Organization
-				</Button>
-			</div> */}
-
-			 <Row className="g-4">
-				{/*{organizations.map((org) => (
-					<Col key={org.id} xs={12} md={6} lg={4}>
-						<Card className="h-100 shadow-sm hover:shadow-md transition-shadow duration-200">
-							<div className="p-4">
-								<div className="flex items-center gap-4">
-									<img
-										src={org.logo || '/placeholder-logo.png'}
-										alt={`${org.name} logo`}
-										className="w-16 h-16 object-contain rounded"
-									/>
-									<div>
-										<h3 className="text-lg font-semibold">{org.name}</h3>
-										<Button
-											variant="link"
-											className="p-0 text-blue-600 hover:text-blue-800"
-											onClick={() => {
-												
-											}}
-										>
-											Manage Organization
-										</Button>
-									</div>
-								</div>
-							</div>
-						</Card>
-					</Col>
-				))} */}
-
-				{organizations.length === 0 && (
-					<Col xs={12}>
-						<div className="text-center p-8 bg-gray-50 rounded-lg">
-							<h3 className="text-gray-600 mb-4">No organizations found</h3>
-							<Button
-								variant="primary"
-								className="flex items-center gap-2 mx-auto"
-								onClick={() => {
-									/* Implement new organization creation */
-									// Router.
-									// router.
-									router.push('/dashboard/createOrganisation');
-								}}
-							>
-								<Plus size={20} />
-								Create Your First Organization
-							</Button>
-						</div>
-					</Col>
-				)}
-			</Row>
+					<FaPlus className="organization-icon" /> Create Your First Organization
+				</button>
+			</div>
 		</div>
 	);
 };
