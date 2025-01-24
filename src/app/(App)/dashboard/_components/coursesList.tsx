@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Card, Button, Badge } from 'react-bootstrap';
 import { motion } from 'framer-motion';
 import styles from '../../_styles/dashboard/coursesList.module.scss';
+import {useRouter} from 'next/navigation'
 
 interface Course {
 	id: number;
@@ -18,6 +19,7 @@ interface CoursesListProps {
 
 export default function CoursesList({ instructorId }: CoursesListProps) {
 	const [courses, setCourses] = useState<Course[]>([]);
+	const router = useRouter();
 
 	useEffect(() => {
 		fetchCourses();
@@ -56,7 +58,7 @@ export default function CoursesList({ instructorId }: CoursesListProps) {
 		<div className={styles.coursesList}>
 			<div className={styles.header}>
 				<h2>My Courses</h2>
-				<Button variant="primary">Create New Course</Button>
+				<Button variant="primary" onClick={()=>{router.push('/dashboard/createCourse')}}>Create New Course</Button>
 			</div>
 
 			<div className={styles.grid}>
@@ -79,7 +81,7 @@ export default function CoursesList({ instructorId }: CoursesListProps) {
 										Last updated:{' '}
 										{new Date(course.lastUpdated).toLocaleDateString()}
 									</small>
-									<Button variant="outline-primary" size="sm">
+									<Button variant="outline-primary" size="sm" >
 										Edit
 									</Button>
 								</div>

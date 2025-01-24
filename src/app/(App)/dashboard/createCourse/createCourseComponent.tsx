@@ -20,11 +20,11 @@ const courseSchema = yup.object().shape({
 	shortDescription: yup.string().required('Short description is required'),
 	description: yup.string(),
 	price: yup.number().positive('Price must be a positive number').nullable(),
-	duration: yup
-		.number()
-		.positive('Duration must be a positive number')
-		.integer('Duration must be in whole minutes')
-		.nullable(),
+	// duration: yup
+	// 	.number()
+	// 	.positive('Duration must be a positive number')
+	// 	.integer('Duration must be in whole minutes')
+	// 	.nullable(),
 	level: yup.string().oneOf(['beginner', 'intermediate', 'advanced'], 'Invalid course level'),
 	prerequisites: yup.string(),
 	objectives: yup.string(),
@@ -43,6 +43,12 @@ interface Instructor {
 	specialization: string;
 }
 
+interface Organization {
+	id: number;
+	name: string;
+	description?: string;
+}
+
 // Main component:
 const CreateCourseComponent = () => {
 	const [tags, setTags] = useState([]);
@@ -50,6 +56,8 @@ const CreateCourseComponent = () => {
 	const { user, isAuthenticated, getToken } = useAuth();
 	const router = useRouter();
 	const [instructor, setInstructor] = useState<Instructor | null>(null);
+	const [organization, setOrganization] = useState<Organization | null>(null);
+
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
@@ -64,8 +72,7 @@ const CreateCourseComponent = () => {
 			title: '',
 			shortDescription: '',
 			description: '',
-			price: null,
-			duration: null,
+			price: 0,
 			level: 'beginner',
 			prerequisites: '',
 			objectives: '',
@@ -86,21 +93,28 @@ const CreateCourseComponent = () => {
 		setTags(tags.filter((tag) => tag !== tagToRemove));
 	};
 
+	// submission:
 	const onSubmit = async (data: any) => {
 		try {
 			const finalData = {
 				...data,
 				tags: JSON.stringify(tags),
 				// Assuming organisationId and createdBy would be set from context
-				organisationId: 1, // Replace with actual organisation ID
-				createdBy: 1, // Replace with actual user ID
+
+
+				organisationId: organization?.id || null, // Use the fetched organization ID
+				createdBy: instructor?.id, // Replace with actual user ID
 				publishStatus: 'draft',
 				publishedAt: null,
 				lastUpdated: new Date().toISOString(),
 			};
 
 			// : Implement API call to create course
-			console.log('Course Data:', finalData);
+			// console.log('Course Data:', finalData);
+			console.log(
+				'submit hit'
+			)
+			console.log(finalData)
 
 			// Reset form after successful submission
 			reset();
@@ -124,15 +138,25 @@ const CreateCourseComponent = () => {
 				return;
 			}
 
+			// set instructor data and also set the organisation data we wish to uplaod course for:
 			const userDetailsId = await getUserDetails(user.id);
 			const response = await axios.get('/api/instructors/getOne', {
 				headers: { Authorization: `Bearer ${token}` },
 				params: { id: userDetailsId },
 			});
+			
 
 			if (response.status === 200) {
 				setInstructor(response.data.data);
-				console.log(response.data.data);
+				console.log(response.data.data)
+				let InstructorId = response.data.data.id;
+
+				// set organisation data:
+				const response2 = await axios.get(`/api/organisations/first/${InstructorId}`);
+				setOrganization(response2.data);
+				// console.log(user.id)
+				// console.log(response2.data)
+
 				setLoading(false);
 			} else if (response.status === 404) {
 				router.push('/onboarding');
@@ -148,15 +172,17 @@ const CreateCourseComponent = () => {
 		}
 	}, [user?.id, router, getToken]);
 
+
 	// useEffect:
-	useEffect(() => {
+	useEffect( () => {
 		if (isAuthenticated === false) {
 			router.push('/signin');
 			return;
 		}
 
 		if (isAuthenticated === true) {
-			fetchInstructorData();
+			 fetchInstructorData();
+			
 		}
 	}, [isAuthenticated, fetchInstructorData, router]);
 
@@ -204,6 +230,32 @@ const CreateCourseComponent = () => {
 									)}
 								/>
 							</Form.Group>
+						</Col>
+					</Row>
+
+					{/* The organisation that they are creating a course for: */}
+					<Row>
+						<Col md={12}>
+						<Form.Group className="mb-3">
+							<Form.Label className={styles.label}>
+								Organisation
+							</Form.Label>
+							
+								<Form.Control
+									className={styles.controller}
+									
+									placeholder=""
+									readOnly // This makes the field non-editable
+									value={organization?.name || ''} // Populate with fetched organization name
+								/>
+							
+							<Form.Control.Feedback
+								type="invalid"
+								className={styles.formFeedback}
+							>
+								{errors.organisation?.message}
+							</Form.Control.Feedback>
+						</Form.Group>
 						</Col>
 					</Row>
 
