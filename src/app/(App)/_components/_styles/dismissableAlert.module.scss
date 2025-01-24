@@ -1,0 +1,80 @@
+@import '../../_styles/main.module.scss';
+
+.main {
+	border: 1px solid pink;
+	padding: 0px;
+	height: auto;
+	position: absolute;
+}
+
+.alert {
+	// position: absolute;
+	border-radius: 0px;
+	border: 0px solid;
+	padding: 5px;
+	border: 1px solid green;
+	// height: 100%;
+	// height: inherit;
+	// height: auto;
+
+	.informationRow {
+		border: 1px solid blue;
+		// height: 100px;
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		// text-align: center;
+		.informationCol {
+			p {
+				align-items: center;
+				color: purple;
+			}
+		}
+
+		.buttonCol {
+			.button {
+				width: auto;
+				height: auto;
+			}
+		}
+	}
+}
+
+.error {
+	background-color: $orange;
+	color: white;
+}
+
+.success {
+	background-color: #543ee0;
+	color: white;
+}
+
+.button {
+	// border: 1px solid;
+}
+
+.buttonSuccess {
+	border: 2px solid white;
+	color: white;
+	background-color: inherit;
+	font-weight: bold;
+	&:hover {
+		background-color: white;
+		color: #543ee0;
+	}
+}
+.buttonError {
+	border: 2px solid white;
+	color: white;
+	background-color: inherit;
+	border-radius: 0px;
+
+	&:hover {
+		background-color: white;
+		// color: #543ee0;
+		border: 1px solid red;
+		color: red;
+	}
+}
