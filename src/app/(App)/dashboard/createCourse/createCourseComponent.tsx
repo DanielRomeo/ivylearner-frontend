@@ -116,6 +116,9 @@ const CreateCourseComponent = () => {
 			)
 			console.log(finalData)
 
+			const response = await axios.post('/api/courses/create', finalData);
+			console.log(response.data)
+
 			// Reset form after successful submission
 			reset();
 			setTags([]);
@@ -190,6 +193,20 @@ const CreateCourseComponent = () => {
 		<div>
 			<Container className={styles.container}>
 				<h2 className="my-4">Create Course</h2>
+				<Button
+					variant="dark"
+					onClick={() => {
+						router.push('/dashboard');
+					}}
+				>
+				Back to Dashboard
+				</Button>
+
+				<br />
+				<br/>
+				<br/>
+
+
 				<Form onSubmit={handleSubmit(onSubmit)}>
 					<Row>
 						<Col md={8}>
