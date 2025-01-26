@@ -101,7 +101,6 @@ const CreateCourseComponent = () => {
 				tags: JSON.stringify(tags),
 				// Assuming organisationId and createdBy would be set from context
 
-
 				organisationId: organization?.id || null, // Use the fetched organization ID
 				createdBy: instructor?.id, // Replace with actual user ID
 				publishStatus: 'draft',
@@ -111,13 +110,11 @@ const CreateCourseComponent = () => {
 
 			// : Implement API call to create course
 			// console.log('Course Data:', finalData);
-			console.log(
-				'submit hit'
-			)
-			console.log(finalData)
+			console.log('submit hit');
+			console.log(finalData);
 
 			const response = await axios.post('/api/courses/create', finalData);
-			console.log(response.data)
+			console.log(response.data);
 			router.push('/dashboard');
 
 			// Reset form after successful submission
@@ -148,11 +145,10 @@ const CreateCourseComponent = () => {
 				headers: { Authorization: `Bearer ${token}` },
 				params: { id: userDetailsId },
 			});
-			
 
 			if (response.status === 200) {
 				setInstructor(response.data.data);
-				console.log(response.data.data)
+				console.log(response.data.data);
 				let InstructorId = response.data.data.id;
 
 				// set organisation data:
@@ -176,17 +172,15 @@ const CreateCourseComponent = () => {
 		}
 	}, [user?.id, router, getToken]);
 
-
 	// useEffect:
-	useEffect( () => {
+	useEffect(() => {
 		if (isAuthenticated === false) {
 			router.push('/signin');
 			return;
 		}
 
 		if (isAuthenticated === true) {
-			 fetchInstructorData();
-			
+			fetchInstructorData();
 		}
 	}, [isAuthenticated, fetchInstructorData, router]);
 
@@ -200,13 +194,12 @@ const CreateCourseComponent = () => {
 						router.push('/dashboard');
 					}}
 				>
-				Back to Dashboard
+					Back to Dashboard
 				</Button>
 
 				<br />
-				<br/>
-				<br/>
-
+				<br />
+				<br />
 
 				<Form onSubmit={handleSubmit(onSubmit)}>
 					<Row>
@@ -254,26 +247,23 @@ const CreateCourseComponent = () => {
 					{/* The organisation that they are creating a course for: */}
 					<Row>
 						<Col md={12}>
-						<Form.Group className="mb-3">
-							<Form.Label className={styles.label}>
-								Organisation
-							</Form.Label>
-							
+							<Form.Group className="mb-3">
+								<Form.Label className={styles.label}>Organisation</Form.Label>
+
 								<Form.Control
 									className={styles.controller}
-									
 									placeholder=""
 									readOnly // This makes the field non-editable
 									value={organization?.name || ''} // Populate with fetched organization name
 								/>
-							
-							<Form.Control.Feedback
-								type="invalid"
-								className={styles.formFeedback}
-							>
-								{errors.organisation?.message}
-							</Form.Control.Feedback>
-						</Form.Group>
+
+								<Form.Control.Feedback
+									type="invalid"
+									className={styles.formFeedback}
+								>
+									{errors.organisation?.message}
+								</Form.Control.Feedback>
+							</Form.Group>
 						</Col>
 					</Row>
 

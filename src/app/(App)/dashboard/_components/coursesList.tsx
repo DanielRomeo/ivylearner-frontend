@@ -1,11 +1,10 @@
 // app/dashboard/components/CoursesList.tsx
 import { useState, useEffect } from 'react';
-import { Card, Button, Badge, Col,Row, Container } from 'react-bootstrap';
+import { Card, Button, Badge, Col, Row, Container } from 'react-bootstrap';
 import { motion } from 'framer-motion';
 import styles from '../../_styles/dashboard/coursesList.module.scss';
-import {useRouter} from 'next/navigation'
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
-
 
 interface Course {
 	id: number;
@@ -23,7 +22,6 @@ export default function CoursesList({ instructorId }: CoursesListProps) {
 	const [courses, setCourses] = useState<Course[]>([]);
 	const router = useRouter();
 	const [loading, setLoading] = useState(true);
-
 
 	useEffect(() => {
 		fetchCourses();
@@ -61,47 +59,58 @@ export default function CoursesList({ instructorId }: CoursesListProps) {
 
 	return (
 		<>
-		<Container className={styles.coursesList}>
-			water
-			<div className={styles.header}>
-				<h2>My Courses</h2>
-				<Button variant="primary" onClick={()=>{router.push('/dashboard/createCourse')}}>Create New Course</Button>
-			</div>
-
-
-			<Row >
-				{courses.map((course) => (
-					<Col>
-					<motion.div
-						key={course.id}
-						initial={{ opacity: 0, y: 20 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ duration: 0.3 }}
+			<Container className={styles.coursesList}>
+				water
+				<div className={styles.header}>
+					<h2>My Courses</h2>
+					<Button
+						variant="primary"
+						onClick={() => {
+							router.push('/dashboard/createCourse');
+						}}
 					>
-						<Card className={styles.courseCard}>
-							<Card.Body>
-								<Card.Title>{course.title}</Card.Title>
-								<Badge bg={getStatusColor(course.publishStatus)}>
-									{course.publishStatus}
-								</Badge>
-								<Card.Text>{course.shortDescription}</Card.Text>
-								<div className={styles.cardFooter}>
-									<small>
-										Last updated:{' '}
-										{new Date(course.lastUpdated).toLocaleDateString()}
-									</small>
-									<br />
-									<Button variant="outline-primary" size="sm" onClick={()=>{handleEditCourse(course.id)}} >
-										Edit
-									</Button>
-								</div>
-							</Card.Body>
-						</Card>
-					</motion.div>
-					</Col>
-				))}
-			</Row>
-		</Container>
+						Create New Course
+					</Button>
+				</div>
+				<Row>
+					{courses.map((course) => (
+						<Col>
+							<motion.div
+								key={course.id}
+								initial={{ opacity: 0, y: 20 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ duration: 0.3 }}
+							>
+								<Card className={styles.courseCard}>
+									<Card.Body>
+										<Card.Title>{course.title}</Card.Title>
+										<Badge bg={getStatusColor(course.publishStatus)}>
+											{course.publishStatus}
+										</Badge>
+										<Card.Text>{course.shortDescription}</Card.Text>
+										<div className={styles.cardFooter}>
+											<small>
+												Last updated:{' '}
+												{new Date(course.lastUpdated).toLocaleDateString()}
+											</small>
+											<br />
+											<Button
+												variant="outline-primary"
+												size="sm"
+												onClick={() => {
+													handleEditCourse(course.id);
+												}}
+											>
+												Edit
+											</Button>
+										</div>
+									</Card.Body>
+								</Card>
+							</motion.div>
+						</Col>
+					))}
+				</Row>
+			</Container>
 		</>
 	);
 }

@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
-    const authHeader = request.headers.get('Authorization');
+	const authHeader = request.headers.get('Authorization');
 
 	const body = await request.json();
 	console.log('body is ');
@@ -12,7 +12,7 @@ export async function POST(request: Request) {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
-            Authorization: authHeader || '',
+			Authorization: authHeader || '',
 		},
 		body: JSON.stringify(body),
 	});

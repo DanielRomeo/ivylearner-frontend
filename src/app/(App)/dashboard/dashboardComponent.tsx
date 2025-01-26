@@ -136,8 +136,8 @@ export default function DashboardPage() {
 					activeView={activeView}
 					onViewChange={setActiveView}
 				>
-					<div >
-					{/* <Container fluid> */}
+					<div>
+						{/* <Container fluid> */}
 						{/* {alertType === 'success' && <div className="alert">{message}</div>} */}
 						{alertType ? (
 							<AlertDismissible type={alertType} message={message}></AlertDismissible>
@@ -147,27 +147,27 @@ export default function DashboardPage() {
 
 						{instructor ? (
 							<div>
-									{activeView === 'courses' && (
-										<CoursesList instructorId={instructor.id} />
-									)}
-									{activeView === 'organizations' && instructor && (
-										<OrganizationsList instructorId={instructor.id} />
-									)}
-									{activeView === 'profile' && (
-										<Profile
-											instructor={instructor}
-											onUpdate={(updatedData) =>
-												setInstructor((prev) =>
-													prev ? { ...prev, ...updatedData } : null
-												)
-											}
-										/>
-									)}
-								</div>
+								{activeView === 'courses' && (
+									<CoursesList instructorId={instructor.id} />
+								)}
+								{activeView === 'organizations' && instructor && (
+									<OrganizationsList instructorId={instructor.id} />
+								)}
+								{activeView === 'profile' && (
+									<Profile
+										instructor={instructor}
+										onUpdate={(updatedData) =>
+											setInstructor((prev) =>
+												prev ? { ...prev, ...updatedData } : null
+											)
+										}
+									/>
+								)}
+							</div>
 						) : (
 							<div></div>
 						)}
-					{/* </Container> */}
+						{/* </Container> */}
 					</div>
 				</Sidebar>
 			</motion.div>
