@@ -4,6 +4,8 @@ import { Card, Button, Badge } from 'react-bootstrap';
 import { motion } from 'framer-motion';
 import styles from '../../_styles/dashboard/coursesList.module.scss';
 import {useRouter} from 'next/navigation'
+import axios from 'axios';
+
 
 interface Course {
 	id: number;
@@ -20,6 +22,8 @@ interface CoursesListProps {
 export default function CoursesList({ instructorId }: CoursesListProps) {
 	const [courses, setCourses] = useState<Course[]>([]);
 	const router = useRouter();
+	const [loading, setLoading] = useState(true);
+
 
 	useEffect(() => {
 		fetchCourses();
@@ -27,17 +31,12 @@ export default function CoursesList({ instructorId }: CoursesListProps) {
 
 	const fetchCourses = async () => {
 		try {
-			const token = localStorage.getItem('token');
-			const response = await fetch('/api/courses', {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
-			if (!response.ok) throw new Error('Failed to fetch courses');
-			const data = await response.json();
-			setCourses(data);
+			const response = await axios.get(`/api/courses/mycourses`);
+			setCourses(response.data);
 		} catch (error) {
-			console.error('Error fetching courses:', error);
+			console.error('Error fetching organization:', error);
+		} finally {
+			setLoading(false);
 		}
 	};
 
