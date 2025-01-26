@@ -129,14 +129,15 @@ export default function DashboardPage() {
 				initial={{ opacity: 0 }}
 				animate={{ opacity: 1 }}
 				transition={{ duration: 0.5 }}
-				className={styles.dashboard}
+				// className={styles.dashboard}
 			>
 				<Sidebar
 					instructor={instructor}
 					activeView={activeView}
 					onViewChange={setActiveView}
 				>
-					<Container fluid>
+					<div >
+					{/* <Container fluid> */}
 						{/* {alertType === 'success' && <div className="alert">{message}</div>} */}
 						{alertType ? (
 							<AlertDismissible type={alertType} message={message}></AlertDismissible>
@@ -145,8 +146,7 @@ export default function DashboardPage() {
 						)}
 
 						{instructor ? (
-							<Row>
-								<Col>
+							<div>
 									{activeView === 'courses' && (
 										<CoursesList instructorId={instructor.id} />
 									)}
@@ -163,12 +163,12 @@ export default function DashboardPage() {
 											}
 										/>
 									)}
-								</Col>
-							</Row>
+								</div>
 						) : (
 							<div></div>
 						)}
-					</Container>
+					{/* </Container> */}
+					</div>
 				</Sidebar>
 			</motion.div>
 		</>

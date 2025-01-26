@@ -90,7 +90,7 @@ export default function Sidebar({ instructor, activeView, onViewChange, children
 					</div>
 				))}
 			</motion.div>
-			<main>{children}</main>
+			<main className={styles.children}>{children}</main>
 		</div>
 	);
 }

@@ -1,6 +1,6 @@
 // app/dashboard/components/CoursesList.tsx
 import { useState, useEffect } from 'react';
-import { Card, Button, Badge } from 'react-bootstrap';
+import { Card, Button, Badge, Col,Row, Container } from 'react-bootstrap';
 import { motion } from 'framer-motion';
 import styles from '../../_styles/dashboard/coursesList.module.scss';
 import {useRouter} from 'next/navigation'
@@ -32,7 +32,8 @@ export default function CoursesList({ instructorId }: CoursesListProps) {
 	const fetchCourses = async () => {
 		try {
 			const response = await axios.get(`/api/courses/mycourses`);
-			setCourses(response.data);
+			setCourses(response.data.data);
+			// console.log
 		} catch (error) {
 			console.error('Error fetching organization:', error);
 		} finally {
@@ -53,15 +54,24 @@ export default function CoursesList({ instructorId }: CoursesListProps) {
 		}
 	};
 
+	// handle edit course: route to where they can edit the course:
+	const handleEditCourse = (courseId: number) => {
+		router.push(`/dashboard/editCourse?courseId=${courseId}`);
+	};
+
 	return (
-		<div className={styles.coursesList}>
+		<>
+		<Container className={styles.coursesList}>
+			water
 			<div className={styles.header}>
 				<h2>My Courses</h2>
 				<Button variant="primary" onClick={()=>{router.push('/dashboard/createCourse')}}>Create New Course</Button>
 			</div>
 
-			<div className={styles.grid}>
+
+			<Row >
 				{courses.map((course) => (
+					<Col>
 					<motion.div
 						key={course.id}
 						initial={{ opacity: 0, y: 20 }}
@@ -80,15 +90,18 @@ export default function CoursesList({ instructorId }: CoursesListProps) {
 										Last updated:{' '}
 										{new Date(course.lastUpdated).toLocaleDateString()}
 									</small>
-									<Button variant="outline-primary" size="sm" >
+									<br />
+									<Button variant="outline-primary" size="sm" onClick={()=>{handleEditCourse(course.id)}} >
 										Edit
 									</Button>
 								</div>
 							</Card.Body>
 						</Card>
 					</motion.div>
+					</Col>
 				))}
-			</div>
-		</div>
+			</Row>
+		</Container>
+		</>
 	);
 }

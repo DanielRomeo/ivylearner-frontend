@@ -118,10 +118,11 @@ const CreateCourseComponent = () => {
 
 			const response = await axios.post('/api/courses/create', finalData);
 			console.log(response.data)
+			router.push('/dashboard');
 
 			// Reset form after successful submission
-			reset();
-			setTags([]);
+			// reset();
+			// setTags([]);
 		} catch (error) {
 			console.error('Error creating course:', error);
 		}
