@@ -27,6 +27,7 @@
 		"class-validator": "^0.14.1",
 		"framer": "^2.4.1",
 		"framer-motion": "^11.18.0",
+		"googleapis": "^144.0.0",
 		"lucide-react": "^0.471.1",
 		"next": "^14.0.0",
 		"prettier": "^3.3.2",

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import { Form, Button, Container, Row, Col, Accordion } from 'react-bootstrap';
 import { FaSave, FaTimes } from 'react-icons/fa';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '../../../contexts/auth-context';
@@ -150,6 +150,11 @@ const EditCourseComponent = () => {
 		}
 	}, [isAuthenticated, courseId, fetchCourseData, router]);
 
+	// handle edit course: route to where they can edit the course:
+	const handleCreateLesson = (courseId: number) => {
+		router.push(`/dashboard/createLesson?courseId=${courseId}`);
+	};
+
 	if (loading) return <div>Loading...</div>;
 
 	return (
@@ -164,147 +169,168 @@ const EditCourseComponent = () => {
 				>
 					Back to Dashboard
 				</Button>
-				<Form onSubmit={handleSubmit(onSubmit)} className="mt-4">
-					{/* Reuse the form fields from the CreateCourseComponent */}
-					{/* Populate default values using the fetched course data */}
-					{/* Example field */}
-					<Form.Group className="mb-3">
-						<Form.Label>Course Title</Form.Label>
-						<Controller
-							name="title"
-							control={control}
-							render={({ field }) => (
-								<Form.Control
-									{...field}
-									isInvalid={!!errors.title}
-									placeholder="Enter course title"
-								/>
-							)}
-						/>
-						<Form.Control.Feedback type="invalid">
-							{errors.title?.message}
-						</Form.Control.Feedback>
-					</Form.Group>
 
-					<Form.Group className="mb-3">
-						<Form.Label className={styles.label}>Course Level</Form.Label>
-						<Controller
-							name="level"
-							control={control}
-							render={({ field }) => (
-								<Form.Select className={styles.controller} {...field}>
-									<option value="beginner">Beginner</option>
-									<option value="intermediate">Intermediate</option>
-									<option value="advanced">Advanced</option>
-								</Form.Select>
-							)}
-						/>
-					</Form.Group>
+				<Accordion >
+					<Accordion.Item eventKey="0">
+						<Accordion.Header>EDIT COURSE CONTENTS</Accordion.Header>
+						<Accordion.Body>
+							<Form onSubmit={handleSubmit(onSubmit)} className="mt-4">
+								{/* Reuse the form fields from the CreateCourseComponent */}
+								{/* Populate default values using the fetched course data */}
+								{/* Example field */}
+								<Form.Group className="mb-3">
+									<Form.Label>Course Title</Form.Label>
+									<Controller
+										name="title"
+										control={control}
+										render={({ field }) => (
+											<Form.Control
+												{...field}
+												isInvalid={!!errors.title}
+												placeholder="Enter course title"
+											/>
+										)}
+									/>
+									<Form.Control.Feedback type="invalid">
+										{errors.title?.message}
+									</Form.Control.Feedback>
+								</Form.Group>
 
-					{/* I have ommited the organisation name because we already know which organisation this course belongs to. */}
-					{/* The instructor knows this info as well. */}
+								<Form.Group className="mb-3">
+									<Form.Label className={styles.label}>Course Level</Form.Label>
+									<Controller
+										name="level"
+										control={control}
+										render={({ field }) => (
+											<Form.Select className={styles.controller} {...field}>
+												<option value="beginner">Beginner</option>
+												<option value="intermediate">Intermediate</option>
+												<option value="advanced">Advanced</option>
+											</Form.Select>
+										)}
+									/>
+								</Form.Group>
 
-					<Form.Group className="mb-3">
-						<Form.Label className={styles.label}>Short Description *</Form.Label>
-						<Controller
-							name="shortDescription"
-							control={control}
-							render={({ field }) => (
-								<Form.Control
-									{...field}
-									className={styles.controller}
-									as="textarea"
-									isInvalid={!!errors.shortDescription}
-									placeholder="Enter a brief course description"
-								/>
-							)}
-						/>
-						<Form.Control.Feedback type="invalid" className={styles.formFeedback}>
-							{errors.shortDescription?.message}
-						</Form.Control.Feedback>
-					</Form.Group>
-					<Form.Group className="mb-3">
-						<Form.Label className={styles.label}>Full Description</Form.Label>
-						<Controller
-							name="description"
-							control={control}
-							render={({ field }) => (
-								<Form.Control
-									className={styles.controller}
-									{...field}
-									as="textarea"
-									placeholder="Enter detailed course description"
-								/>
-							)}
-						/>
-					</Form.Group>
-					<Form.Group className="mb-3">
-						<Form.Label className={styles.label}>Price</Form.Label>
-						<Controller
-							name="price"
-							control={control}
-							render={({ field }) => (
-								<Form.Control
-									className={styles.controller}
-									{...field}
-									type="number"
-									isInvalid={!!errors.price}
-									placeholder="Course price"
-								/>
-							)}
-						/>
-						<Form.Control.Feedback type="invalid" className={styles.formFeedback}>
-							{errors.price?.message}
-						</Form.Control.Feedback>
-					</Form.Group>
-					<Form.Group className="mb-3">
-						<Form.Label className={styles.label}>Language</Form.Label>
-						<Controller
-							name="language"
-							control={control}
-							render={({ field }) => (
-								<Form.Control
-									{...field}
-									className={styles.controller}
-									placeholder="Course language"
-								/>
-							)}
-						/>
-						<Form.Control.Feedback type="invalid" className={styles.formFeedback}>
-							{errors.language?.message}
-						</Form.Control.Feedback>
-					</Form.Group>
+								{/* I have ommited the organisation name because we already know which organisation this course belongs to. */}
+								{/* The instructor knows this info as well. */}
 
-					<Form.Group className="mb-3">
-						<Form.Label className={styles.label}>Prerequisites</Form.Label>
-						<Controller
-							name="prerequisites"
-							control={control}
-							render={({ field }) => (
-								<Form.Control
-									{...field}
-									as="textarea"
-									placeholder="List any prerequisites for this course"
-								/>
-							)}
-						/>
-					</Form.Group>
-					<Form.Group className="mb-3">
-						<Form.Label className={styles.label}>Learning Objectives</Form.Label>
-						<Controller
-							name="objectives"
-							control={control}
-							render={({ field }) => (
-								<Form.Control
-									className={styles.controller}
-									{...field}
-									as="textarea"
-									placeholder="What will students learn from this course?"
-								/>
-							)}
-						/>
-					</Form.Group>
-					<Form.Group className="mb-3">
+								<Form.Group className="mb-3">
+									<Form.Label className={styles.label}>
+										Short Description *
+									</Form.Label>
+									<Controller
+										name="shortDescription"
+										control={control}
+										render={({ field }) => (
+											<Form.Control
+												{...field}
+												className={styles.controller}
+												as="textarea"
+												isInvalid={!!errors.shortDescription}
+												placeholder="Enter a brief course description"
+											/>
+										)}
+									/>
+									<Form.Control.Feedback
+										type="invalid"
+										className={styles.formFeedback}
+									>
+										{errors.shortDescription?.message}
+									</Form.Control.Feedback>
+								</Form.Group>
+								<Form.Group className="mb-3">
+									<Form.Label className={styles.label}>
+										Full Description
+									</Form.Label>
+									<Controller
+										name="description"
+										control={control}
+										render={({ field }) => (
+											<Form.Control
+												className={styles.controller}
+												{...field}
+												as="textarea"
+												placeholder="Enter detailed course description"
+											/>
+										)}
+									/>
+								</Form.Group>
+								<Form.Group className="mb-3">
+									<Form.Label className={styles.label}>Price</Form.Label>
+									<Controller
+										name="price"
+										control={control}
+										render={({ field }) => (
+											<Form.Control
+												className={styles.controller}
+												{...field}
+												type="number"
+												isInvalid={!!errors.price}
+												placeholder="Course price"
+											/>
+										)}
+									/>
+									<Form.Control.Feedback
+										type="invalid"
+										className={styles.formFeedback}
+									>
+										{errors.price?.message}
+									</Form.Control.Feedback>
+								</Form.Group>
+								<Form.Group className="mb-3">
+									<Form.Label className={styles.label}>Language</Form.Label>
+									<Controller
+										name="language"
+										control={control}
+										render={({ field }) => (
+											<Form.Control
+												{...field}
+												className={styles.controller}
+												placeholder="Course language"
+											/>
+										)}
+									/>
+									<Form.Control.Feedback
+										type="invalid"
+										className={styles.formFeedback}
+									>
+										{errors.language?.message}
+									</Form.Control.Feedback>
+								</Form.Group>
+
+								<Form.Group className="mb-3">
+									<Form.Label className={styles.label}>Prerequisites</Form.Label>
+									<Controller
+										name="prerequisites"
+										control={control}
+										render={({ field }) => (
+											<Form.Control
+												{...field}
+												as="textarea"
+												placeholder="List any prerequisites for this course"
+											/>
+										)}
+									/>
+								</Form.Group>
+								<Form.Group className="mb-3">
+									<Form.Label className={styles.label}>
+										Learning Objectives
+									</Form.Label>
+									<Controller
+										name="objectives"
+										control={control}
+										render={({ field }) => (
+											<Form.Control
+												className={styles.controller}
+												{...field}
+												as="textarea"
+												placeholder="What will students learn from this course?"
+											/>
+										)}
+									/>
+								</Form.Group>
+
+								{/* <Form.Group className="mb-3">
 						<Form.Label className={styles.label}>Tags</Form.Label>
 						<div className="d-flex">
 							<Form.Control
@@ -318,90 +344,115 @@ const EditCourseComponent = () => {
 							</Button>
 						</div>
 						<div className="mt-2">
-							{tags.map((tag) => (
-								<Button
-									key={tag}
-									variant="outline-primary"
-									size="sm"
-									className="me-2 mb-2"
-									onClick={() => removeTag(tag)}
-								>
-									{tag} ×
-								</Button>
-							))}
-						</div>
-					</Form.Group>
-					<Form.Group className="mb-3">
-						<Form.Label className={styles.label}>Additional Options</Form.Label>
-						<div>
-							<Controller
-								name="certificateAvailable"
-								control={control}
-								render={({ field: { value, onChange } }) => (
-									<Form.Check
-										className={styles.controllerCheck}
-										type="checkbox"
-										label="Certificate Available"
-										checked={value}
-										onChange={(e) => onChange(e.target.checked)}
-									/>
-								)}
-							/>
-							<Controller
-								name="featured"
-								control={control}
-								render={({ field: { value, onChange } }) => (
-									<Form.Check
-										className={styles.controllerCheck}
-										type="checkbox"
-										label="Featured Course"
-										checked={value}
-										onChange={(e) => onChange(e.target.checked)}
-									/>
-								)}
-							/>
-						</div>
-					</Form.Group>
-					<Form.Group className="mb-3">
-						<Form.Label className={styles.label}>Publish Status</Form.Label>
-						<Controller
-							name="publishStatus"
-							control={control}
-							render={({ field }) => (
-								<div>
-									{['draft', 'published', 'archived'].map((status) => (
-										<Form.Check
-											key={status}
-											type="radio"
-											label={status.charAt(0).toUpperCase() + status.slice(1)}
-											value={status}
-											checked={field.value === status}
-											onChange={() => field.onChange(status)}
-											className={styles.controllerCheck}
+							{tags ? (
+								tags.map((tag) => (
+									<Button
+										key={tag}
+										variant="outline-primary"
+										size="sm"
+										className="me-2 mb-2"
+										onClick={() => removeTag(tag)}
+									>
+										{tag} ×
+									</Button>
+								))
+							): <></> }
+						</div> 
+					</Form.Group>*/}
+								<Form.Group className="mb-3">
+									<Form.Label className={styles.label}>
+										Additional Options
+									</Form.Label>
+									<div>
+										<Controller
+											name="certificateAvailable"
+											control={control}
+											render={({ field: { value, onChange } }) => (
+												<Form.Check
+													className={styles.controllerCheck}
+													type="checkbox"
+													label="Certificate Available"
+													checked={value}
+													onChange={(e) => onChange(e.target.checked)}
+												/>
+											)}
 										/>
-									))}
+										<Controller
+											name="featured"
+											control={control}
+											render={({ field: { value, onChange } }) => (
+												<Form.Check
+													className={styles.controllerCheck}
+													type="checkbox"
+													label="Featured Course"
+													checked={value}
+													onChange={(e) => onChange(e.target.checked)}
+												/>
+											)}
+										/>
+									</div>
+								</Form.Group>
+								<Form.Group className="mb-3">
+									<Form.Label className={styles.label}>Publish Status</Form.Label>
+									<Controller
+										name="publishStatus"
+										control={control}
+										render={({ field }) => (
+											<div>
+												{['draft', 'published', 'archived'].map(
+													(status) => (
+														<Form.Check
+															key={status}
+															type="radio"
+															label={
+																status.charAt(0).toUpperCase() +
+																status.slice(1)
+															}
+															value={status}
+															checked={field.value === status}
+															onChange={() => field.onChange(status)}
+															className={styles.controllerCheck}
+														/>
+													)
+												)}
+											</div>
+										)}
+									/>
+								</Form.Group>
+
+								{/* Add other form fields like shortDescription, tags, etc., similar to CreateCourseComponent */}
+
+								<hr />
+								{/* Save/Cancel buttons */}
+								<div className="d-flex justify-content-end mt-4">
+									<Button
+										variant="secondary"
+										onClick={() => router.push('/dashboard')}
+										className="me-2"
+									>
+										<FaTimes className="me-2" /> Cancel
+									</Button>
+									<Button type="submit" variant="primary">
+										<FaSave className="me-2" /> Update Course
+									</Button>
 								</div>
-							)}
-						/>
-					</Form.Group>
-
-					{/* Add other form fields like shortDescription, tags, etc., similar to CreateCourseComponent */}
-
-					<hr />
-					{/* Save/Cancel buttons */}
-					<div className="d-flex justify-content-end mt-4">
-						<Button
-							variant="secondary"
-							onClick={() => router.push('/dashboard')}
-							className="me-2"
-						>
-							<FaTimes className="me-2" /> Cancel
-						</Button>
-						<Button type="submit" variant="primary">
-							<FaSave className="me-2" /> Update Course
-						</Button>
-					</div>
-				</Form>
+							</Form>
+						</Accordion.Body>
+					</Accordion.Item>
+					<Accordion.Item eventKey="1">
+						<Accordion.Header>EDIT LESSON CONTENTS</Accordion.Header>
+						<Accordion.Body>
+							<Container>
+								<Button onClick={() => {
+													handleCreateLesson(courseId);
+												}}>Create a lesson!</Button>
+							</Container>
+							<Container>
+								<h4>This is where you will be able to see and delete lessons:</h4>
+							</Container>
+						</Accordion.Body>
+					</Accordion.Item>
+				</Accordion>
 			</Container>
 		</div>
 	);
