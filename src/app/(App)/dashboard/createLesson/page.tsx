@@ -10,8 +10,7 @@ export const metadata: Metadata = {
 const CreateLesson = () => {
 	return (
 		<div>
-			
-            <CreateLessonComponent></CreateLessonComponent>
+			<CreateLessonComponent></CreateLessonComponent>
 		</div>
 	);
 };

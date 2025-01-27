@@ -170,7 +170,7 @@ const EditCourseComponent = () => {
 					Back to Dashboard
 				</Button>
 
-				<Accordion >
+				<Accordion>
 					<Accordion.Item eventKey="0">
 						<Accordion.Header>EDIT COURSE CONTENTS</Accordion.Header>
 						<Accordion.Body>
@@ -443,9 +443,13 @@ const EditCourseComponent = () => {
 						<Accordion.Header>EDIT LESSON CONTENTS</Accordion.Header>
 						<Accordion.Body>
 							<Container>
-								<Button onClick={() => {
-													handleCreateLesson(courseId);
-												}}>Create a lesson!</Button>
+								<Button
+									onClick={() => {
+										handleCreateLesson(courseId);
+									}}
+								>
+									Create a lesson!
+								</Button>
 							</Container>
 							<Container>
 								<h4>This is where you will be able to see and delete lessons:</h4>
