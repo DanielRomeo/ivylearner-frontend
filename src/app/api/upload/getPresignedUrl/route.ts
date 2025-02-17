@@ -13,11 +13,12 @@ const s3Client = new S3Client({
 export async function POST(request: Request) {
     try {
         const { fileName, fileType } = await request.json();
-        
+        const fileKey = `lessonvideos/${fileName}`;
+
         // Ensure the content type is set
         const command = new PutObjectCommand({
             Bucket: process.env.NEXT_PUBLIC_AWS_S3_BUCKET,
-            Key: fileName,
+            Key: fileKey,
             ContentType: fileType,
             // Add ACL if needed
             // ACL: 'public-read',
