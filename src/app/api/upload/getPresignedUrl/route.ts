@@ -20,7 +20,7 @@ export async function POST(request: Request) {
             Key: fileName,
             ContentType: fileType,
             // Add ACL if needed
-            ACL: 'public-read',
+            // ACL: 'public-read',
         });
 
         // Generate signed URL with longer expiration

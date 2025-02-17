@@ -8,6 +8,7 @@ import axios from 'axios';
 import { Form, Button, ProgressBar, Container } from 'react-bootstrap';
 import { useRouter, useSearchParams } from 'next/navigation';
 import styles from '@/app/(App)/_styles/dashboard/createCourseComponent.module.scss';
+import AlertDismissible from '../../_components/DismissableAlert';
 
 // Validation schema for lesson creation
 const lessonSchema = yup.object().shape({
@@ -33,9 +34,11 @@ const CreateLessonComponent = () => {
     const courseId = searchParams.get('courseId');
 
     const [uploadProgress, setUploadProgress] = useState(0);
+    const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    // submission function:
     const onSubmit = async (data: any) => {
 		try {
 			if (!courseId) {
@@ -89,6 +92,7 @@ const CreateLessonComponent = () => {
 				});
 	
 				console.log('Upload response:', uploadResponse);
+                setUploadSuccess(true);
 	
 				// Store lesson metadata in the database using your regular axios instance
 				const lessonData = {
@@ -96,12 +100,7 @@ const CreateLessonComponent = () => {
 					description: data.description,
 					videoUrl: fileUrl,
 				};
-	
-				const response = await axios.post(`/api/lessons/upload/${courseId}`, lessonData);
-	
-				if (response.status === 200) {
-					router.push(`/dashboard/courseDetails?courseId=${courseId}`);
-				}
+
 			} catch (uploadError) {
 				console.error('Error during upload:', uploadError);
 				console.error('Upload error response:', uploadError.response?.data);
@@ -110,6 +109,7 @@ const CreateLessonComponent = () => {
 		} catch (err) {
 			console.error('Error uploading lesson:', err);
 			setError('Failed to upload lesson. Please try again.');
+            setUploadSuccess(false);
 		} finally {
 			setUploading(false);
 			setUploadProgress(0);
@@ -120,6 +120,8 @@ const CreateLessonComponent = () => {
     return (
         <Container className={styles.createLesson}>
             <h2>Create New Lesson</h2>
+            <AlertDismissible type='success' heading='Successful upload!' message='Successfully uploaded lesson your course!'></AlertDismissible>
+
             <Form onSubmit={handleSubmit(onSubmit)}>
                 <Form.Group className="mb-3">
                     <Form.Label>Lesson Title</Form.Label>

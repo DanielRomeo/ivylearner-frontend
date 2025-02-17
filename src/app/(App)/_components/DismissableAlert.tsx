@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { Alert, Button, Col, Row, Container } from 'react-bootstrap';
-import styles from './_styles/DismissableAlert.module.scss';
+import styles from './_styles/dismissableAlert.module.scss';
 
 type alertType = 'success' | 'error';
 
