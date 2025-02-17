@@ -1,3 +1,4 @@
+// app/api/courses/thumbnail/route.ts
 import { NextResponse } from 'next/server';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
@@ -13,21 +14,30 @@ const s3Client = new S3Client({
 export async function POST(request: Request) {
 	try {
 		const { fileName, fileType } = await request.json();
-		const fileKey = `lessonvideos/${fileName}`;
 
-		// Ensure the content type is set:
+		// Validate file type
+		if (!fileType.startsWith('image/')) {
+			return NextResponse.json(
+				{ error: 'Invalid file type. Only images are allowed.' },
+				{ status: 400 }
+			);
+		}
+
+		const fileKey = `courseThumbnails/${Date.now()}-${fileName}`;
+
 		const command = new PutObjectCommand({
 			Bucket: process.env.NEXT_PUBLIC_AWS_S3_BUCKET,
 			Key: fileKey,
 			ContentType: fileType,
+            ChecksumAlgorithm: undefined
+
 		});
 
-		// Generate signed URL with longer expiration
 		const uploadUrl = await getSignedUrl(s3Client, command, {
 			expiresIn: 3600,
 		});
 
-		const fileUrl = `https://${process.env.NEXT_PUBLIC_AWS_S3_BUCKET}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${fileName}`;
+		const fileUrl = `https://${process.env.NEXT_PUBLIC_AWS_S3_BUCKET}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${fileKey}`;
 
 		return NextResponse.json({
 			uploadUrl,
