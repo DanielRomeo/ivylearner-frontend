@@ -25,16 +25,18 @@ const courseSchema = yup.object().shape({
 	language: yup.string(),
 	certificateAvailable: yup.boolean(),
 	featured: yup.boolean(),
+	publishStatus: yup.string().required()
+
 });
 
 // Main component
 const EditCourseComponent = () => {
-	const [tags, setTags] = useState([]);
-	const [newTag, setNewTag] = useState('');
+	const [tags, setTags] = useState<any>([]);
+	const [newTag, setNewTag] = useState<any>('');
 	const { user, isAuthenticated, getToken } = useAuth();
 	const router = useRouter();
 	const searchParams = useSearchParams();
-	const courseId = searchParams.get('courseId');
+	const courseId: any = searchParams.get('courseId');
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
@@ -138,7 +140,7 @@ const EditCourseComponent = () => {
 	};
 
 	const removeTag = (tagToRemove: any) => {
-		setTags(tags.filter((tag) => tag !== tagToRemove));
+		setTags(tags.filter((tag:any) => tag !== tagToRemove));
 	};
 
 	useEffect(() => {
@@ -260,7 +262,7 @@ const EditCourseComponent = () => {
 									<Controller
 										name="price"
 										control={control}
-										render={({ field }) => (
+										render={({ field }:any) => (
 											<Form.Control
 												className={styles.controller}
 												{...field}
@@ -397,7 +399,7 @@ const EditCourseComponent = () => {
 									<Controller
 										name="publishStatus"
 										control={control}
-										render={({ field }) => (
+										render={({ field }:any) => (
 											<div>
 												{['draft', 'published', 'archived'].map(
 													(status) => (
