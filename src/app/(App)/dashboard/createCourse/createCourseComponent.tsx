@@ -33,6 +33,9 @@ const courseSchema = yup.object().shape({
 	certificateAvailable: yup.boolean(),
 	featured: yup.boolean(),
 	thumbnailUrl: yup.string(),
+	organisation: yup.string(),
+	publishStatus: yup.string().required()
+
 });
 
 // Types
@@ -53,8 +56,8 @@ interface Organization {
 
 // Main component:
 const CreateCourseComponent = () => {
-	const [tags, setTags] = useState([]);
-	const [newTag, setNewTag] = useState('');
+	const [tags, setTags] = useState<any>([]);
+	const [newTag, setNewTag] = useState<any>('');
 	const { user, isAuthenticated, getToken } = useAuth();
 	const router = useRouter();
 	const [instructor, setInstructor] = useState<Instructor | null>(null);
@@ -97,7 +100,7 @@ const CreateCourseComponent = () => {
 	};
 
 	const removeTag = (tagToRemove: any) => {
-		setTags(tags.filter((tag) => tag !== tagToRemove));
+		setTags(tags.filter((tag:any) => tag !== tagToRemove));
 	};
 
 	// Thumbnail upload handler
@@ -280,7 +283,7 @@ const CreateCourseComponent = () => {
 													style={{ maxWidth: '200px', maxHeight: '200px' }}
 													width={100}
 													height={100}
-													thumbnail
+													// thumbnail
 												/>
 											</div>
 										)}
@@ -364,6 +367,8 @@ const CreateCourseComponent = () => {
 						</Col>
 					</Row>
 
+
+
 					<Row>
 						<Col md={6}>
 							<Form.Group className="mb-3">
@@ -419,14 +424,17 @@ const CreateCourseComponent = () => {
 									control={control}
 									render={({ field }) => (
 										<Form.Control
-											className={styles.controller}
-											{...field}
-											type="number"
-											isInvalid={!!errors.price}
-											placeholder="Course price"
+										className={styles.controller}
+										{...{
+											...field,
+											value: field.value ?? '' // Convert null to empty string
+										}}
+										type="number"
+										isInvalid={!!errors.price}
+										placeholder="Enter price"
 										/>
 									)}
-								/>
+									/>
 								<Form.Control.Feedback
 									type="invalid"
 									className={styles.formFeedback}
@@ -507,7 +515,7 @@ const CreateCourseComponent = () => {
 									</Button>
 								</div>
 								<div className="mt-2">
-									{tags.map((tag) => (
+									{tags.map((tag:any) => (
 										<Button
 											key={tag}
 											variant="outline-primary"
