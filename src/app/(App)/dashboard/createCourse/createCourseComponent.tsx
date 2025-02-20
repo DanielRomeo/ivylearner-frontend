@@ -9,6 +9,7 @@ import { FaSave, FaTimes } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../../contexts/auth-context';
 import { getUserDetails } from '@/app/api/ID/StudentInstructor';
+import Image from 'next/image';
 import axios from 'axios';
 
 // import styles:
@@ -31,6 +32,7 @@ const courseSchema = yup.object().shape({
 	language: yup.string(),
 	certificateAvailable: yup.boolean(),
 	featured: yup.boolean(),
+	thumbnailUrl: yup.string(),
 });
 
 // Types
@@ -57,6 +59,11 @@ const CreateCourseComponent = () => {
 	const router = useRouter();
 	const [instructor, setInstructor] = useState<Instructor | null>(null);
 	const [organization, setOrganization] = useState<Organization | null>(null);
+
+	// thumbnail states:
+	const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+	const [thumbnailPreview, setThumbnailPreview] = useState<string>('');
+	const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
 
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
@@ -93,37 +100,94 @@ const CreateCourseComponent = () => {
 		setTags(tags.filter((tag) => tag !== tagToRemove));
 	};
 
-	// submission:
-	const onSubmit = async (data: any) => {
+	// Thumbnail upload handler
+	const handleThumbnailChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (!file) return;
+
+		// Validate file type
+		if (!file.type.startsWith('image/')) {
+			alert('Please upload an image file');
+			return;
+		}
+
+		// Validate file size (e.g., 5MB limit)
+		if (file.size > 5 * 1024 * 1024) {
+			alert('File size should be less than 5MB');
+			return;
+		}
+
+		setThumbnailFile(file);
+		setThumbnailPreview(URL.createObjectURL(file));
+	};
+
+	// Upload thumbnail to S3
+	const uploadThumbnail = async () => {
+		if (!thumbnailFile) return null;
+		
 		try {
-			const finalData = {
-				...data,
-				tags: JSON.stringify(tags),
-				// Assuming organisationId and createdBy would be set from context
-
-				organisationId: organization?.id || null, // Use the fetched organization ID
-				createdBy: instructor?.id, // Replace with actual user ID
-				publishStatus: 'draft',
-				publishedAt: null,
-				lastUpdated: new Date().toISOString(),
-			};
-
-			// : Implement API call to create course
-			// console.log('Course Data:', finalData);
-			console.log('submit hit');
-			console.log(finalData);
-
-			const response = await axios.post('/api/courses/create', finalData);
-			console.log(response.data);
-			router.push('/dashboard');
-
-			// Reset form after successful submission
-			// reset();
-			// setTags([]);
+			setUploadingThumbnail(true);
+			
+			// Get presigned URL
+			const presignedResponse = await axios.post('/api/courses/thumbnail', {
+				fileName: thumbnailFile.name,
+				fileType: thumbnailFile.type,
+			});
+	
+			// Upload to S3
+			await axios.put(
+				presignedResponse.data.uploadUrl, 
+				thumbnailFile,
+				{
+					headers: {
+						'Content-Type': thumbnailFile.type,
+					},
+					// Disable axios from automatically setting headers
+					transformRequest: [(data, headers) => {
+						delete headers['x-amz-checksum-crc32'];
+						delete headers['x-amz-sdk-checksum-algorithm'];
+						return data;
+					}],
+				}
+			);
+	
+			return presignedResponse.data.fileUrl;
 		} catch (error) {
-			console.error('Error creating course:', error);
+			console.error('Error uploading thumbnail:', error);
+			alert('Failed to upload thumbnail. Please try again.');
+			throw error;
+		} finally {
+			setUploadingThumbnail(false);
 		}
 	};
+
+	// submission:
+	// Updated submit handler
+    const onSubmit = async (data: any) => {
+        try {
+            let thumbnailUrl = null;
+            if (thumbnailFile) {
+                thumbnailUrl = await uploadThumbnail();
+            }
+
+            const finalData = {
+                ...data,
+                thumbnailUrl,
+                tags: JSON.stringify(tags),
+                organisationId: organization?.id || null,
+                createdBy: instructor?.id,
+                publishStatus: 'draft',
+                publishedAt: null,
+                lastUpdated: new Date().toISOString(),
+            };
+
+            const response = await axios.post('/api/courses/create', finalData);
+            console.log(response.data);
+            router.push('/dashboard');
+        } catch (error) {
+            console.error('Error creating course:', error);
+        }
+    };
 
 	// fetch instructor data function:
 	const fetchInstructorData = useCallback(async () => {
@@ -202,6 +266,39 @@ const CreateCourseComponent = () => {
 				<br />
 
 				<Form onSubmit={handleSubmit(onSubmit)}>
+					{/* Thumbnail row */}
+					<Row className="mb-4">
+							<Col md={6}>
+								<Form.Group>
+									<Form.Label className={styles.label}>Course Thumbnail</Form.Label>
+									<div className="d-flex flex-column">
+										{thumbnailPreview && (
+											<div className="mb-3">
+												<Image
+													src={thumbnailPreview}
+													alt="Thumbnail preview"
+													style={{ maxWidth: '200px', maxHeight: '200px' }}
+													width={100}
+													height={100}
+													thumbnail
+												/>
+											</div>
+										)}
+										<div className="d-flex align-items-center">
+											<Form.Control
+												type="file"
+												accept="image/*"
+												onChange={handleThumbnailChange}
+												className={styles.controller}
+											/>
+											{uploadingThumbnail && (
+												<span className="ms-2">Uploading...</span>
+											)}
+										</div>
+									</div>
+								</Form.Group>
+							</Col>
+						</Row>
 					<Row>
 						<Col md={8}>
 							<Form.Group className="mb-3">
