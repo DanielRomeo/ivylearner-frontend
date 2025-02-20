@@ -52,7 +52,7 @@ const CreateOrganisationComponent = () => {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
-	const [socialMediaLinks, setSocialMediaLinks] = useState({
+	const [socialMediaLinks, setSocialMediaLinks] = useState<any>({
 		facebook: '',
 		twitter: '',
 		linkedin: '',
@@ -194,7 +194,7 @@ const CreateOrganisationComponent = () => {
 							<Controller
 								name="foundedYear"
 								control={control}
-								render={({ field }) => (
+								render={({ field }: any) => (
 									<Form.Control
 										{...field}
 										type="number"
@@ -319,7 +319,7 @@ const CreateOrganisationComponent = () => {
 								</Form.Label>
 								<Form.Control
 									value={socialMediaLinks[platform]}
-									onChange={(e) =>
+									onChange={(e:any) =>
 										setSocialMediaLinks({
 											...socialMediaLinks,
 											[platform]: e.target.value,
