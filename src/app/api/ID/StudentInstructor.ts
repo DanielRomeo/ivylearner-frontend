@@ -3,7 +3,7 @@ import axios from 'axios';
 // function that gets the user details(instructor or student) given their ID:
 export const getUserDetails = async (id: number) => {
 	try {
-		let response = await axios.get(`http://localhost:5000/api/getUserDetails/${id}`);
+		let response = await axios.get(`${process.env.NEXT_PRIVATE_API_URL}/api/getUserDetails/${id}`);
 		let userData = response.data;
 
 		if (userData && userData.hasOwnProperty('educationLevel')) {
