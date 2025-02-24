@@ -17,7 +17,7 @@ export async function GET(
     }
     
     // Forward the request to your backend on port 5000
-    const response = await axios.get(`http://localhost:5000/api/getUserDetails/${userId}`);
+    const response = await axios.get(`${process.env.NEXT_PRIVATE_API_URL}/api/getUserDetails/${userId}`);
     
     // Return the data from your backend
     return NextResponse.json(response.data);
