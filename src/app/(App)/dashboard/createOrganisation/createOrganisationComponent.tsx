@@ -8,7 +8,7 @@ import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { FaSave, FaTimes } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../../contexts/auth-context';
-import { getUserDetails } from '@/app/api/ID/StudentInstructor';
+// import { getUserDetails } from '@/app/api/ID/StudentInstructor';
 import axios from 'axios';
 
 // Validation schema

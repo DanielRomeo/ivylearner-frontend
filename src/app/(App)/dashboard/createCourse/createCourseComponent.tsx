@@ -8,7 +8,6 @@ import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { FaSave, FaTimes } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../../contexts/auth-context';
-import { getUserDetails } from '@/app/api/ID/StudentInstructor';
 import Image from 'next/image';
 import axios from 'axios';
 
@@ -207,10 +206,9 @@ const CreateCourseComponent = () => {
 			}
 
 			// set instructor data and also set the organisation data we wish to uplaod course for:
-			const userDetailsId = await getUserDetails(user.id);
-			const response = await axios.get('/api/instructors/getOne', {
-				headers: { Authorization: `Bearer ${token}` },
-				params: { id: userDetailsId },
+			const userDetailsId = await axios.get(`/api/userDetails/${user.id}`);
+			const response = await axios.get(`/api/instructors/${userDetailsId.data.userId}`, { 
+				headers: { Authorization: `Bearer ${token}` }
 			});
 
 			if (response.status === 200) {

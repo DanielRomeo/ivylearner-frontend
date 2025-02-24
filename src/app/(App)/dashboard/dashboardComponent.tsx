@@ -17,7 +17,7 @@ import styles from '../_styles/dashboard/coursesList.module.scss';
 
 // Contexts and API
 import { useAuth } from '../../contexts/auth-context';
-import { getUserDetails } from '@/app/api/ID/StudentInstructor';
+// import { getUserDetails } from '@/app/api/ID/StudentInstructor';
 import MainNavbar from '../_components/MainNavbar';
 import AlertDismissible from '../_components/DismissableAlert';
 
@@ -59,12 +59,13 @@ export default function DashboardPage() {
 				router.push('/signin');
 				return;
 			}
-
-			const userDetailsId = await getUserDetails(user.id);
-			const response = await axios.get('/api/instructors/getOne', {
-				headers: { Authorization: `Bearer ${token}` },
-				params: { id: userDetailsId },
+			console.log('look')
+			// const userDetailsId = await getUserDetails(user.id);
+			const userDetailsId = await axios.get(`/api/userDetails/${user.id}`);
+			const response = await axios.get(`/api/instructors/${userDetailsId.data.userId}`, { 
+				headers: { Authorization: `Bearer ${token}` }
 			});
+			console.log(response)
 
 			if (response.status === 200) {
 				setInstructor(response.data.data);
