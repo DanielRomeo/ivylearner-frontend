@@ -36,7 +36,7 @@ export async function GET(request: Request) {
 		// Parse the response and send it back as JSON
 		const data = await apiResponse.json();
 		return NextResponse.json(data);
-	} catch (error:any) {
+	} catch (error: any) {
 		// Handle unexpected errors
 		return NextResponse.json(
 			{ error: 'Internal Server Error', details: error.message },

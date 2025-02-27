@@ -2,39 +2,33 @@
 const nextConfig = {
 	reactStrictMode: true,
 	images: {
-	  domains: [
-		'your-domain.com', 
-		's3-alpha-sig.figma.com', 
-		'pexels.com', 
-		'images.pexels.com'
-	  ],
+		domains: ['your-domain.com', 's3-alpha-sig.figma.com', 'pexels.com', 'images.pexels.com'],
 	},
-	trailingSlash: false, 
+	trailingSlash: false,
 	experimental: {
-	  serverActions: true,  // Enable Next.js App Router server actions (if needed)
+		serverActions: true, // Enable Next.js App Router server actions (if needed)
 	},
 	async headers() {
-	  return [
-		{
-		  source: "/(.*)", // Apply CORS headers globally
-		  headers: [
+		return [
 			{
-			  key: "Access-Control-Allow-Origin",
-			  value: "*", // Change to your specific allowed origin for security
+				source: '/(.*)', // Apply CORS headers globally
+				headers: [
+					{
+						key: 'Access-Control-Allow-Origin',
+						value: '*', // Change to your specific allowed origin for security
+					},
+					{
+						key: 'Access-Control-Allow-Methods',
+						value: 'GET,POST,PUT,DELETE,OPTIONS',
+					},
+					{
+						key: 'Access-Control-Allow-Headers',
+						value: 'Content-Type, Authorization',
+					},
+				],
 			},
-			{
-			  key: "Access-Control-Allow-Methods",
-			  value: "GET,POST,PUT,DELETE,OPTIONS",
-			},
-			{
-			  key: "Access-Control-Allow-Headers",
-			  value: "Content-Type, Authorization",
-			},
-		  ],
-		},
-	  ];
+		];
 	},
-  };
-  
-  module.exports = nextConfig;
-  
+};
+
+module.exports = nextConfig;

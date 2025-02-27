@@ -29,8 +29,7 @@ export async function POST(request: Request) {
 			Bucket: process.env.NEXT_PUBLIC_AWS_S3_BUCKET,
 			Key: fileKey,
 			ContentType: fileType,
-            ChecksumAlgorithm: undefined
-
+			ChecksumAlgorithm: undefined,
 		});
 
 		const uploadUrl = await getSignedUrl(s3Client, command, {

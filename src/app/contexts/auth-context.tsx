@@ -7,6 +7,7 @@ import axios from 'axios';
 interface User {
 	id: number;
 	email: string;
+	userType?: string;
 	// Add other user properties
 }
 
@@ -93,6 +94,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		return localStorage.getItem('access_token');
 	};
 
+	// I wanna write another function here -- to get the userDetails in order to set if a student is a 
+	// student vs instructor:
+
 	const login = async (email: string, password: string) => {
 		try {
 			const response = await axios.post(
@@ -114,9 +118,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 			if (!userData) {
 				throw new Error('Failed to fetch user data after login');
 			}
-
+			let userDetails = axios.get(`/api/userDetails/${userData.id}`);
 			// Set user state
+			console.log(userDetails)
+			// userData.userType = (await userDetails).data.type;
+			// console.log(userData)
 			setUser(userData);
+			// console.log(userData)
 
 			// Navigate to dashboard
 			router.push('/dashboard');

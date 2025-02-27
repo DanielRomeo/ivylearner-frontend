@@ -16,7 +16,7 @@ const lessonSchema = yup.object().shape({
 	description: yup.string().required('Description is required'),
 	videoFile: yup
 		.mixed()
-		.test('fileRequired', 'Video file is required', (value:any) => value && value.length > 0),
+		.test('fileRequired', 'Video file is required', (value: any) => value && value.length > 0),
 });
 
 const CreateLessonComponent = () => {
@@ -100,7 +100,7 @@ const CreateLessonComponent = () => {
 					description: data.description,
 					videoUrl: fileUrl,
 				};
-			} catch (uploadError:any) {
+			} catch (uploadError: any) {
 				console.error('Error during upload:', uploadError);
 				console.error('Upload error response:', uploadError.response?.data);
 				throw new Error('Failed to upload file to S3');
@@ -159,7 +159,7 @@ const CreateLessonComponent = () => {
 						render={({ field: { onChange, value, ...field } }) => (
 							<Form.Control
 								type="file"
-								onChange={(e:any) => {
+								onChange={(e: any) => {
 									const files = e.target.files;
 									if (files && files.length > 0) {
 										onChange(files);

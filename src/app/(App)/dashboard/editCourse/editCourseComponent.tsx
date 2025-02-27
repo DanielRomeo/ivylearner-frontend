@@ -25,8 +25,7 @@ const courseSchema = yup.object().shape({
 	language: yup.string(),
 	certificateAvailable: yup.boolean(),
 	featured: yup.boolean(),
-	publishStatus: yup.string().required()
-
+	publishStatus: yup.string().required(),
 });
 
 // Main component
@@ -140,7 +139,7 @@ const EditCourseComponent = () => {
 	};
 
 	const removeTag = (tagToRemove: any) => {
-		setTags(tags.filter((tag:any) => tag !== tagToRemove));
+		setTags(tags.filter((tag: any) => tag !== tagToRemove));
 	};
 
 	useEffect(() => {
@@ -262,7 +261,7 @@ const EditCourseComponent = () => {
 									<Controller
 										name="price"
 										control={control}
-										render={({ field }:any) => (
+										render={({ field }: any) => (
 											<Form.Control
 												className={styles.controller}
 												{...field}
@@ -399,7 +398,7 @@ const EditCourseComponent = () => {
 									<Controller
 										name="publishStatus"
 										control={control}
-										render={({ field }:any) => (
+										render={({ field }: any) => (
 											<div>
 												{['draft', 'published', 'archived'].map(
 													(status) => (

@@ -319,7 +319,7 @@ const CreateOrganisationComponent = () => {
 								</Form.Label>
 								<Form.Control
 									value={socialMediaLinks[platform]}
-									onChange={(e:any) =>
+									onChange={(e: any) =>
 										setSocialMediaLinks({
 											...socialMediaLinks,
 											[platform]: e.target.value,

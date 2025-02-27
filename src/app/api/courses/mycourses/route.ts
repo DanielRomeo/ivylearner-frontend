@@ -21,7 +21,7 @@ export async function GET(request: Request) {
 		// Parse the data from the backend response
 		const data = await response.json();
 		return NextResponse.json(data, { status: 200 });
-	} catch (error:any) {
+	} catch (error: any) {
 		console.error('Error fetching courses:', error);
 		return NextResponse.json(
 			{ message: 'Failed to fetch courses', error: error.message },

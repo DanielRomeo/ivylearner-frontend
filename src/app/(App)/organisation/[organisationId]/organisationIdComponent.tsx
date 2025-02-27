@@ -5,8 +5,17 @@ import styles from '../../_styles/organisationComponent.module.scss';
 // import CourseCard from '../_components/CourseCard';\
 import CourseCard from '../../courses/courseCardComponent';
 // import { FaGlobe, FaEnvelope, FaPhone, FaMapMarkerAlt, FaCheckCircle } from 'react-icons/fa';
-import { FaGlobe, FaEnvelope, FaPhone, FaMapMarkerAlt, FaCheckCircle, FaFacebook, FaTwitter, FaLinkedin, FaInstagram } from 'react-icons/fa';
-
+import {
+	FaGlobe,
+	FaEnvelope,
+	FaPhone,
+	FaMapMarkerAlt,
+	FaCheckCircle,
+	FaFacebook,
+	FaTwitter,
+	FaLinkedin,
+	FaInstagram,
+} from 'react-icons/fa';
 
 interface SocialMedia {
 	facebook?: string;
@@ -48,14 +57,18 @@ interface Course {
 }
 const getSocialIcon = (platform: string) => {
 	switch (platform) {
-	  case 'facebook': return <FaFacebook />;
-	  case 'twitter': return <FaTwitter />;
-	  case 'linkedin': return <FaLinkedin />;
-	  case 'instagram': return <FaInstagram />;
-	  default: return null;
+		case 'facebook':
+			return <FaFacebook />;
+		case 'twitter':
+			return <FaTwitter />;
+		case 'linkedin':
+			return <FaLinkedin />;
+		case 'instagram':
+			return <FaInstagram />;
+		default:
+			return null;
 	}
-  };
-
+};
 
 const OrganisationComponent = () => {
 	// Mock data - replace with actual API call
@@ -146,88 +159,103 @@ const OrganisationComponent = () => {
 
 	return (
 		<div className={styles.organisationPage}>
-		  <div className={styles.banner} style={{ backgroundImage: `url(${organization.banner})` }}>
-			<div className={styles.overlay}>
-			  <div className={styles.orgInfo}>
-				<img src={organization.logo} alt={organization.name} className={styles.logo} />
-				<div className={styles.titleSection}>
-				  <h1>
-					{organization.name}
-					{organization.verificationStatus === 'verified' && (
-					  <FaCheckCircle className={styles.verifiedBadge} />
-					)}
-				  </h1>
-				  <p className={styles.description}>{organization.shortDescription}</p>
-				  <p className={styles.foundedYear}>Est. {organization.foundedYear}</p>
-				</div>
-			  </div>
-			</div>
-		  </div>
-	
-		  <div className={styles.mainContent}>
-			<div className={styles.contentGrid}>
-			  <div className={styles.leftColumn}>
-				<section className={styles.aboutSection}>
-				  <h2>About Us</h2>
-				  <p>{organization.description}</p>
-				</section>
-	
-				<section className={styles.contactSection}>
-				  <h2>Get in Touch</h2>
-				  <div className={styles.contactGrid}>
-					<a href={`https://${organization.website}`} className={styles.contactItem} target="_blank" rel="noopener noreferrer">
-					  <FaGlobe className={styles.icon} />
-					  <span>{organization.website}</span>
-					</a>
-					<a href={`mailto:${organization.email}`} className={styles.contactItem}>
-					  <FaEnvelope className={styles.icon} />
-					  <span>{organization.email}</span>
-					</a>
-					<div className={styles.contactItem}>
-					  <FaPhone className={styles.icon} />
-					  <span>{organization.phone}</span>
+			<div
+				className={styles.banner}
+				style={{ backgroundImage: `url(${organization.banner})` }}
+			>
+				<div className={styles.overlay}>
+					<div className={styles.orgInfo}>
+						<img
+							src={organization.logo}
+							alt={organization.name}
+							className={styles.logo}
+						/>
+						<div className={styles.titleSection}>
+							<h1>
+								{organization.name}
+								{organization.verificationStatus === 'verified' && (
+									<FaCheckCircle className={styles.verifiedBadge} />
+								)}
+							</h1>
+							<p className={styles.description}>{organization.shortDescription}</p>
+							<p className={styles.foundedYear}>Est. {organization.foundedYear}</p>
+						</div>
 					</div>
-					<div className={styles.contactItem}>
-					  <FaMapMarkerAlt className={styles.icon} />
-					  <span>{organization.address}</span>
-					</div>
-				  </div>
-				</section>
-	
-				<section className={styles.socialSection}>
-				  <h2>Connect With Us</h2>
-				  <div className={styles.socialLinks}>
-					{Object.entries(socialMediaLinks).map(([platform, handle]) => (
-					  <a
-						key={platform}
-						href={`https://${platform}.com/${handle}`}
-						target="_blank"
-						rel="noopener noreferrer"
-						className={styles.socialLink}
-					  >
-						{getSocialIcon(platform)}
-						<span>{platform}</span>
-					  </a>
-					))}
-				  </div>
-				</section>
-			  </div>
-	
-			  <div className={styles.rightColumn}>
-				<div className={styles.sectionHeader}>
-				  <h2>Our Courses</h2>
-				  <p>Discover our comprehensive range of learning opportunities</p>
 				</div>
-				<div className={styles.coursesGrid}>
-				  {courses.map((course) => (
-					<CourseCard key={course.id} {...course} />
-				  ))}
-				</div>
-			  </div>
 			</div>
-		  </div>
+
+			<div className={styles.mainContent}>
+				<div className={styles.contentGrid}>
+					<div className={styles.leftColumn}>
+						<section className={styles.aboutSection}>
+							<h2>About Us</h2>
+							<p>{organization.description}</p>
+						</section>
+
+						<section className={styles.contactSection}>
+							<h2>Get in Touch</h2>
+							<div className={styles.contactGrid}>
+								<a
+									href={`https://${organization.website}`}
+									className={styles.contactItem}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									<FaGlobe className={styles.icon} />
+									<span>{organization.website}</span>
+								</a>
+								<a
+									href={`mailto:${organization.email}`}
+									className={styles.contactItem}
+								>
+									<FaEnvelope className={styles.icon} />
+									<span>{organization.email}</span>
+								</a>
+								<div className={styles.contactItem}>
+									<FaPhone className={styles.icon} />
+									<span>{organization.phone}</span>
+								</div>
+								<div className={styles.contactItem}>
+									<FaMapMarkerAlt className={styles.icon} />
+									<span>{organization.address}</span>
+								</div>
+							</div>
+						</section>
+
+						<section className={styles.socialSection}>
+							<h2>Connect With Us</h2>
+							<div className={styles.socialLinks}>
+								{Object.entries(socialMediaLinks).map(([platform, handle]) => (
+									<a
+										key={platform}
+										href={`https://${platform}.com/${handle}`}
+										target="_blank"
+										rel="noopener noreferrer"
+										className={styles.socialLink}
+									>
+										{getSocialIcon(platform)}
+										<span>{platform}</span>
+									</a>
+								))}
+							</div>
+						</section>
+					</div>
+
+					<div className={styles.rightColumn}>
+						<div className={styles.sectionHeader}>
+							<h2>Our Courses</h2>
+							<p>Discover our comprehensive range of learning opportunities</p>
+						</div>
+						<div className={styles.coursesGrid}>
+							{courses.map((course) => (
+								<CourseCard key={course.id} {...course} />
+							))}
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
-	  );
-	};
-	
-	export default OrganisationComponent;
+	);
+};
+
+export default OrganisationComponent;

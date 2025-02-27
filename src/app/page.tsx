@@ -11,8 +11,8 @@ const HomePage = () => {
 	return (
 		<div>
 			{/* <HomeComponent></HomeComponent>
-             */}
-             hello worls
+			 */}
+			hello worls
 		</div>
 	);
 };

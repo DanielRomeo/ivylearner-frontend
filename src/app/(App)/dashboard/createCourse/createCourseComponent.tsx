@@ -33,8 +33,7 @@ const courseSchema = yup.object().shape({
 	featured: yup.boolean(),
 	thumbnailUrl: yup.string(),
 	organisation: yup.string(),
-	publishStatus: yup.string().required()
-
+	publishStatus: yup.string().required(),
 });
 
 // Types
@@ -99,7 +98,7 @@ const CreateCourseComponent = () => {
 	};
 
 	const removeTag = (tagToRemove: any) => {
-		setTags(tags.filter((tag:any) => tag !== tagToRemove));
+		setTags(tags.filter((tag: any) => tag !== tagToRemove));
 	};
 
 	// Thumbnail upload handler
@@ -126,33 +125,31 @@ const CreateCourseComponent = () => {
 	// Upload thumbnail to S3
 	const uploadThumbnail = async () => {
 		if (!thumbnailFile) return null;
-		
+
 		try {
 			setUploadingThumbnail(true);
-			
+
 			// Get presigned URL
 			const presignedResponse = await axios.post('/api/courses/thumbnail', {
 				fileName: thumbnailFile.name,
 				fileType: thumbnailFile.type,
 			});
-	
+
 			// Upload to S3
-			await axios.put(
-				presignedResponse.data.uploadUrl, 
-				thumbnailFile,
-				{
-					headers: {
-						'Content-Type': thumbnailFile.type,
-					},
-					// Disable axios from automatically setting headers
-					transformRequest: [(data, headers) => {
+			await axios.put(presignedResponse.data.uploadUrl, thumbnailFile, {
+				headers: {
+					'Content-Type': thumbnailFile.type,
+				},
+				// Disable axios from automatically setting headers
+				transformRequest: [
+					(data, headers) => {
 						delete headers['x-amz-checksum-crc32'];
 						delete headers['x-amz-sdk-checksum-algorithm'];
 						return data;
-					}],
-				}
-			);
-	
+					},
+				],
+			});
+
 			return presignedResponse.data.fileUrl;
 		} catch (error) {
 			console.error('Error uploading thumbnail:', error);
@@ -165,31 +162,31 @@ const CreateCourseComponent = () => {
 
 	// submission:
 	// Updated submit handler
-    const onSubmit = async (data: any) => {
-        try {
-            let thumbnailUrl = null;
-            if (thumbnailFile) {
-                thumbnailUrl = await uploadThumbnail();
-            }
+	const onSubmit = async (data: any) => {
+		try {
+			let thumbnailUrl = null;
+			if (thumbnailFile) {
+				thumbnailUrl = await uploadThumbnail();
+			}
 
-            const finalData = {
-                ...data,
-                thumbnailUrl,
-                tags: JSON.stringify(tags),
-                organisationId: organization?.id || null,
-                createdBy: instructor?.id,
-                publishStatus: 'draft',
-                publishedAt: null,
-                lastUpdated: new Date().toISOString(),
-            };
+			const finalData = {
+				...data,
+				thumbnailUrl,
+				tags: JSON.stringify(tags),
+				organisationId: organization?.id || null,
+				createdBy: instructor?.id,
+				publishStatus: 'draft',
+				publishedAt: null,
+				lastUpdated: new Date().toISOString(),
+			};
 
-            const response = await axios.post('/api/courses/create', finalData);
-            console.log(response.data);
-            router.push('/dashboard');
-        } catch (error) {
-            console.error('Error creating course:', error);
-        }
-    };
+			const response = await axios.post('/api/courses/create', finalData);
+			console.log(response.data);
+			router.push('/dashboard');
+		} catch (error) {
+			console.error('Error creating course:', error);
+		}
+	};
 
 	// fetch instructor data function:
 	const fetchInstructorData = useCallback(async () => {
@@ -207,8 +204,8 @@ const CreateCourseComponent = () => {
 
 			// set instructor data and also set the organisation data we wish to uplaod course for:
 			const userDetailsId = await axios.get(`/api/userDetails/${user.id}`);
-			const response = await axios.get(`/api/instructors/${userDetailsId.data.userId}`, { 
-				headers: { Authorization: `Bearer ${token}` }
+			const response = await axios.get(`/api/instructors/${userDetailsId.data.userId}`, {
+				headers: { Authorization: `Bearer ${token}` },
 			});
 
 			if (response.status === 200) {
@@ -269,37 +266,37 @@ const CreateCourseComponent = () => {
 				<Form onSubmit={handleSubmit(onSubmit)}>
 					{/* Thumbnail row */}
 					<Row className="mb-4">
-							<Col md={6}>
-								<Form.Group>
-									<Form.Label className={styles.label}>Course Thumbnail</Form.Label>
-									<div className="d-flex flex-column">
-										{thumbnailPreview && (
-											<div className="mb-3">
-												<Image
-													src={thumbnailPreview}
-													alt="Thumbnail preview"
-													style={{ maxWidth: '200px', maxHeight: '200px' }}
-													width={100}
-													height={100}
-													// thumbnail
-												/>
-											</div>
-										)}
-										<div className="d-flex align-items-center">
-											<Form.Control
-												type="file"
-												accept="image/*"
-												onChange={handleThumbnailChange}
-												className={styles.controller}
+						<Col md={6}>
+							<Form.Group>
+								<Form.Label className={styles.label}>Course Thumbnail</Form.Label>
+								<div className="d-flex flex-column">
+									{thumbnailPreview && (
+										<div className="mb-3">
+											<Image
+												src={thumbnailPreview}
+												alt="Thumbnail preview"
+												style={{ maxWidth: '200px', maxHeight: '200px' }}
+												width={100}
+												height={100}
+												// thumbnail
 											/>
-											{uploadingThumbnail && (
-												<span className="ms-2">Uploading...</span>
-											)}
 										</div>
+									)}
+									<div className="d-flex align-items-center">
+										<Form.Control
+											type="file"
+											accept="image/*"
+											onChange={handleThumbnailChange}
+											className={styles.controller}
+										/>
+										{uploadingThumbnail && (
+											<span className="ms-2">Uploading...</span>
+										)}
 									</div>
-								</Form.Group>
-							</Col>
-						</Row>
+								</div>
+							</Form.Group>
+						</Col>
+					</Row>
 					<Row>
 						<Col md={8}>
 							<Form.Group className="mb-3">
@@ -365,8 +362,6 @@ const CreateCourseComponent = () => {
 						</Col>
 					</Row>
 
-
-
 					<Row>
 						<Col md={6}>
 							<Form.Group className="mb-3">
@@ -422,17 +417,17 @@ const CreateCourseComponent = () => {
 									control={control}
 									render={({ field }) => (
 										<Form.Control
-										className={styles.controller}
-										{...{
-											...field,
-											value: field.value ?? '' // Convert null to empty string
-										}}
-										type="number"
-										isInvalid={!!errors.price}
-										placeholder="Enter price"
+											className={styles.controller}
+											{...{
+												...field,
+												value: field.value ?? '', // Convert null to empty string
+											}}
+											type="number"
+											isInvalid={!!errors.price}
+											placeholder="Enter price"
 										/>
 									)}
-									/>
+								/>
 								<Form.Control.Feedback
 									type="invalid"
 									className={styles.formFeedback}
@@ -513,7 +508,7 @@ const CreateCourseComponent = () => {
 									</Button>
 								</div>
 								<div className="mt-2">
-									{tags.map((tag:any) => (
+									{tags.map((tag: any) => (
 										<Button
 											key={tag}
 											variant="outline-primary"

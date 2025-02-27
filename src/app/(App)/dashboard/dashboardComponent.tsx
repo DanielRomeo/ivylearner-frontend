@@ -59,13 +59,13 @@ export default function DashboardPage() {
 				router.push('/signin');
 				return;
 			}
-			console.log('look')
+			console.log('look');
 			// const userDetailsId = await getUserDetails(user.id);
 			const userDetailsId = await axios.get(`/api/userDetails/${user.id}`);
-			const response = await axios.get(`/api/instructors/${userDetailsId.data.userId}`, { 
-				headers: { Authorization: `Bearer ${token}` }
+			const response = await axios.get(`/api/instructors/${userDetailsId.data.userId}`, {
+				headers: { Authorization: `Bearer ${token}` },
 			});
-			console.log(response)
+			console.log(response);
 
 			if (response.status === 200) {
 				setInstructor(response.data.data);
