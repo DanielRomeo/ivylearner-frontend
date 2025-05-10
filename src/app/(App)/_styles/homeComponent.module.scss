@@ -20,8 +20,14 @@ $gray-dark: #718096;
 $gradient-start: #00bf63;
 $gradient-end: #24570f;
 
+.partnerLogo .partnersLogo{
+	background-color: #00bf63;
+	border: 1px solid red;
+}
+
 // Global styles
 .container {
+	// background-color: green;
 	font-family:
 		'Inter',
 		-apple-system,
@@ -649,13 +655,19 @@ $gradient-end: #24570f;
 
 // Partners Section
 .partnersSection {
-	padding: 80px 0;
+	// padding: 80px 0;
 	background-color: $gray-light;
 
 	.partnersLogo {
 		margin-top: 2rem;
+		// border: 1px solid black;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		
 
 		.partnerLogo {
+			// border: 1px solid red; 
 			opacity: 0.7;
 			filter: grayscale(100%);
 			transition: all 0.3s ease;
@@ -666,6 +678,13 @@ $gradient-end: #24570f;
 				opacity: 1;
 				filter: grayscale(0%);
 			}
+			.image{
+				// border: 1px solid blue;
+			}
+
+			// .partnersLogoRow{
+			// 	border: 3px solid blue;
+			// }
 		}
 	}
 }

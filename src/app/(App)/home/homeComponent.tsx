@@ -6,6 +6,8 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 // import styles from './homeComponent.module.scss';
 import styles from '../_styles/homeComponent.module.scss';
+import ResponsiveImage from '../_components/ResponsiveImage';
+
 
 export default function HomeComponent() {
 	// Animation variants
@@ -30,7 +32,7 @@ export default function HomeComponent() {
 			<Navbar expand="lg" className={styles.navbar} fixed="top">
 				<Container>
 					<Navbar.Brand href="/">
-						<span className={styles.logoText}>IvyLearner</span>
+						<span className={styles.logoText}>IvyBrilliance</span>
 					</Navbar.Brand>
 					<Navbar.Toggle aria-controls="main-navbar" />
 					<Navbar.Collapse id="main-navbar">
@@ -117,15 +119,14 @@ export default function HomeComponent() {
 							>
 								<div className={styles.heroImage}>
 									{/* Replace with your actual image path */}
-									<Image
-										src="/images/hero-student.png"
-										alt="Student learning online"
-										width={600}
-										height={500}
-										priority
+									<ResponsiveImage
+										src="/pictureOfTeacher.jpg"
+										alt={`New Arrival`}
+										height={400}
+										width={100}
 									/>
 								</div>
-								<div className={styles.floatingCard}>
+								{/* <div className={styles.floatingCard}>
 									<div className={styles.progressIndicator}>
 										<div className={styles.progressBar}>
 											<div className={styles.progressFill}></div>
@@ -134,7 +135,7 @@ export default function HomeComponent() {
 									</div>
 									<h4>Introduction to Data Science</h4>
 									<p>Next: Statistical Analysis Fundamentals</p>
-								</div>
+								</div> */}
 							</motion.div>
 						</Col>
 					</Row>
@@ -189,12 +190,18 @@ export default function HomeComponent() {
 									<motion.div variants={fadeIn}>
 										<Card className={styles.courseCard}>
 											<div className={styles.courseImageContainer}>
-												<Image
+												{/* <Image
 													src={course.image}
 													alt={course.title}
 													width={350}
 													height={200}
 													className={styles.courseImage}
+												/> */}
+												<ResponsiveImage
+													src="/pictureOfTeacher.jpg"
+													alt={`New Arrival`}
+													height={400}
+													width={100}
 												/>
 												<div className={styles.courseOverlay}>
 													<Button
@@ -256,7 +263,7 @@ export default function HomeComponent() {
 						variants={fadeIn}
 						className={styles.sectionHeader}
 					>
-						<h2>How IvyLearner Works</h2>
+						<h2>How IvyBrilliance Works</h2>
 						<p>A simple process to start your learning journey</p>
 					</motion.div>
 
@@ -319,12 +326,12 @@ export default function HomeComponent() {
 								transition={{ duration: 0.6 }}
 								className={styles.instructorImageContainer}
 							>
-								<Image
-									src="/images/tutor-image.png"
-									alt="Become an instructor"
-									width={550}
-									height={450}
-								/>
+								<ResponsiveImage
+										src="/pictureOfTeacher.jpg"
+										alt={`New Arrival`}
+										height={550}
+										width={450}
+									/>
 							</motion.div>
 						</Col>
 						<Col lg={6}>
@@ -371,7 +378,7 @@ export default function HomeComponent() {
 			</section>
 
 			{/* Testimonials Section */}
-			<section className={styles.testimonialsSection}>
+			{/* <section className={styles.testimonialsSection}>
 				<Container>
 					<motion.div
 						initial="hidden"
@@ -438,7 +445,7 @@ export default function HomeComponent() {
 						</Row>
 					</motion.div>
 				</Container>
-			</section>
+			</section> */}
 
 			{/* Universities & Companies Section */}
 			<section className={styles.partnersSection}>
@@ -460,21 +467,19 @@ export default function HomeComponent() {
 						transition={{ duration: 0.8 }}
 						className={styles.partnersLogo}
 					>
-						<Row className="align-items-center">
+						<Row  className={`align-items-center ${styles.partnersLogoRow}`}>
 							{[
-								'university1.png',
-								'company1.png',
-								'university2.png',
-								'company2.png',
-								'university3.png',
+								'econlogo8-removebg-preview.png',
+								'mainlogo.png',
+								'unisalogo8-removebg-preview.png',
 							].map((logo, index) => (
 								<Col key={index} xs={6} md={2} className="text-center">
-									<Image
-										src={`/images/partners/${logo}`}
+									<ResponsiveImage
+									className={styles.image}
+										src={`/${logo}`}
 										alt="Partner logo"
 										width={120}
 										height={60}
-										className={styles.partnerLogo}
 									/>
 								</Col>
 							))}
@@ -494,7 +499,7 @@ export default function HomeComponent() {
 						className={styles.ctaCard}
 					>
 						<h2>Ready to Start Your Learning Journey?</h2>
-						<p>Join thousands of students already learning on IvyLearner</p>
+						<p>Join thousands of students already learning on IvyBrilliance</p>
 						<div className={styles.ctaButtons}>
 							<Button variant="light" size="lg" className={styles.ctaBtn}>
 								View All Courses
@@ -512,12 +517,12 @@ export default function HomeComponent() {
 				<Container>
 					<Row>
 						<Col lg={4} md={6} className={styles.footerBrand}>
-							<h3 className={styles.footerLogo}>IvyLearner</h3>
+							<h3 className={styles.footerLogo}>IvyBrilliance</h3>
 							<p>
 								Continuing education for everyone. Learn at your own pace with
 								expert-led courses designed for real-world skills.
 							</p>
-							<div className={styles.socialIcons}>
+							{/* <div className={styles.socialIcons}>
 								<a href="#" aria-label="Facebook">
 									<i className="fab fa-facebook-f"></i>
 								</a>
@@ -530,7 +535,7 @@ export default function HomeComponent() {
 								<a href="#" aria-label="LinkedIn">
 									<i className="fab fa-linkedin-in"></i>
 								</a>
-							</div>
+							</div> */}
 						</Col>
 
 						<Col lg={2} md={6} sm={6} className={styles.footerLinks}>
@@ -546,7 +551,7 @@ export default function HomeComponent() {
 									<a href="/pricing">Pricing</a>
 								</li>
 								<li>
-									<a href="/enterprise">For Enterprise</a>
+									{/* <a href="/enterprise">For Enterprise</a> */}
 								</li>
 							</ul>
 						</Col>
@@ -561,7 +566,7 @@ export default function HomeComponent() {
 									<a href="/tutorials">Tutorials</a>
 								</li>
 								<li>
-									<a href="/webinars">Webinars</a>
+									{/* <a href="/webinars">Webinars</a> */}
 								</li>
 								<li>
 									<a href="/community">Community</a>
@@ -579,7 +584,7 @@ export default function HomeComponent() {
 									<a href="/careers">Careers</a>
 								</li>
 								<li>
-									<a href="/press">Press</a>
+									{/* <a href="/press">Press</a> */}
 								</li>
 								<li>
 									<a href="/contact">Contact Us</a>
@@ -600,18 +605,18 @@ export default function HomeComponent() {
 									<a href="/cookies">Cookie Policy</a>
 								</li>
 								<li>
-									<a href="/accessibility">Accessibility</a>
+									{/* <a href="/accessibility">Accessibility</a> */}
 								</li>
 							</ul>
 						</Col>
 					</Row>
 
 					<div className={styles.footerBottom}>
-						<p>&copy; {new Date().getFullYear()} IvyLearner. All rights reserved.</p>
-						<div className={styles.footerBottomLinks}>
+						<p>&copy; {new Date().getFullYear()} IvyBrilliance. All rights reserved.</p>
+						{/* <div className={styles.footerBottomLinks}>
 							<a href="/help">Help Center</a>
 							<a href="/sitemap">Sitemap</a>
-						</div>
+						</div> */}
 					</div>
 				</Container>
 			</footer>
