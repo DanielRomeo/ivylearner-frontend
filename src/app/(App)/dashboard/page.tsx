@@ -21,7 +21,7 @@ export default function DashboardPage() {
     useEffect(() => {
         // TODO: Fetch user role from API
         // For now, default to student
-        setUserRole('instructor');
+        setUserRole('student');
     }, []);
 
     if (isLoading) {
@@ -38,20 +38,3 @@ export default function DashboardPage() {
         </DashboardLayout>
     );
 }
-
-
-// 'use client';
-
-// import { useEffect, useState } from 'react';
-// import StudentDashboard from './_components/StudentDashboard';
-// import InstructorDashboard from './_components/InstructorDashboard';
-
-// export default function DashboardPage() {
-//     const [userRole] = useState<'student' | 'instructor'>('student');
-    
-//     return userRole === 'student' ? (
-//         <StudentDashboard />
-//     ) : (
-//         <InstructorDashboard />
-//     );
-// }
