@@ -5,9 +5,9 @@ const nextConfig = {
 		domains: ['your-domain.com', 's3-alpha-sig.figma.com', 'pexels.com', 'images.pexels.com'],
 	},
 	trailingSlash: false,
-	experimental: {
-		serverActions: true, // Enable Next.js App Router server actions (if needed)
-	},
+	// experimental: {
+	// 	serverActions: true, // Enable Next.js App Router server actions (if needed)
+	// },
 	async headers() {
 		return [
 			{
