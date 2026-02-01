@@ -115,7 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setUser(userData);
 
             // Navigate to dashboard
-            router.push('/dashboard1');
+            router.push('/dashboard');
         } catch (error) {
             console.error('Login error:', error);
             localStorage.removeItem('access_token');
