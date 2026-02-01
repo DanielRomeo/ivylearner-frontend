@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 // import DashboardComponent from './protectedComponent';
-import DashboardComponent from './dashboardComponent';
+// import DashboardComponent from './legacy_dashboardComponent';
 
 export const metadata: Metadata = {
 	title: 'Signin to IvydaleFashion',
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 const SigninPage = () => {
 	return (
 		<div>
-			<DashboardComponent></DashboardComponent>
+			{/* <DashboardComponent></DashboardComponent> */}
 			{/* <Footer></Footer> */}
 		</div>
 	);

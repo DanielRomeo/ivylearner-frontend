@@ -1,41 +1,53 @@
 'use client';
 
+
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Form, Button, Container, Row, InputGroup } from 'react-bootstrap';
+import { Form, Button, Container, Row, Alert, InputGroup } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Lock, Mail, ShieldCheck } from 'lucide-react';
-import styles from '../_styles/signinComponent.module.scss';
 import { useAuth } from '../../contexts/auth-context';
 
+import styles from '../_styles/signinComponent.module.scss';
+
 const schema = yup.object().shape({
-	email: yup.string().email('Invalid email').required('Email is required.'),
-	password: yup.string().required('Password is required.'),
+    email: yup.string().email('Invalid email').required('Email is required.'),
+    password: yup.string().required('Password is required.'),
 });
 
+interface SigninFormData {
+    email: string;
+    password: string;
+}
+
+
+
 const SigninComponent = () => {
-	const { login } = useAuth();
-	const [error, setError] = useState('');
-	const [isLoading, setIsLoading] = useState<boolean>(false);
+    const { login } = useAuth();
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
-	const {
-		register,
-		handleSubmit,
-		formState: { errors },
-	} = useForm({ resolver: yupResolver(schema) });
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<SigninFormData>({
+        resolver: yupResolver(schema),
+    });
 
-	const onSubmit = async (data: any) => {
-		try {
-			setIsLoading(true);
-			await login(data.email, data.password);
-		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Login failed');
-		} finally {
-			setIsLoading(false);
-		}
-	};
+    const onSubmit = async (data: SigninFormData) => {
+        try {
+            setError('');
+            setIsLoading(true);
+            await login(data.email, data.password);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Login failed');
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
 	return (
 		<div className={styles.main}>
