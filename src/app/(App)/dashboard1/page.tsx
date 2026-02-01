@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/app/contexts/auth-context';
-import DashboardLayout from './components/DashboardLayout';
-import StudentDashboard from './components/StudentDashboard';
-import InstructorDashboard from './components/InstructorDashboard';
+import DashboardLayout from './_components/DashboardLayout';
+import StudentDashboard from './_components/StudentDashboard';
+import InstructorDashboard from './_components/InstructorDashboard';
 import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {

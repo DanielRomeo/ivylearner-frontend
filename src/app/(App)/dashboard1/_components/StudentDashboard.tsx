@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Row, Col, Card, ProgressBar } from 'react-bootstrap';
 import { FaBook, FaGraduationCap, FaClock, FaTrophy } from 'react-icons/fa';
-import styles from './StudentDashboard.module.scss';
+import styles from '../_styles/StudentDashboard.module.scss';
 import axios from 'axios';
 
 const StudentDashboard = () => {

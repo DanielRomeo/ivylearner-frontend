@@ -10,7 +10,7 @@ import {
     FaPlus,
 } from 'react-icons/fa';
 import { Line } from 'react-chartjs-2';
-import styles from './InstructorDashboard.module.scss';
+import styles from '../_styles/InstructorDashboard.module.scss';
 import axios from 'axios';
 
 const InstructorDashboard = () => {

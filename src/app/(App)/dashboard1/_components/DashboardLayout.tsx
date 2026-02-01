@@ -18,7 +18,7 @@ import {
     FaFileAlt,
 } from 'react-icons/fa';
 import { useAuth } from '@/app/contexts/auth-context';
-import styles from './DashboardLayout.module.scss';
+import styles from '../_styles/DashboardLayout.module.scss';
 
 interface DashboardLayoutProps {
     children: React.ReactNode;
