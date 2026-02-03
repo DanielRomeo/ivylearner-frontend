@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Container, Row, Col } from 'react-bootstrap';
 import {
@@ -29,6 +29,12 @@ const DashboardLayout = ({ children, userRole = 'student' }: DashboardLayoutProp
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const { logout, user } = useAuth();
     const router = useRouter();
+
+   useEffect(() => {
+    console.log('User object:', user);
+    console.log('User email:', user?.email);
+    console.log('User role:', user?.role);
+}, [user]);
 
     const studentMenuItems = [
         {
@@ -133,6 +139,7 @@ const DashboardLayout = ({ children, userRole = 'student' }: DashboardLayoutProp
                             <FaUserCircle size={48} />
                         </div>
                         <div className={styles.userDetails}>
+                            {user? JSON.stringify(user) : 'no'}
                             <h4>{user?.email?.split('@')[0] || 'User'}</h4>
                             <p className={styles.userRole}>
                                 {userRole === 'instructor' ? 'Instructor' : 'Student'}

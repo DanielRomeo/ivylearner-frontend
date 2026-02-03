@@ -1,6 +1,6 @@
 // app/contexts/auth-context.tsx
 'use client';
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
@@ -40,6 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 },
             });
 
+            console.log('Fetched user data:', response.data);
             if (response.status === 200 && response.data) {
                 return {
                     id: response.data.id,
@@ -54,14 +55,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    // Refresh user data
-    const refreshUser = async () => {
-        const token = localStorage.getItem('access_token');
-        if (token) {
-            const userData = await fetchUserData(token);
-            setUser(userData);
-        }
-    };
+  // Refresh user data - memoized with useCallback
+const refreshUser = useCallback(async () => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+        const userData = await fetchUserData(token);
+        console.log('Setting user data in refreshUser:', userData);
+        setUser(userData);
+    }
+}, []);
 
     // Initialize auth on mount
     useEffect(() => {

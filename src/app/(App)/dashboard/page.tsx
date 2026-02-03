@@ -10,7 +10,6 @@ import { useRouter } from 'next/navigation';
 export default function DashboardPage() {
     const { user, isAuthenticated, isLoading } = useAuth();
     const router = useRouter();
-    const [userRole, setUserRole] = useState<'student' | 'instructor'>('student');
 
     useEffect(() => {
         if (!isLoading && !isAuthenticated) {
@@ -18,11 +17,21 @@ export default function DashboardPage() {
         }
     }, [isAuthenticated, isLoading, router]);
 
-    useEffect(() => {
-        // TODO: Fetch user role from API
-        // For now, default to student
-        setUserRole('instructor');
-    }, []);
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
+    if (!user) {
+        console.log('No user found after loading');
+        return null;
+    }else{
+        console.log('User found:', user);
+    }
+
+    // Determine which dashboard to show based on user role
+    const userRole = user.role === 'instructor' || user.role === 'admin' 
+        ? 'instructor' 
+        : 'student';
 
     if (isLoading) {
         return <div>Loading...</div>;
@@ -31,9 +40,9 @@ export default function DashboardPage() {
     return (
         <DashboardLayout userRole={userRole}>
             {userRole === 'student' ? (
-                <StudentDashboard />
+                <StudentDashboard user={user} />
             ) : (
-                <InstructorDashboard />
+                <InstructorDashboard user={user} />
             )}
         </DashboardLayout>
     );
