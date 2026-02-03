@@ -21,7 +21,7 @@ export default function DashboardPage() {
     useEffect(() => {
         // TODO: Fetch user role from API
         // For now, default to student
-        setUserRole('student');
+        setUserRole('instructor');
     }, []);
 
     if (isLoading) {

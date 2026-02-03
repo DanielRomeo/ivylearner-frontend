@@ -7,6 +7,9 @@ import axios from 'axios';
 interface User {
     id: number;
     email: string;
+    role: 'student' | 'instructor' | 'admin';
+    firstName?: string;
+    lastName?: string;
 }
 
 interface AuthContextType {
@@ -17,6 +20,8 @@ interface AuthContextType {
     login: (email: string, password: string) => Promise<void>;
     signup: (email: string, password: string, role?: string) => Promise<void>;
     logout: () => void;
+    refreshUser: () => Promise<void>;
+
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -39,12 +44,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 return {
                     id: response.data.id,
                     email: response.data.email,
+                    role: response.data.role
                 };
             }
             return null;
         } catch (error) {
             console.error('Error fetching user data:', error);
             return null;
+        }
+    };
+
+    // Refresh user data
+    const refreshUser = async () => {
+        const token = localStorage.getItem('access_token');
+        if (token) {
+            const userData = await fetchUserData(token);
+            setUser(userData);
         }
     };
 
@@ -114,8 +129,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
             setUser(userData);
 
-            // Navigate to dashboard
-            router.push('/dashboard');
+            // navigate based on role:
+            // Navigate based on role
+            if (userData.role === 'instructor') {
+                router.push('/dashboard');
+            } else {
+                router.push('/dashboard');
+            }
         } catch (error) {
             console.error('Login error:', error);
             localStorage.removeItem('access_token');
@@ -196,6 +216,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 login,
                 signup,
                 logout,
+                refreshUser
             }}
         >
             {children}
