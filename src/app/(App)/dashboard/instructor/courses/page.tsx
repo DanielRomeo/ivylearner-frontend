@@ -6,13 +6,14 @@ import { useEffect, useState } from 'react';
 // import StudentDashboard from './_components/StudentDashboard';
 // import InstructorDashboard from './_components/InstructorDashboard';
 // import { useRouter } from 'next/navigation';
+import InstructorCourses from '../../_components/InstructorCourses';
 
 export default function DashboardPage() {
     
 
     return (
        <div>
-        <p>Instructor profile page</p>
+        <InstructorCourses />
        </div>
     );
 }
