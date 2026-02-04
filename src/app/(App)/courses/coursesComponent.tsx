@@ -1,13 +1,13 @@
 'use client';
 import React from 'react';
-import BadgeOverlay from './badgeOverlayComponent';
+// import BadgeOverlay from './badgeOverlayComponent';
 import { Card, Button, Row, Col, Container } from 'react-bootstrap';
 import '../_styles/courses/courseComponent.module.scss';
 import MainNavbar from '../_components/MainNavbar';
 import CourseCard from './courseCardComponent';
 
 const CourseList = () => {
-	const courseData = {
+	const courseData: any = {
 		title: 'Introduction to Programming with Java',
 		duration: '5 hours',
 		instructor: 'John Doe',
