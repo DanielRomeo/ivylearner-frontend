@@ -1,9 +1,20 @@
 'use client';
 
-import React,{ useState , useEffect} from 'react';
-import { Row, Col, Card, Form, Button } from 'react-bootstrap';
-import { FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaCamera, FaSave } from 'react-icons/fa';
-// import styles from '../_styles/InstructorProfile.module.scss';
+import { useState } from 'react';
+import { Row, Col, Card, Form, Button, Badge } from 'react-bootstrap';
+import { 
+    FaUser, 
+    FaEnvelope, 
+    FaGlobe, 
+    FaCamera, 
+    FaSave, 
+    FaBriefcase,
+    FaAward,
+    FaChalkboardTeacher,
+    FaClock,
+    FaEdit,
+    FaPlus
+} from 'react-icons/fa';
 import styles from '../_styles/InstructorProfile.module.scss';
 import { useAuth } from '@/app/contexts/auth-context';
 
@@ -13,26 +24,59 @@ interface InstructorProfileProps {
 }
 
 const InstructorProfile = ({ sidebarOpen, isMobile }: InstructorProfileProps) => {
-    //  const [sidebarOpen, setSidebarOpen] = useState(true);
-    // const [isMobile, setIsMobile] = useState(false);
     const { user } = useAuth();
     const [editing, setEditing] = useState(false);
-    // const [isMobile, setIsMobile] = useState(false); // RESIZING STATE
-    //     const [sidebarOpen, setSidebarOpen] = useState(true); // RESIZING STATE
     const [formData, setFormData] = useState({
         firstName: 'John',
         lastName: 'Doe',
         email: user?.email || 'john.doe@example.com',
-        phone: '+1 234 567 8900',
-        location: 'New York, USA',
-        bio: 'Passionate learner exploring new technologies and skills.',
+        timezone: 'Africa/Johannesburg',
+        country: 'ZA',
+        bio: 'Passionate educator with years of experience in software development and teaching.',
+        expertise: ['JavaScript', 'React', 'Node.js', 'Python'],
+        yearsExperience: 8,
+        teachingStyle: 'Interactive and hands-on approach with real-world projects',
+        certifications: [
+            { name: 'AWS Certified Solutions Architect', issuer: 'Amazon', date: '2022' },
+            { name: 'Certified Scrum Master', issuer: 'Scrum Alliance', date: '2021' }
+        ]
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const [newExpertise, setNewExpertise] = useState('');
+    const [newCertification, setNewCertification] = useState({ name: '', issuer: '', date: '' });
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value,
         });
+    };
+
+    const handleAddExpertise = () => {
+        if (newExpertise.trim()) {
+            setFormData({
+                ...formData,
+                expertise: [...formData.expertise, newExpertise.trim()]
+            });
+            setNewExpertise('');
+        }
+    };
+
+    const handleRemoveExpertise = (index: number) => {
+        setFormData({
+            ...formData,
+            expertise: formData.expertise.filter((_, i) => i !== index)
+        });
+    };
+
+    const handleAddCertification = () => {
+        if (newCertification.name && newCertification.issuer) {
+            setFormData({
+                ...formData,
+                certifications: [...formData.certifications, newCertification]
+            });
+            setNewCertification({ name: '', issuer: '', date: '' });
+        }
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -42,36 +86,16 @@ const InstructorProfile = ({ sidebarOpen, isMobile }: InstructorProfileProps) =>
         console.log('Saved:', formData);
     };
 
-    // useEffect(() => {
-    //     const handleResize = () => {
-    //         const mobile = window.innerWidth <= 1678;
-    //         setIsMobile(mobile);
-    //         if (mobile) {
-    //             setSidebarOpen(false);
-    //         } else {
-    //             setSidebarOpen(true);
-    //         }
-    //     };
-
-    //     handleResize();
-    //     window.addEventListener('resize', handleResize);
-    //     return () => window.removeEventListener('resize', handleResize);
-    // }, []);
-   
-
-
     return (
         <div className={`${styles.profilePage} ${sidebarOpen && !isMobile ? styles.sidebarOpen : styles.sidebarClosed}`}>
-        {/* <div className={styles.profilePage}> */}
             <div className={styles.header}>
-                <h1>My Profile</h1>
-                <p>Manage your account settings and preferences</p>
+                <h1>Instructor Profile</h1>
+                <p>Manage your teaching profile and credentials</p>
             </div>
 
             <Row className="g-4">
-               
-
-                <Col xl={4} lg={12}>
+                {/* Left Column - Avatar & Stats */}
+                <Col lg={4}>
                     <Card className={styles.avatarCard}>
                         <Card.Body className="text-center">
                             <div className={styles.avatarContainer}>
@@ -86,20 +110,20 @@ const InstructorProfile = ({ sidebarOpen, isMobile }: InstructorProfileProps) =>
                             <h3 className={styles.userName}>
                                 {formData.firstName} {formData.lastName}
                             </h3>
-                            <p className={styles.userRole}>Student</p>
+                            <p className={styles.userRole}>Instructor</p>
 
                             <div className={styles.stats}>
                                 <div className={styles.statItem}>
-                                    <h4>12</h4>
+                                    <h4>8</h4>
                                     <p>Courses</p>
                                 </div>
                                 <div className={styles.statItem}>
-                                    <h4>5</h4>
-                                    <p>Completed</p>
+                                    <h4>342</h4>
+                                    <p>Students</p>
                                 </div>
                                 <div className={styles.statItem}>
-                                    <h4>3</h4>
-                                    <p>Certificates</p>
+                                    <h4>4.7</h4>
+                                    <p>Rating</p>
                                 </div>
                             </div>
                         </Card.Body>
@@ -107,15 +131,15 @@ const InstructorProfile = ({ sidebarOpen, isMobile }: InstructorProfileProps) =>
 
                     <Card className={styles.infoCard}>
                         <Card.Body>
-                            <h5>Account Status</h5>
+                            <h5>Teaching Stats</h5>
                             <div className={styles.statusItem}>
                                 <span className={styles.statusLabel}>Member Since</span>
-                                <span className={styles.statusValue}>Jan 2024</span>
+                                <span className={styles.statusValue}>Jan 2020</span>
                             </div>
                             <div className={styles.statusItem}>
-                                <span className={styles.statusLabel}>Subscription</span>
+                                <span className={styles.statusLabel}>Total Revenue</span>
                                 <span className={`${styles.statusValue} ${styles.premium}`}>
-                                    Premium
+                                    $15,420
                                 </span>
                             </div>
                             <div className={styles.statusItem}>
@@ -124,12 +148,18 @@ const InstructorProfile = ({ sidebarOpen, isMobile }: InstructorProfileProps) =>
                                     Active
                                 </span>
                             </div>
+                            <div className={styles.statusItem}>
+                                <span className={styles.statusLabel}>Experience</span>
+                                <span className={styles.statusValue}>
+                                    {formData.yearsExperience} years
+                                </span>
+                            </div>
                         </Card.Body>
                     </Card>
                 </Col>
 
                 {/* Right Column - Edit Form */}
-                <Col xl={8} lg={12}>
+                <Col lg={8}>
                     <Card className={styles.formCard}>
                         <Card.Body>
                             <div className={styles.cardHeader}>
@@ -139,7 +169,7 @@ const InstructorProfile = ({ sidebarOpen, isMobile }: InstructorProfileProps) =>
                                         className={styles.editBtn}
                                         onClick={() => setEditing(true)}
                                     >
-                                        Edit Profile
+                                        <FaEdit /> Edit Profile
                                     </Button>
                                 ) : (
                                     <div className={styles.actionBtns}>
@@ -211,27 +241,31 @@ const InstructorProfile = ({ sidebarOpen, isMobile }: InstructorProfileProps) =>
                                     <Col md={6}>
                                         <Form.Group className="mb-4">
                                             <Form.Label className={styles.label}>
-                                                <FaPhone /> Phone Number
+                                                <FaClock /> Timezone
                                             </Form.Label>
-                                            <Form.Control
-                                                type="tel"
-                                                name="phone"
-                                                value={formData.phone}
+                                            <Form.Select
+                                                name="timezone"
+                                                value={formData.timezone}
                                                 onChange={handleChange}
                                                 disabled={!editing}
                                                 className={styles.input}
-                                            />
+                                            >
+                                                <option value="Africa/Johannesburg">Africa/Johannesburg (SAST)</option>
+                                                <option value="America/New_York">America/New York (EST)</option>
+                                                <option value="Europe/London">Europe/London (GMT)</option>
+                                                <option value="Asia/Tokyo">Asia/Tokyo (JST)</option>
+                                            </Form.Select>
                                         </Form.Group>
                                     </Col>
                                     <Col md={6}>
                                         <Form.Group className="mb-4">
                                             <Form.Label className={styles.label}>
-                                                <FaMapMarkerAlt /> Location
+                                                <FaGlobe /> Country
                                             </Form.Label>
                                             <Form.Control
                                                 type="text"
-                                                name="location"
-                                                value={formData.location}
+                                                name="country"
+                                                value={formData.country}
                                                 onChange={handleChange}
                                                 disabled={!editing}
                                                 className={styles.input}
@@ -241,7 +275,9 @@ const InstructorProfile = ({ sidebarOpen, isMobile }: InstructorProfileProps) =>
                                 </Row>
 
                                 <Form.Group className="mb-4">
-                                    <Form.Label className={styles.label}>Bio</Form.Label>
+                                    <Form.Label className={styles.label}>
+                                        <FaBriefcase /> Bio
+                                    </Form.Label>
                                     <Form.Control
                                         as="textarea"
                                         rows={4}
@@ -252,25 +288,139 @@ const InstructorProfile = ({ sidebarOpen, isMobile }: InstructorProfileProps) =>
                                         className={styles.input}
                                     />
                                 </Form.Group>
+
+                                <Form.Group className="mb-4">
+                                    <Form.Label className={styles.label}>
+                                        <FaChalkboardTeacher /> Teaching Style
+                                    </Form.Label>
+                                    <Form.Control
+                                        as="textarea"
+                                        rows={3}
+                                        name="teachingStyle"
+                                        value={formData.teachingStyle}
+                                        onChange={handleChange}
+                                        disabled={!editing}
+                                        className={styles.input}
+                                    />
+                                </Form.Group>
                             </Form>
                         </Card.Body>
                     </Card>
 
-                    <Card className={styles.securityCard}>
+                    {/* Expertise Section */}
+                    <Card className={styles.formCard}>
                         <Card.Body>
-                            <h4>Security Settings</h4>
-                            <Button className={styles.changePasswordBtn}>
-                                Change Password
-                            </Button>
-                            <Button variant="outline-danger" className="ms-3">
-                                Two-Factor Authentication
-                            </Button>
+                            <div className={styles.cardHeader}>
+                                <h4>Areas of Expertise</h4>
+                            </div>
+
+                            <div className={styles.expertiseList}>
+                                {formData.expertise.map((skill, index) => (
+                                    <Badge 
+                                        key={index} 
+                                        className={styles.expertiseBadge}
+                                    >
+                                        {skill}
+                                        {editing && (
+                                            <button 
+                                                onClick={() => handleRemoveExpertise(index)}
+                                                className={styles.removeBadge}
+                                            >
+                                                ×
+                                            </button>
+                                        )}
+                                    </Badge>
+                                ))}
+                            </div>
+
+                            {editing && (
+                                <div className={styles.addExpertise}>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Add new expertise..."
+                                        value={newExpertise}
+                                        onChange={(e) => setNewExpertise(e.target.value)}
+                                        className={styles.input}
+                                        onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddExpertise())}
+                                    />
+                                    <Button 
+                                        className={styles.addBtn}
+                                        onClick={handleAddExpertise}
+                                    >
+                                        <FaPlus /> Add
+                                    </Button>
+                                </div>
+                            )}
+                        </Card.Body>
+                    </Card>
+
+                    {/* Certifications Section */}
+                    <Card className={styles.formCard}>
+                        <Card.Body>
+                            <div className={styles.cardHeader}>
+                                <h4>Certifications</h4>
+                            </div>
+
+                            <div className={styles.certificationsList}>
+                                {formData.certifications.map((cert, index) => (
+                                    <div key={index} className={styles.certificationItem}>
+                                        <div className={styles.certIcon}>
+                                            <FaAward />
+                                        </div>
+                                        <div className={styles.certDetails}>
+                                            <h5>{cert.name}</h5>
+                                            <p>{cert.issuer} {cert.date && `• ${cert.date}`}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {editing && (
+                                <div className={styles.addCertification}>
+                                    <Row>
+                                        <Col md={5}>
+                                            <Form.Control
+                                                type="text"
+                                                placeholder="Certification name"
+                                                value={newCertification.name}
+                                                onChange={(e) => setNewCertification({...newCertification, name: e.target.value})}
+                                                className={styles.input}
+                                            />
+                                        </Col>
+                                        <Col md={4}>
+                                            <Form.Control
+                                                type="text"
+                                                placeholder="Issuer"
+                                                value={newCertification.issuer}
+                                                onChange={(e) => setNewCertification({...newCertification, issuer: e.target.value})}
+                                                className={styles.input}
+                                            />
+                                        </Col>
+                                        <Col md={2}>
+                                            <Form.Control
+                                                type="text"
+                                                placeholder="Year"
+                                                value={newCertification.date}
+                                                onChange={(e) => setNewCertification({...newCertification, date: e.target.value})}
+                                                className={styles.input}
+                                            />
+                                        </Col>
+                                        <Col md={1}>
+                                            <Button 
+                                                className={styles.addBtn}
+                                                onClick={handleAddCertification}
+                                            >
+                                                <FaPlus />
+                                            </Button>
+                                        </Col>
+                                    </Row>
+                                </div>
+                            )}
                         </Card.Body>
                     </Card>
                 </Col>
             </Row>
         </div>
-        // </div>
     );
 };
 

@@ -1,4 +1,4 @@
-// Profile.module.scss - Using your home page colors
+// InstructorProfile.module.scss - Using your home page colors
 
 $primary-green: #00bf63;
 $blue: #5271ff;
@@ -25,7 +25,6 @@ $gray-dark: #718096;
     &.sidebarClosed {
         padding: 0 3rem;
     }
-
 
     .header {
         margin-bottom: 3rem;
@@ -54,11 +53,8 @@ $gray-dark: #718096;
             color: $gray-dark;
         }
     }
-
-  
 }
 
-  
 .avatarCard {
     border: none;
     border-radius: 16px;
@@ -247,6 +243,9 @@ $gray-dark: #718096;
             border-radius: 8px;
             font-weight: 600;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
 
             &:hover {
                 transform: translateY(-2px);
@@ -313,29 +312,65 @@ $gray-dark: #718096;
     }
 }
 
-.securityCard {
-    border: none;
-    border-radius: 16px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+// Expertise Section
+.expertiseList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
 
-    :global(.card-body) {
-        padding: 2.5rem;
+.expertiseBadge {
+    background: linear-gradient(135deg, $primary-green 0%, $dark-green 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 
-        h4 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: $text-dark;
-            margin-bottom: 1.5rem;
+    .removeBadge {
+        background: rgba(255, 255, 255, 0.3);
+        border: none;
+        color: white;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1.2rem;
+        line-height: 1;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.5);
         }
     }
+}
 
-    .changePasswordBtn {
+.addExpertise {
+    display: flex;
+    gap: 0.75rem;
+
+    .input {
+        flex: 1;
+    }
+
+    .addBtn {
         background: linear-gradient(135deg, $blue 0%, lighten($blue, 10%) 100%);
         border: none;
-        padding: 0.75rem 1.75rem;
+        padding: 0.875rem 1.5rem;
         border-radius: 8px;
         font-weight: 600;
-        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        white-space: nowrap;
 
         &:hover {
             transform: translateY(-2px);
@@ -344,6 +379,157 @@ $gray-dark: #718096;
     }
 }
 
+// Certifications Section
+.certificationsList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.certificationItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: $gray-light;
+    border-radius: 12px;
+    border: 2px solid $gray-medium;
+    transition: all 0.3s ease;
+
+    &:hover {
+        border-color: $primary-green;
+        box-shadow: 0 4px 12px rgba(0, 191, 99, 0.1);
+    }
+
+    .certIcon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, $yellow 0%, darken($yellow, 10%) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .certDetails {
+        flex: 1;
+
+        h5 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: $text-dark;
+            margin-bottom: 0.25rem;
+        }
+
+        p {
+            color: $gray-dark;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+    }
+}
+
+.addCertification {
+    .addBtn {
+        background: linear-gradient(135deg, $blue 0%, lighten($blue, 10%) 100%);
+        border: none;
+        width: 100%;
+        height: 100%;
+        min-height: 46px;
+        border-radius: 8px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba($blue, 0.3);
+        }
+    }
+}
+
+// Mobile responsive
+@media (max-width: 1024px) {
+    .profilePage {
+        padding: 0 1rem !important;
+    }
+
+    .formCard {
+        .cardHeader {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+
+            .actionBtns {
+                width: 100%;
+                
+                button {
+                    flex: 1;
+                }
+            }
+        }
+    }
+
+    .addCertification {
+        .addBtn {
+            width: auto;
+            padding: 0.875rem 1.5rem;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .profilePage {
+        .header {
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    }
+
+    .formCard,
+    .securityCard {
+        :global(.card-body) {
+            padding: 1.5rem;
+        }
+    }
+
+    .avatarCard {
+        .avatarContainer {
+            .avatar {
+                width: 120px;
+                height: 120px;
+            }
+        }
+
+        .stats {
+            gap: 0.5rem;
+
+            .statItem {
+                h4 {
+                    font-size: 1.5rem;
+                }
+
+                p {
+                    font-size: 0.75rem;
+                }
+            }
+        }
+    }
+
+    .addExpertise {
+        flex-direction: column;
+
+        .addBtn {
+            width: 100%;
+        }
+    }
+}
 // At the bottom, change your responsive breakpoints to match the new 1024px breakpoint
 // Responsive breakpoints
 @media (max-width: 1900px) {
