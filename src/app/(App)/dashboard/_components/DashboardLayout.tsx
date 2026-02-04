@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Container, Row, Col } from 'react-bootstrap';
 import {
@@ -27,14 +27,31 @@ interface DashboardLayoutProps {
 
 const DashboardLayout = ({ children, userRole = 'student' }: DashboardLayoutProps) => {
     const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [isMobile, setIsMobile] = useState(false);
     const { logout, user } = useAuth();
     const router = useRouter();
 
-   useEffect(() => {
-    console.log('User object:', user);
-    console.log('User email:', user?.email);
-    console.log('User role:', user?.role);
-}, [user]);
+    useEffect(() => {
+        console.log('User object:', user);
+        console.log('User email:', user?.email);
+        console.log('User role:', user?.role);
+    }, [user]);
+
+    useEffect(() => {
+        const handleResize = () => {
+            const mobile = window.innerWidth <= 1024;
+            setIsMobile(mobile);
+            if (mobile) {
+                setSidebarOpen(false);
+            } else {
+                setSidebarOpen(true);
+            }
+        };
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const studentMenuItems = [
         {
@@ -73,28 +90,28 @@ const DashboardLayout = ({ children, userRole = 'student' }: DashboardLayoutProp
         {
             name: 'Dashboard',
             icon: <FaHome />,
-            path: '/dashboard/instructor',
+            path: '/dashboard',
         },
         {
             name: 'My Courses',
             icon: <FaChalkboardTeacher />,
             path: '/dashboard/instructor/courses',
         },
-        {
-            name: 'Students',
-            icon: <FaUsers />,
-            path: '/dashboard/instructor/students',
-        },
-        {
-            name: 'Analytics',
-            icon: <FaChartLine />,
-            path: '/dashboard/instructor/analytics',
-        },
-        {
-            name: 'Content',
-            icon: <FaFileAlt />,
-            path: '/dashboard/instructor/content',
-        },
+        // {
+        //     name: 'Students',
+        //     icon: <FaUsers />,
+        //     path: '/dashboard/instructor/students',
+        // },
+        // {
+        //     name: 'Analytics',
+        //     icon: <FaChartLine />,
+        //     path: '/dashboard/instructor/analytics',
+        // },
+        // {
+        //     name: 'Content',
+        //     icon: <FaFileAlt />,
+        //     path: '/dashboard/instructor/content',
+        // },
         {
             name: 'Profile',
             icon: <FaUserCircle />,
@@ -111,26 +128,55 @@ const DashboardLayout = ({ children, userRole = 'student' }: DashboardLayoutProp
 
     const handleNavigation = (path: string) => {
         router.push(path);
+        // Close sidebar on mobile after navigation
+        if (isMobile) {
+            setSidebarOpen(false);
+        }
     };
 
     const handleLogout = () => {
         logout();
     };
 
+    const toggleSidebar = () => {
+        setSidebarOpen(!sidebarOpen);
+    };
+
     return (
         <div className={styles.dashboardContainer}>
+            {/* Mobile Overlay */}
+            {isMobile && sidebarOpen && (
+                <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
+            )}
+
+            {/* Mobile Toggle Button */}
+            {isMobile && (
+                <button
+                    className={styles.mobileToggle}
+                    onClick={toggleSidebar}
+                    aria-label="Toggle menu"
+                >
+                    {sidebarOpen ? <FaTimes /> : <FaBars />}
+                </button>
+            )}
+
             {/* Sidebar */}
             <aside className={`${styles.sidebar} ${sidebarOpen ? styles.open : styles.closed}`}>
                 <div className={styles.sidebarHeader}>
                     <div className={styles.logoContainer}>
                         <h2 className={styles.logo}>IvyBrilliance</h2>
                     </div>
-                    <button
-                        className={styles.toggleBtn}
-                        onClick={() => setSidebarOpen(!sidebarOpen)}
-                    >
-                        {sidebarOpen ? <FaTimes /> : <FaBars />}
-                    </button>
+
+                    {/* I HAVE HID THE TOGGLE HAMBURGER MENU BUTTON FOR NOW */}
+
+                    {/* {!isMobile && (
+                        <button
+                            className={styles.toggleBtn}
+                            onClick={toggleSidebar}
+                        >
+                            {sidebarOpen ? <FaTimes /> : <FaBars />}
+                        </button>
+                    )} */}
                 </div>
 
                 {sidebarOpen && (
@@ -139,7 +185,6 @@ const DashboardLayout = ({ children, userRole = 'student' }: DashboardLayoutProp
                             <FaUserCircle size={48} />
                         </div>
                         <div className={styles.userDetails}>
-                            {user? JSON.stringify(user) : 'no'}
                             <h4>{user?.email?.split('@')[0] || 'User'}</h4>
                             <p className={styles.userRole}>
                                 {userRole === 'instructor' ? 'Instructor' : 'Student'}
@@ -183,8 +228,17 @@ const DashboardLayout = ({ children, userRole = 'student' }: DashboardLayoutProp
             </aside>
 
             {/* Main Content */}
-            <main className={styles.mainContent}>
+            {/* <main className={`${styles.mainContent} ${sidebarOpen && !isMobile ? styles.shifted : ''}`}>
                 <div className={styles.contentWrapper}>{children}</div>
+            </main> */}
+            {/* Main Content */}
+            <main className={`${styles.mainContent} ${sidebarOpen && !isMobile ? styles.shifted : ''}`}>
+                <div className={styles.contentWrapper}>
+                    {React.cloneElement(children as React.ReactElement, { 
+                        sidebarOpen, 
+                        isMobile 
+                    })}
+                </div>
             </main>
         </div>
     );

@@ -40,12 +40,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 },
             });
 
-            console.log('Fetched user data:', response.data);
+            console.log('Fetched user data:', response);
             if (response.status === 200 && response.data) {
                 return {
-                    id: response.data.id,
-                    email: response.data.email,
-                    role: response.data.role
+                    id: response.data.data.id,
+                    email: response.data.data.email,
+                    role: response.data.data.role
                 };
             }
             return null;

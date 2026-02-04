@@ -40,9 +40,9 @@ export default function DashboardPage() {
     return (
         <DashboardLayout userRole={userRole}>
             {userRole === 'student' ? (
-                <StudentDashboard user={user} />
+                <StudentDashboard  />
             ) : (
-                <InstructorDashboard user={user} />
+                <InstructorDashboard  />
             )}
         </DashboardLayout>
     );

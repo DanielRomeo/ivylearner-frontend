@@ -19,6 +19,58 @@ $gray-dark: #718096;
     background-color: $gray-light;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
         Cantarell, sans-serif;
+    position: relative;
+}
+
+// Mobile overlay
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+// Mobile toggle button
+.mobileToggle {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1001;
+    background: $primary-green;
+    border: none;
+    color: $text-light;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 191, 99, 0.3);
+    transition: all 0.3s ease;
+
+    &:hover {
+        background: darken($primary-green, 10%);
+        transform: scale(1.05);
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
 }
 
 .sidebar {
@@ -28,7 +80,7 @@ $gray-dark: #718096;
     height: 100vh;
     background: linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 100%);
     color: $text-light;
-    transition: width 0.3s ease;
+    transition: transform 0.3s ease, width 0.3s ease;
     z-index: 1000;
     display: flex;
     flex-direction: column;
@@ -36,10 +88,12 @@ $gray-dark: #718096;
 
     &.open {
         width: 280px;
+        transform: translateX(0);
     }
 
     &.closed {
         width: 80px;
+        transform: translateX(0);
 
         .userInfo {
             padding: 1rem;
@@ -70,6 +124,7 @@ $gray-dark: #718096;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin: 0;
+            white-space: nowrap;
         }
     }
 
@@ -80,6 +135,10 @@ $gray-dark: #718096;
         font-size: 1.2rem;
         cursor: pointer;
         transition: color 0.3s ease;
+        padding: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
         &:hover {
             color: $primary-green;
@@ -222,47 +281,81 @@ $gray-dark: #718096;
 
 .mainContent {
     flex: 1;
+    min-height: 100vh;
     transition: margin-left 0.3s ease;
+    margin-left: 120px;
 
-    .open ~ & {
-        margin-left: 280px;
+    &.shifted {
+        margin-left: 120px;
     }
 
-    .closed ~ & {
+    .contentWrapper {
+        padding: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+        width: 100%;
+    }
+}
+
+// Desktop - sidebar collapsed
+@media (min-width: 1025px) {
+    .sidebar.closed ~ .mainContent {
         margin-left: 80px;
     }
 }
 
-.contentWrapper {
-    padding: 2rem;
-    max-width: 1400px;
-    margin: 0 auto;
-}
+// Mobile responsive
+@media (max-width: 1024px) {
+    .mobileToggle {
+        display: flex;
+    }
 
-// Responsive
-@media (max-width: 768px) {
     .sidebar {
         &.closed {
-            width: 0;
-            overflow: hidden;
+            transform: translateX(-100%);
+            width: 280px;
         }
 
         &.open {
             width: 280px;
+            transform: translateX(0);
         }
     }
 
     .mainContent {
         margin-left: 0 !important;
+        width: 100%;
+
+        .contentWrapper {
+            padding: 5rem 1rem 2rem;
+        }
     }
 
-    .toggleBtn {
-        position: fixed;
-        top: 1rem;
-        right: 1rem;
-        z-index: 1001;
-        background: $primary-green;
-        padding: 0.75rem;
-        border-radius: 8px;
+    .sidebarHeader {
+        .toggleBtn {
+            display: none;
+        }
+    }
+}
+
+// Small mobile devices
+@media (max-width: 480px) {
+    .sidebar {
+        &.open {
+            width: 85vw;
+            max-width: 280px;
+        }
+    }
+
+    .mainContent {
+        .contentWrapper {
+            padding: 5rem 1rem 1.5rem;
+        }
+    }
+
+    .mobileToggle {
+        width: 44px;
+        height: 44px;
+        font-size: 1.1rem;
     }
 }

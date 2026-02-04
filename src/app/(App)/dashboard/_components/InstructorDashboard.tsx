@@ -112,7 +112,7 @@ const InstructorDashboard = () => {
             {/* Stats Cards */}
             <Row className="g-4 mb-4">
                 {statCards.map((card, index) => (
-                    <Col key={index} lg={3} md={6}>
+                    <Col key={index} lg={6} md={6}>
                         <Card className={`${styles.statCard} ${styles[card.color]}`}>
                             <Card.Body>
                                 <div className={styles.statIcon}>{card.icon}</div>
