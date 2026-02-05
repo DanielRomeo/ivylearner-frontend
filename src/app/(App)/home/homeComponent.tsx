@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect } from 'react';
+import ModernNavbar from '../_components/MainNavbar';
 import { Container, Navbar, Nav, Button, Row, Col, Card } from 'react-bootstrap';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -29,7 +30,7 @@ export default function HomeComponent() {
 	return (
 		<div className={styles.container}>
 			{/* Navigation Bar */}
-			<Navbar expand="lg" className={styles.navbar} fixed="top">
+			{/* <Navbar expand="lg" className={styles.navbar} fixed="top">
 				<Container>
 					<Navbar.Brand href="/">
 						<span className={styles.logoText}>IvyBrilliance</span>
@@ -56,7 +57,11 @@ export default function HomeComponent() {
 						</div>
 					</Navbar.Collapse>
 				</Container>
-			</Navbar>
+			</Navbar> */}
+
+			{/* Import the navbar */}
+				<ModernNavbar></ModernNavbar>
+
 
 			{/* Hero Section */}
 			<section className={styles.heroSection}>
