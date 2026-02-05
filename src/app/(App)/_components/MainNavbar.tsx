@@ -10,6 +10,8 @@ import { Search, User, Menu, X } from 'lucide-react';
 import { useAuth } from '../../contexts/auth-context';
 
 export default function ModernNavbar() {
+
+
 	const [scrolled, setScrolled] = useState(false);
 	const [showMobileMenu, setShowMobileMenu] = useState(false);
 	const { user, isAuthenticated, logout } = useAuth();
@@ -29,7 +31,7 @@ export default function ModernNavbar() {
 
 	const handleLogout = () => {
 		logout();
-		router.push('/');
+		router.push('/home');
 	};
 
 	return (
@@ -39,7 +41,7 @@ export default function ModernNavbar() {
 			fixed="top"
 		>
 			<Container>
-				<Navbar.Brand href="/" className={styles.logoText}>
+				<Navbar.Brand href="/home" className={styles.logoText}>
 					IvyBrilliance
 				</Navbar.Brand>
 
