@@ -16,6 +16,7 @@ import {
     FaChalkboardTeacher,
     FaUsers,
     FaFileAlt,
+    FaBuilding
 } from 'react-icons/fa';
 import { useAuth } from '@/app/contexts/auth-context';
 import styles from '../_styles/DashboardLayout.module.scss';
@@ -32,9 +33,9 @@ const DashboardLayout = ({ children, userRole = 'student' }: DashboardLayoutProp
     const router = useRouter();
 
     useEffect(() => {
-        console.log('User object:', user);
-        console.log('User email:', user?.email);
-        console.log('User role:', user?.role);
+        // console.log('User object:', user);
+        // console.log('User email:', user?.email);
+        // console.log('User role:', user?.role);
     }, [user]);
 
     useEffect(() => {
@@ -69,11 +70,11 @@ const DashboardLayout = ({ children, userRole = 'student' }: DashboardLayoutProp
             icon: <FaChartLine />,
             path: '/dashboard/progress',
         },
-        {
-            name: 'Certificates',
-            icon: <FaGraduationCap />,
-            path: '/dashboard/certificates',
-        },
+        // {
+        //     name: 'Certificates',
+        //     icon: <FaGraduationCap />,
+        //     path: '/dashboard/certificates',
+        // },
         {
             name: 'Profile',
             icon: <FaUserCircle />,
@@ -107,11 +108,11 @@ const DashboardLayout = ({ children, userRole = 'student' }: DashboardLayoutProp
         //     icon: <FaChartLine />,
         //     path: '/dashboard/instructor/analytics',
         // },
-        // {
-        //     name: 'Content',
-        //     icon: <FaFileAlt />,
-        //     path: '/dashboard/instructor/content',
-        // },
+        {
+            name: 'Organistion',
+            icon: <FaBuilding />,
+            path: '/dashboard/instructor/organisations',
+        },
         {
             name: 'Profile',
             icon: <FaUserCircle />,

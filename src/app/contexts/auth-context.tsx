@@ -40,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 },
             });
 
-            console.log('Fetched user data:', response);
+            // console.log('Fetched user data:', response);
             if (response.status === 200 && response.data) {
                 return {
                     id: response.data.data.id,
@@ -60,7 +60,7 @@ const refreshUser = useCallback(async () => {
     const token = localStorage.getItem('access_token');
     if (token) {
         const userData = await fetchUserData(token);
-        console.log('Setting user data in refreshUser:', userData);
+        // console.log('Setting user data in refreshUser:', userData);
         setUser(userData);
     }
 }, []);
