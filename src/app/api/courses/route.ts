@@ -3,12 +3,14 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
 	const authHeader = request.headers.get('Authorization');
+	console.log('🔑 Authorization header:', authHeader); // Check this
+	console.log('🔑 Token preview:', authHeader?.substring(0, 20) + '...'); // First 20 chars
 
 	const body = await request.json();
-	console.log('body is ');
-	console.log(body);
+console.log('body is:', body);
+console.log('organizationId type:', typeof body.organizationId); // Check if it's a string
 
-	const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/courses/create`, {
+	const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/courses`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -16,6 +18,7 @@ export async function POST(request: Request) {
 		},
 		body: JSON.stringify(body),
 	});
+	console.log('API response status:', response.status);
 
 	const data = await response.json();
 	return NextResponse.json(data);

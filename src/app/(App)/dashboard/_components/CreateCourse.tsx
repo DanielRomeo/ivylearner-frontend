@@ -73,26 +73,30 @@ const CreateCourse = ({ sidebarOpen, isMobile }: { sidebarOpen?: boolean; isMobi
   }, []);
 
   const onSubmit = async (data: any) => {
+	console.log("Submitting course data:", data); // Debug log
     setLoading(true);
     setError(null);
     setSuccess(null);
 
     try {
-      const response = await fetch('/api/courses', { // Assuming /api/courses for create
+      const response = await fetch('/api/courses/create', { // Assuming /api/courses for create
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
         },
+		
         body: JSON.stringify(data),
       });
+
+	  console.log(response)
 
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to create course');
       }
 
-      setSuccess('Course created successfully!');
+    //   setSuccess('Course created successfully!');
       setTimeout(() => router.push('/dashboard/instructor/courses'), 2000);
     } catch (err) {
       setError((err as Error).message);
