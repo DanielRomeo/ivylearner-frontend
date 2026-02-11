@@ -94,7 +94,7 @@ const MyOrganisations = ({ sidebarOpen, isMobile }: { sidebarOpen?: boolean; isM
   
 
   const handleCreateNew = () => {
-    router.push('/dashboard/instructor/organisations/create');
+    router.push('/dashboard/instructor/create-organisation');
   };
 
   const handleOrgClick = (orgId: number) => {
