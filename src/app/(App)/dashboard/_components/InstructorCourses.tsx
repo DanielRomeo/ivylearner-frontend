@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Row, Col, Card, Button, Badge, Form, InputGroup } from 'react-bootstrap';
 import { 
     FaPlus, 
@@ -22,8 +23,11 @@ interface InstructorCoursesProps {
 }
 
 const InstructorCourses = ({ sidebarOpen, isMobile }: InstructorCoursesProps) => {
+    const router = useRouter();
     const [searchQuery, setSearchQuery] = useState('');
     const [filterStatus, setFilterStatus] = useState('all');
+
+    
 
     // Mock data - replace with API call later
     const courses = [
@@ -81,6 +85,11 @@ const InstructorCourses = ({ sidebarOpen, isMobile }: InstructorCoursesProps) =>
         }
     ];
 
+    const handleCreateNew = () => {
+        router.push('/dashboard/instructor/create-course');
+    };
+
+
     const filteredCourses = courses.filter(course => {
         const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                             course.category.toLowerCase().includes(searchQuery.toLowerCase());
@@ -99,9 +108,10 @@ const InstructorCourses = ({ sidebarOpen, isMobile }: InstructorCoursesProps) =>
                     <h1>My Courses</h1>
                     <p>Manage and track your course performance</p>
                 </div>
-                <Button className={styles.createBtn}>
+                <Button variant="primary" onClick={handleCreateNew} className={styles.createBtn}>
                     <FaPlus /> Create New Course
                 </Button>
+               
             </div>
 
             {/* Stats Overview */}

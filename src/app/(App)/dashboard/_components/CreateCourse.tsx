@@ -27,6 +27,7 @@ const schema = yup.object().shape({
 interface Organization {
   id: number;
   name: string;
+  memberRole: string; // Assuming this field indicates the user's role in the organization
   // other fields
 }
 
@@ -51,7 +52,14 @@ const CreateCourse = ({ sidebarOpen, isMobile }: { sidebarOpen?: boolean; isMobi
         });
         if (response.ok) {
           const data = await response.json();
-          setOwnedOrgs(data.owned || data || []);
+		  console.log("Fetched organisations:", data.data); // Debug log
+
+		  let newdata = data.data.filter((org: Organization) => {
+			// Assuming the API returns a field to indicate ownership
+			return org.memberRole === 'owner';
+		  });
+
+          setOwnedOrgs(newdata);
         } else {
           throw new Error('Failed to fetch organisations');
         }
@@ -116,7 +124,7 @@ const CreateCourse = ({ sidebarOpen, isMobile }: { sidebarOpen?: boolean; isMobi
                       <Form.Label>Organisation</Form.Label>
                       <Form.Select {...register('organizationId')} isInvalid={!!errors.organizationId}>
                         <option value="">Select Organisation</option>
-                        {ownedOrgs.map(org => (
+                        {ownedOrgs && ownedOrgs.map(org => (
                           <option key={org.id} value={org.id}>{org.name}</option>
                         ))}
                       </Form.Select>

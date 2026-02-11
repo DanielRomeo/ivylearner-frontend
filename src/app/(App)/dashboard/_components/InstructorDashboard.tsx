@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { Row, Col, Card } from 'react-bootstrap';
 import {
     FaChalkboardTeacher,
@@ -14,6 +15,7 @@ import styles from '../_styles/InstructorDashboard.module.scss';
 import axios from 'axios';
 
 const InstructorDashboard = () => {
+    // const router = useRouter();
     const [stats, setStats] = useState({
         totalCourses: 0,
         totalStudents: 0,
