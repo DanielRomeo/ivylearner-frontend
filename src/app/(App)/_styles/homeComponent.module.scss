@@ -20,7 +20,7 @@ $gray-dark: #718096;
 $gradient-start: #00bf63;
 $gradient-end: #24570f;
 
-.partnerLogo .partnersLogo{
+.partnerLogo .partnersLogo {
 	background-color: #00bf63;
 	border: 1px solid red;
 }
@@ -664,10 +664,9 @@ $gradient-end: #24570f;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
-		
 
 		.partnerLogo {
-			// border: 1px solid red; 
+			// border: 1px solid red;
 			opacity: 0.7;
 			filter: grayscale(100%);
 			transition: all 0.3s ease;
@@ -678,7 +677,7 @@ $gradient-end: #24570f;
 				opacity: 1;
 				filter: grayscale(0%);
 			}
-			.image{
+			.image {
 				// border: 1px solid blue;
 			}
 

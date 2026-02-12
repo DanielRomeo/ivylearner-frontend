@@ -33,7 +33,8 @@ const CoursesPage: React.FC = () => {
 			const mockCourses = Array.from({ length: 24 }, (_, i) => ({
 				id: i + 1,
 				title: `Course ${i + 1}: ${['Web Development', 'Data Science', 'Mobile Apps', 'UI/UX Design', 'Machine Learning'][i % 5]}`,
-				shortDescription: 'Learn the fundamentals and advanced concepts with hands-on projects and real-world examples.',
+				shortDescription:
+					'Learn the fundamentals and advanced concepts with hands-on projects and real-world examples.',
 				duration: `${Math.floor(Math.random() * 10) + 5} hours`,
 				instructor: {
 					firstName: ['John', 'Jane', 'Mike', 'Sarah', 'David'][i % 5],
@@ -47,7 +48,10 @@ const CoursesPage: React.FC = () => {
 				language: 'English',
 				rating: (Math.random() * 2 + 3).toFixed(1),
 				enrollmentCount: Math.floor(Math.random() * 1000) + 50,
-				tags: ['Programming', 'Web', 'Backend', 'Frontend'].slice(0, Math.floor(Math.random() * 3) + 1),
+				tags: ['Programming', 'Web', 'Backend', 'Frontend'].slice(
+					0,
+					Math.floor(Math.random() * 3) + 1
+				),
 			}));
 			setCourses(mockCourses);
 		} catch (error) {
@@ -202,7 +206,9 @@ const CoursesPage: React.FC = () => {
 						<div className={styles.noResults}>
 							<Filter size={64} />
 							<h3>No courses found</h3>
-							<p>Try adjusting your search or filter to find what you're looking for.</p>
+							<p>
+								Try adjusting your search or filter to find what you're looking for.
+							</p>
 						</div>
 					)}
 				</Container>

@@ -10,14 +10,12 @@ import { useEffect, useState } from 'react';
 import InstructorProfile from '../../_components/InstructorProfile';
 
 export default function DashboardPage() {
-    
-
-    return (
-       <div>
-        {/* <p>Instructor profile page</p> */}
-        {/* <InstructorProfile />
-         */}
-         <InstructorProfile />
-       </div>
-    );
+	return (
+		<div>
+			{/* <p>Instructor profile page</p> */}
+			{/* <InstructorProfile />
+			 */}
+			<InstructorProfile />
+		</div>
+	);
 }

@@ -8,42 +8,36 @@ import InstructorDashboard from './_components/InstructorDashboard';
 import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
-    const { user, isAuthenticated, isLoading } = useAuth();
-    const router = useRouter();
+	const { user, isAuthenticated, isLoading } = useAuth();
+	const router = useRouter();
 
-    useEffect(() => {
-        if (!isLoading && !isAuthenticated) {
-            router.push('/signin');
-        }
-    }, [isAuthenticated, isLoading, router]);
+	useEffect(() => {
+		if (!isLoading && !isAuthenticated) {
+			router.push('/signin');
+		}
+	}, [isAuthenticated, isLoading, router]);
 
-    if (isLoading) {
-        return <div>Loading...</div>;
-    }
+	if (isLoading) {
+		return <div>Loading...</div>;
+	}
 
-    if (!user) {
-        console.log('No user found after loading');
-        return null;
-    }else{
-        console.log('User found:', user);
-    }
+	if (!user) {
+		console.log('No user found after loading');
+		return null;
+	} else {
+		console.log('User found:', user);
+	}
 
-    // Determine which dashboard to show based on user role
-    const userRole = user.role === 'instructor' || user.role === 'admin' 
-        ? 'instructor' 
-        : 'student';
+	// Determine which dashboard to show based on user role
+	const userRole = user.role === 'instructor' || user.role === 'admin' ? 'instructor' : 'student';
 
-    if (isLoading) {
-        return <div>Loading...</div>;
-    }
+	if (isLoading) {
+		return <div>Loading...</div>;
+	}
 
-    return (
-        <DashboardLayout userRole={userRole}>
-            {userRole === 'student' ? (
-                <StudentDashboard  />
-            ) : (
-                <InstructorDashboard  />
-            )}
-        </DashboardLayout>
-    );
+	return (
+		<DashboardLayout userRole={userRole}>
+			{userRole === 'student' ? <StudentDashboard /> : <InstructorDashboard />}
+		</DashboardLayout>
+	);
 }

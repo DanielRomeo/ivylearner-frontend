@@ -9,11 +9,9 @@ import { useEffect, useState } from 'react';
 import InstructorCourses from '../../_components/InstructorCourses';
 
 export default function DashboardPage() {
-    
-
-    return (
-       <div>
-        <InstructorCourses />
-       </div>
-    );
+	return (
+		<div>
+			<InstructorCourses />
+		</div>
+	);
 }

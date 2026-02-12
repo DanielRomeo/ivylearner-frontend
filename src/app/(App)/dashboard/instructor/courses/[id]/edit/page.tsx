@@ -1,21 +1,19 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import EditCourse from '../../../../_components/InstructorCoursesEdit';
 // import { useAuth } from '@/app/contexts/auth-context';
 // import DashboardLayout from './_components/DashboardLayout';
 // import StudentDashboard from './_components/StudentDashboard';
 // import InstructorDashboard from './_components/InstructorDashboard';
 // import { useRouter } from 'next/navigation';
-// import InstructorOrganisation from '../_components/InstructorOrganisation';
-import MyOrganisations from '../../_components/InstructorOrganisations';
+// import InstructorCourses from '../../_components/InstructorCourses';
 
 export default function DashboardPage() {
 	return (
 		<div>
-			{/* <p>Instructor profile page</p> */}
-			{/* <InstructorProfile />
-			 */}
-			<MyOrganisations />
+			{/* <InstructorCourses /> */}
+            <EditCourse></EditCourse>
 		</div>
 	);
 }

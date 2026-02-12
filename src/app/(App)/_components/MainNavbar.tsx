@@ -5,13 +5,11 @@ import { Container, Nav, Navbar, Button, Row, Col } from 'react-bootstrap';
 import styles from './_styles/mainNavbar.module.scss';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import {  Form, Offcanvas } from 'react-bootstrap';
+import { Form, Offcanvas } from 'react-bootstrap';
 import { Search, User, Menu, X } from 'lucide-react';
 import { useAuth } from '../../contexts/auth-context';
 
 export default function ModernNavbar() {
-
-
 	const [scrolled, setScrolled] = useState(false);
 	const [showMobileMenu, setShowMobileMenu] = useState(false);
 	const { user, isAuthenticated, logout } = useAuth();
@@ -63,10 +61,7 @@ export default function ModernNavbar() {
 						>
 							Courses
 						</Nav.Link>
-						<Nav.Link
-							href="/about"
-							className={isActive('/about') ? styles.active : ''}
-						>
+						<Nav.Link href="/about" className={isActive('/about') ? styles.active : ''}>
 							About
 						</Nav.Link>
 						<Nav.Link
@@ -125,9 +120,7 @@ export default function ModernNavbar() {
 					className={styles.mobileOffcanvas}
 				>
 					<Offcanvas.Header>
-						<Offcanvas.Title className={styles.logoText}>
-							IvyBrilliance
-						</Offcanvas.Title>
+						<Offcanvas.Title className={styles.logoText}>IvyBrilliance</Offcanvas.Title>
 						<Button
 							variant="link"
 							onClick={() => setShowMobileMenu(false)}

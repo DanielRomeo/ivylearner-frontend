@@ -1,13 +1,14 @@
-// app/api/organizations/[id]/route.ts
-// For GET, PUT, DELETE /api/organizations/{id}
+// app/api/courses/[id]/route.ts
 import { NextResponse } from 'next/server';
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(
+	request: Request,
+	{ params }: { params: { id: string } }
+) {
 	try {
-		const { id } = params;
 		const authHeader = request.headers.get('Authorization');
 		const response = await fetch(
-			`${process.env.NEXT_PRIVATE_API_URL}/api/organizations/${id}`,
+			`${process.env.NEXT_PRIVATE_API_URL}/api/courses/${params.id}`,
 			{
 				method: 'GET',
 				headers: {
@@ -18,6 +19,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
 		);
 
 		const data = await response.json();
+		console.log('Get course API response:', data);
 
 		if (!response.ok) {
 			return NextResponse.json(data, { status: response.status });
@@ -25,18 +27,21 @@ export async function GET(request: Request, { params }: { params: { id: string }
 
 		return NextResponse.json(data, { status: 200 });
 	} catch (error) {
-		console.error('Get organisation by ID API error:', error);
+		console.error('Get course API error:', error);
 		return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
 	}
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(
+	request: Request,
+	{ params }: { params: { id: string } }
+) {
 	try {
-		const { id } = params;
-		const body = await request.json();
 		const authHeader = request.headers.get('Authorization');
+		const body = await request.json();
+		
 		const response = await fetch(
-			`${process.env.NEXT_PRIVATE_API_URL}/api/organizations/${id}`,
+			`${process.env.NEXT_PRIVATE_API_URL}/api/courses/${params.id}`,
 			{
 				method: 'PUT',
 				headers: {
@@ -48,6 +53,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 		);
 
 		const data = await response.json();
+		console.log('Update course API response:', data);
 
 		if (!response.ok) {
 			return NextResponse.json(data, { status: response.status });
@@ -55,17 +61,20 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
 		return NextResponse.json(data, { status: 200 });
 	} catch (error) {
-		console.error('Update organisation API error:', error);
+		console.error('Update course API error:', error);
 		return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
 	}
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(
+	request: Request,
+	{ params }: { params: { id: string } }
+) {
 	try {
-		const { id } = params;
 		const authHeader = request.headers.get('Authorization');
+		
 		const response = await fetch(
-			`${process.env.NEXT_PRIVATE_API_URL}/api/organizations/${id}`,
+			`${process.env.NEXT_PRIVATE_API_URL}/api/courses/${params.id}`,
 			{
 				method: 'DELETE',
 				headers: {
@@ -75,14 +84,16 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
 			}
 		);
 
+		const data = await response.json();
+		console.log('Delete course API response:', data);
+
 		if (!response.ok) {
-			const data = await response.json();
 			return NextResponse.json(data, { status: response.status });
 		}
 
-		return NextResponse.json({ message: 'Organisation deleted successfully' }, { status: 200 });
+		return NextResponse.json(data, { status: 200 });
 	} catch (error) {
-		console.error('Delete organisation API error:', error);
+		console.error('Delete course API error:', error);
 		return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
 	}
 }

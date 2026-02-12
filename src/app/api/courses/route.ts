@@ -7,8 +7,8 @@ export async function POST(request: Request) {
 	console.log('🔑 Token preview:', authHeader?.substring(0, 20) + '...'); // First 20 chars
 
 	const body = await request.json();
-console.log('body is:', body);
-console.log('organizationId type:', typeof body.organizationId); // Check if it's a string
+	console.log('body is:', body);
+	console.log('organizationId type:', typeof body.organizationId); // Check if it's a string
 
 	const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/courses`, {
 		method: 'POST',

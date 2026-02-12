@@ -9,7 +9,6 @@ import { motion } from 'framer-motion';
 import styles from '../_styles/homeComponent.module.scss';
 import ResponsiveImage from '../_components/ResponsiveImage';
 
-
 export default function HomeComponent() {
 	// Animation variants
 	const fadeIn = {
@@ -60,8 +59,7 @@ export default function HomeComponent() {
 			</Navbar> */}
 
 			{/* Import the navbar */}
-				<ModernNavbar></ModernNavbar>
-
+			<ModernNavbar></ModernNavbar>
 
 			{/* Hero Section */}
 			<section className={styles.heroSection}>
@@ -332,11 +330,11 @@ export default function HomeComponent() {
 								className={styles.instructorImageContainer}
 							>
 								<ResponsiveImage
-										src="/pictureOfTeacher.jpg"
-										alt={`New Arrival`}
-										height={550}
-										width={450}
-									/>
+									src="/pictureOfTeacher.jpg"
+									alt={`New Arrival`}
+									height={550}
+									width={450}
+								/>
 							</motion.div>
 						</Col>
 						<Col lg={6}>
@@ -472,7 +470,7 @@ export default function HomeComponent() {
 						transition={{ duration: 0.8 }}
 						className={styles.partnersLogo}
 					>
-						<Row  className={`align-items-center ${styles.partnersLogoRow}`}>
+						<Row className={`align-items-center ${styles.partnersLogoRow}`}>
 							{[
 								'econlogo8-removebg-preview.png',
 								'mainlogo.png',
@@ -480,7 +478,7 @@ export default function HomeComponent() {
 							].map((logo, index) => (
 								<Col key={index} xs={6} md={2} className="text-center">
 									<ResponsiveImage
-									className={styles.image}
+										className={styles.image}
 										src={`/${logo}`}
 										alt="Partner logo"
 										width={120}
@@ -555,9 +553,7 @@ export default function HomeComponent() {
 								<li>
 									<a href="/pricing">Pricing</a>
 								</li>
-								<li>
-									{/* <a href="/enterprise">For Enterprise</a> */}
-								</li>
+								<li>{/* <a href="/enterprise">For Enterprise</a> */}</li>
 							</ul>
 						</Col>
 
@@ -570,9 +566,7 @@ export default function HomeComponent() {
 								<li>
 									<a href="/tutorials">Tutorials</a>
 								</li>
-								<li>
-									{/* <a href="/webinars">Webinars</a> */}
-								</li>
+								<li>{/* <a href="/webinars">Webinars</a> */}</li>
 								<li>
 									<a href="/community">Community</a>
 								</li>
@@ -588,9 +582,7 @@ export default function HomeComponent() {
 								<li>
 									<a href="/careers">Careers</a>
 								</li>
-								<li>
-									{/* <a href="/press">Press</a> */}
-								</li>
+								<li>{/* <a href="/press">Press</a> */}</li>
 								<li>
 									<a href="/contact">Contact Us</a>
 								</li>
@@ -609,9 +601,7 @@ export default function HomeComponent() {
 								<li>
 									<a href="/cookies">Cookie Policy</a>
 								</li>
-								<li>
-									{/* <a href="/accessibility">Accessibility</a> */}
-								</li>
+								<li>{/* <a href="/accessibility">Accessibility</a> */}</li>
 							</ul>
 						</Col>
 					</Row>

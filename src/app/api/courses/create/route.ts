@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
 	console.log('🚀 NEXT.JS ROUTE HANDLER CALLED');
-	
+
 	const authHeader = request.headers.get('Authorization');
 	console.log('🔑 Authorization header:', authHeader);
 
@@ -29,9 +29,6 @@ export async function POST(request: Request) {
 		return NextResponse.json(data, { status: response.status });
 	} catch (error) {
 		console.error('❌ Error calling backend:', error);
-		return NextResponse.json(
-			{ error: 'Failed to create course' },
-			{ status: 500 }
-		);
+		return NextResponse.json({ error: 'Failed to create course' }, { status: 500 });
 	}
 }

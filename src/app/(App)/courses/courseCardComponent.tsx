@@ -10,11 +10,13 @@ interface CourseCardProps {
 	title: string;
 	shortDescription?: string;
 	duration?: string;
-	instructor?: {
-		firstName: string;
-		lastName: string;
-		profilePicture?: string;
-	} | string;
+	instructor?:
+		| {
+				firstName: string;
+				lastName: string;
+				profilePicture?: string;
+		  }
+		| string;
 	price?: number;
 	level: string;
 	tags?: string[];
@@ -45,16 +47,18 @@ const CourseCard: React.FC<CourseCardProps> = ({
 	const isFree = price === 0;
 	const numericRating = typeof rating === 'string' ? parseFloat(rating) : rating;
 	const filledStars = Math.floor(numericRating);
-	
-	const instructorName = typeof instructor === 'string' 
-		? instructor 
-		: instructor 
-			? `${instructor.firstName} ${instructor.lastName}`
-			: 'Unknown Instructor';
-	
-	const instructorImage = typeof instructor === 'object' && instructor?.profilePicture 
-		? instructor.profilePicture 
-		: 'https://i.pravatar.cc/150?img=1';
+
+	const instructorName =
+		typeof instructor === 'string'
+			? instructor
+			: instructor
+				? `${instructor.firstName} ${instructor.lastName}`
+				: 'Unknown Instructor';
+
+	const instructorImage =
+		typeof instructor === 'object' && instructor?.profilePicture
+			? instructor.profilePicture
+			: 'https://i.pravatar.cc/150?img=1';
 
 	const courseLink = slug ? `/courses/${slug}` : id ? `/courses/${id}` : '#';
 
@@ -64,11 +68,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
 				{/* Course Image */}
 				<div className={styles.imageContainer}>
 					{thumbnailUrl ? (
-						<img 
-							src={thumbnailUrl} 
-							alt={title} 
-							className={styles.courseImage} 
-						/>
+						<img src={thumbnailUrl} alt={title} className={styles.courseImage} />
 					) : (
 						<div className={styles.placeholder}>
 							<BookOpen size={48} />
@@ -87,21 +87,17 @@ const CourseCard: React.FC<CourseCardProps> = ({
 						<span className={`${styles.levelBadge} ${styles[level]}`}>
 							{level.charAt(0).toUpperCase() + level.slice(1)}
 						</span>
-						{language && (
-							<span className={styles.language}>🌐 {language}</span>
-						)}
+						{language && <span className={styles.language}>🌐 {language}</span>}
 					</div>
 
 					<h3 className={styles.title}>{title}</h3>
-					
-					{shortDescription && (
-						<p className={styles.description}>{shortDescription}</p>
-					)}
+
+					{shortDescription && <p className={styles.description}>{shortDescription}</p>}
 
 					{/* Instructor Info */}
 					<div className={styles.instructorInfo}>
-						<img 
-							src={instructorImage} 
+						<img
+							src={instructorImage}
 							alt={instructorName}
 							className={styles.instructorAvatar}
 						/>
@@ -143,9 +139,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
 						</div>
 						<div className={styles.rating}>
 							<Star size={16} className={styles.starIcon} />
-							<span className={styles.ratingValue}>
-								{numericRating.toFixed(1)}
-							</span>
+							<span className={styles.ratingValue}>{numericRating.toFixed(1)}</span>
 						</div>
 					</div>
 				</div>
