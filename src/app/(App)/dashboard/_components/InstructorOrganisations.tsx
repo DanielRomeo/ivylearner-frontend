@@ -22,16 +22,27 @@ interface Organization {
   website: string;
   contact_email: string;
   address: string;
-  is_public: boolean;
-  founded_year: number;
+  isPublic: boolean;
+  foundedYear: number;
   created_at: string;
   updated_at: string;
+  memberRole?: string; // Added memberRole to distinguish between owned and member orgs
 }
 
 interface OrganizationMembership {
-  organization_id: number;
-  role: string;
-  organization: Organization;
+ id: number;
+  name: string;
+  slug: string;
+  description: string;
+  logo_url: string;
+  website: string;
+  contact_email: string;
+  address: string;
+  isPublic: boolean;
+  foundedYear: number;
+  created_at: string;
+  updated_at: string;
+  memberRole: string; // Role of the user in this organization (e.g., "Member", "Admin")
 }
 // app/dashboard/instructor/organisations/page.tsx
 // Update fetch to use access_token consistently and handle errors better
@@ -174,8 +185,8 @@ const getPlaceholderImage = (index: number = 0) => {
                       {org.description || 'No description available'}
                     </Card.Text>
                     <div className={styles.orgFooter}>
-                      <span>{org.is_public ? 'Public' : 'Private'}</span>
-                      {org.founded_year && <span>Est. {org.founded_year}</span>}
+                      <span>{org.isPublic ? 'Public' : 'Private'}</span>
+                      {org.foundedYear && <span>Est. {org.foundedYear}</span>}
                     </div>
                   </Card.Body>
                 </Card>
