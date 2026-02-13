@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { Container } from 'react-bootstrap';
-import CoursesComponent from './coursesComponent';
+import CourseDetailPage from './courseComponent';
 
 export const metadata: Metadata = {
 	title: 'Course',
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 const CoursePage = () => {
 	return (
 		<div>
-			<CoursesComponent></CoursesComponent>
+			<CourseDetailPage></CourseDetailPage>
 		</div>
 	);
 };
