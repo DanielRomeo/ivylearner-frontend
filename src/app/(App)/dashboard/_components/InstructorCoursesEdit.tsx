@@ -70,10 +70,10 @@ const EditCourse = () => {
                 setNewLesson({ ...newLesson, order: lessonsList.length + 1 });
             }
 
-            // Fetch organisations members if course belongs to an organisations
-            if (courseData.data?.organisationsId || courseData.organisationsId) {
-                const orgId = courseData.data?.organisationsId || courseData.organisationsId;
-                const membersRes = await fetch(`/api/organisationss/${orgId}/members`, {
+            // Fetch organisation members if course belongs to an organisation
+            if (courseData.data?.organisationId || courseData.organisationId) {
+                const orgId = courseData.data?.organisationId || courseData.organisationId;
+                const membersRes = await fetch(`/api/organisations/${orgId}/members`, {
                     headers: { 
                         'Authorization': `Bearer ${token || ''}`,
                         'Content-Type': 'application/json'
@@ -198,22 +198,33 @@ const EditCourse = () => {
     const addNewLesson = async () => {
         try {
             const token = localStorage.getItem('access_token');
+            
+            // Backend expects camelCase field names to match the schema
+            const lessonData = {
+                title: newLesson.title,
+                courseId: parseInt(id as string),      // camelCase
+                videoUrl: newLesson.content_url,       // camelCase
+                orderIndex: newLesson.order,           // camelCase
+                durationMinutes: newLesson.duration_minutes,  // camelCase
+                isFreePreview: newLesson.is_free_preview,     // camelCase
+                contentType: 'video'  // Required field in schema
+            };
+
+            console.log('Adding new lesson with data:', lessonData);
+
             const res = await fetch('/api/lessons', {
                 method: 'POST',
                 headers: { 
                     'Authorization': `Bearer ${token || ''}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ 
-                    ...newLesson, 
-                    course_id: parseInt(id as string) 
-                })
+                body: JSON.stringify(lessonData)
             });
             
             if (!res.ok) {
                 const errorData = await res.json();
                 if (res.status === 403) {
-                    alert('You do not have permission to create lessons. Only organisations owners/admins can create lessons.');
+                    alert('You do not have permission to create lessons. Only organisation owners/admins can create lessons.');
                 } else {
                     alert('Failed to add lesson: ' + (errorData.error || errorData.message || 'Unknown error'));
                 }
@@ -251,7 +262,7 @@ const EditCourse = () => {
                 
                 if (!res.ok) {
                     if (res.status === 403) {
-                        alert('You do not have permission to delete lessons. Only organisations owners/admins can delete lessons.');
+                        alert('You do not have permission to delete lessons. Only organisation owners/admins can delete lessons.');
                     } else {
                         alert('Failed to delete lesson');
                     }
@@ -283,7 +294,7 @@ const EditCourse = () => {
             if (!res.ok) {
                 const errorData = await res.json();
                 if (res.status === 403) {
-                    alert('You do not have permission to add instructors. Only organisations owners/admins can manage instructors.');
+                    alert('You do not have permission to add instructors. Only organisation owners/admins can manage instructors.');
                 } else if (res.status === 409) {
                     alert('This instructor is already assigned to the course.');
                 } else {
@@ -314,7 +325,7 @@ const EditCourse = () => {
                 
                 if (!res.ok) {
                     if (res.status === 403) {
-                        alert('You do not have permission to remove instructors. Only organisations owners/admins can manage instructors.');
+                        alert('You do not have permission to remove instructors. Only organisation owners/admins can manage instructors.');
                     } else {
                         alert('Failed to remove instructor');
                     }
@@ -344,7 +355,7 @@ const EditCourse = () => {
             
             if (!res.ok) {
                 if (res.status === 403) {
-                    alert('You do not have permission to update instructor roles. Only organisations owners/admins can manage instructors.');
+                    alert('You do not have permission to update instructor roles. Only organisation owners/admins can manage instructors.');
                 } else {
                     alert('Failed to update role');
                 }
@@ -376,7 +387,7 @@ const EditCourse = () => {
             if (!courseRes.ok) {
                 const errorData = await courseRes.json();
                 if (courseRes.status === 403) {
-                    setError('You do not have permission to update this course. Only organisations owners/admins can update courses.');
+                    setError('You do not have permission to update this course. Only organisation owners/admins can update courses.');
                 } else {
                     setError('Failed to save course changes: ' + (errorData.error || errorData.message));
                 }
