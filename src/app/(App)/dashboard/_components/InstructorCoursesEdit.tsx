@@ -4,9 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Row, Col, Card, Form, Button, Accordion, Alert, Spinner, ListGroup, InputGroup } from 'react-bootstrap';
 import { FaSave, FaUpload, FaTrash, FaSearch, FaPlus } from 'react-icons/fa';
-// import styles from '../_styles/EditCourse.module.scss';
-// import styles from '../_styles/InstructorCoursesEdit.module.scss';
-import styles from '../_styles/InstructorCoursesEdit.module.scss'; // Assuming you have this CSS module for styling
+import styles from '../_styles/InstructorCoursesEdit.module.scss';
 
 const EditCourse = () => {
     const { id } = useParams();
@@ -25,11 +23,12 @@ const EditCourse = () => {
         is_free_preview: false 
     });
     const [uploading, setUploading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState('');
     const [searchMember, setSearchMember] = useState('');
 
-    // Cloudinary config - replace with your actual values
-    const CLOUDINARY_CLOUD_NAME = 'your_cloud_name';
-    const CLOUDINARY_UPLOAD_PRESET = 'your_unsigned_preset';
+    // Cloudinary config from environment variables
+    const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+    const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
 
     useEffect(() => {
         fetchCourseData();
@@ -37,65 +36,71 @@ const EditCourse = () => {
 
     const fetchCourseData = async () => {
         try {
-            // Fetch course details
             setLoading(true);
-			const token = localStorage.getItem('access_token');
+            const token = localStorage.getItem('access_token');
 
+            // Fetch course details
             const courseRes = await fetch(`/api/courses/${id}`, {
                 headers: { 
                     'Authorization': `Bearer ${token || ''}`,
-                    
+                    'Content-Type': 'application/json'
                 },
             });
             
-            if (!courseRes.ok) throw new Error('Failed to fetch course');
+            if (!courseRes.ok) {
+                const errorData = await courseRes.json();
+                throw new Error(errorData.error || 'Failed to fetch course');
+            }
+            
             const courseData = await courseRes.json();
-            setCourse(courseData.data);
-            setNewLesson({ ...newLesson, order: courseData.data.lessons?.length + 1 || 1 });
+            setCourse(courseData.data || courseData);
 
             // Fetch lessons for this course
             const lessonsRes = await fetch(`/api/lessons/course/${id}`, {
                 headers: { 
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Authorization': `Bearer ${token || ''}`,
                     'Content-Type': 'application/json'
                 },
             });
             
             if (lessonsRes.ok) {
                 const lessonsData = await lessonsRes.json();
-                setLessons(lessonsData.data || []);
+                const lessonsList = lessonsData.data || lessonsData;
+                setLessons(Array.isArray(lessonsList) ? lessonsList : []);
+                setNewLesson({ ...newLesson, order: lessonsList.length + 1 });
             }
 
-            // Fetch organization members if course belongs to an organization
-            if (courseData.data.organizationId) {
-                const membersRes = await fetch(`/api/organizations/${courseData.data.organizationId}/members`, {
+            // Fetch organisations members if course belongs to an organisations
+            if (courseData.data?.organisationsId || courseData.organisationsId) {
+                const orgId = courseData.data?.organisationsId || courseData.organisationsId;
+                const membersRes = await fetch(`/api/organisationss/${orgId}/members`, {
                     headers: { 
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Authorization': `Bearer ${token || ''}`,
                         'Content-Type': 'application/json'
                     },
                 });
                 
                 if (membersRes.ok) {
                     const membersData = await membersRes.json();
-                    setMembers(membersData.data || []);
+                    setMembers(membersData.data || membersData || []);
                 }
             }
 
             // Fetch course instructors
             const instructorsRes = await fetch(`/api/courses/${id}/instructors`, {
                 headers: { 
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Authorization': `Bearer ${token || ''}`,
                     'Content-Type': 'application/json'
                 },
             });
             
             if (instructorsRes.ok) {
                 const instructorsData = await instructorsRes.json();
-                setInstructors(instructorsData.data || []);
+                setInstructors(instructorsData.data || instructorsData || []);
             }
         } catch (err: any) {
             setError('Failed to load course data: ' + err.message);
-            console.error(err);
+            console.error('Fetch error:', err);
         } finally {
             setLoading(false);
         }
@@ -114,26 +119,48 @@ const EditCourse = () => {
     };
 
     const uploadToCloudinary = async (file: File, type: 'image' | 'video') => {
+        if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET) {
+            alert('Cloudinary configuration is missing. Please check your environment variables.');
+            return null;
+        }
+
         setUploading(true);
+        setUploadProgress(`Uploading ${type}...`);
+        
         const formData = new FormData();
         formData.append('file', file);
         formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-        formData.append('resource_type', type);
 
         try {
-            const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/${type}/upload`, {
+            const resourceType = type === 'video' ? 'video' : 'image';
+            const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/${resourceType}/upload`;
+            
+            console.log('Uploading to Cloudinary:', url);
+            
+            const res = await fetch(url, {
                 method: 'POST',
                 body: formData,
             });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                console.error('Cloudinary error:', errorData);
+                throw new Error(errorData.error?.message || 'Upload failed');
+            }
+
             const data = await res.json();
+            console.log('Upload successful:', data.secure_url);
+            
             if (data.secure_url) {
+                setUploadProgress(`${type} uploaded successfully!`);
+                setTimeout(() => setUploadProgress(''), 3000);
                 return data.secure_url;
             } else {
-                throw new Error('Upload failed');
+                throw new Error('No URL returned from Cloudinary');
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error('Upload error:', err);
-            alert('Failed to upload file');
+            alert(`Failed to upload ${type}: ` + err.message);
             return null;
         } finally {
             setUploading(false);
@@ -170,10 +197,11 @@ const EditCourse = () => {
 
     const addNewLesson = async () => {
         try {
+            const token = localStorage.getItem('access_token');
             const res = await fetch('/api/lessons', {
                 method: 'POST',
                 headers: { 
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Authorization': `Bearer ${token || ''}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ 
@@ -183,16 +211,18 @@ const EditCourse = () => {
             });
             
             if (!res.ok) {
+                const errorData = await res.json();
                 if (res.status === 403) {
-                    alert('You do not have permission to create lessons. Only organization owners/admins can create lessons.');
+                    alert('You do not have permission to create lessons. Only organisations owners/admins can create lessons.');
                 } else {
-                    alert('Failed to add lesson');
+                    alert('Failed to add lesson: ' + (errorData.error || errorData.message || 'Unknown error'));
                 }
                 return;
             }
             
             const data = await res.json();
-            setLessons([...lessons, data.data]);
+            const newLessonData = data.data || data;
+            setLessons([...lessons, newLessonData]);
             setNewLesson({ 
                 title: '', 
                 content_url: '', 
@@ -200,26 +230,28 @@ const EditCourse = () => {
                 duration_minutes: 0, 
                 is_free_preview: false 
             });
+            alert('Lesson added successfully!');
         } catch (err: any) {
             console.error('Error adding lesson:', err);
-            alert('Failed to add lesson');
+            alert('Failed to add lesson: ' + err.message);
         }
     };
 
     const deleteLesson = async (lessonId: number) => {
         if (confirm('Are you sure you want to delete this lesson?')) {
             try {
+                const token = localStorage.getItem('access_token');
                 const res = await fetch(`/api/lessons/${lessonId}`, {
                     method: 'DELETE',
                     headers: { 
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Authorization': `Bearer ${token || ''}`,
                         'Content-Type': 'application/json'
                     },
                 });
                 
                 if (!res.ok) {
                     if (res.status === 403) {
-                        alert('You do not have permission to delete lessons. Only organization owners/admins can delete lessons.');
+                        alert('You do not have permission to delete lessons. Only organisations owners/admins can delete lessons.');
                     } else {
                         alert('Failed to delete lesson');
                     }
@@ -227,9 +259,10 @@ const EditCourse = () => {
                 }
                 
                 setLessons(lessons.filter((l) => l.id !== lessonId));
+                alert('Lesson deleted successfully!');
             } catch (err: any) {
                 console.error('Error deleting lesson:', err);
-                alert('Failed to delete lesson');
+                alert('Failed to delete lesson: ' + err.message);
             }
         }
     };
@@ -237,45 +270,51 @@ const EditCourse = () => {
     // ================ Instructor Management =================
     const addInstructor = async (userId: number) => {
         try {
+            const token = localStorage.getItem('access_token');
             const res = await fetch(`/api/courses/${id}/instructors`, {
                 method: 'POST',
                 headers: { 
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Authorization': `Bearer ${token || ''}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ userId, role: 'assistant' })
             });
             
             if (!res.ok) {
+                const errorData = await res.json();
                 if (res.status === 403) {
-                    alert('You do not have permission to add instructors. Only organization owners/admins can manage instructors.');
+                    alert('You do not have permission to add instructors. Only organisations owners/admins can manage instructors.');
+                } else if (res.status === 409) {
+                    alert('This instructor is already assigned to the course.');
                 } else {
-                    alert('Failed to add instructor');
+                    alert('Failed to add instructor: ' + (errorData.error || errorData.message));
                 }
                 return;
             }
             
             fetchCourseData(); // Refresh instructors and members
+            alert('Instructor added successfully!');
         } catch (err: any) {
             console.error('Error adding instructor:', err);
-            alert('Failed to add instructor');
+            alert('Failed to add instructor: ' + err.message);
         }
     };
 
     const removeInstructor = async (userId: number) => {
         if (confirm('Are you sure you want to remove this instructor?')) {
             try {
+                const token = localStorage.getItem('access_token');
                 const res = await fetch(`/api/courses/${id}/instructors/${userId}`, {
                     method: 'DELETE',
                     headers: { 
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Authorization': `Bearer ${token || ''}`,
                         'Content-Type': 'application/json'
                     },
                 });
                 
                 if (!res.ok) {
                     if (res.status === 403) {
-                        alert('You do not have permission to remove instructors. Only organization owners/admins can manage instructors.');
+                        alert('You do not have permission to remove instructors. Only organisations owners/admins can manage instructors.');
                     } else {
                         alert('Failed to remove instructor');
                     }
@@ -283,19 +322,21 @@ const EditCourse = () => {
                 }
                 
                 fetchCourseData();
+                alert('Instructor removed successfully!');
             } catch (err: any) {
                 console.error('Error removing instructor:', err);
-                alert('Failed to remove instructor');
+                alert('Failed to remove instructor: ' + err.message);
             }
         }
     };
 
     const updateInstructorRole = async (userId: number, role: 'lead' | 'assistant') => {
         try {
+            const token = localStorage.getItem('access_token');
             const res = await fetch(`/api/courses/${id}/instructors/${userId}`, {
                 method: 'PUT',
                 headers: { 
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Authorization': `Bearer ${token || ''}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ role })
@@ -303,7 +344,7 @@ const EditCourse = () => {
             
             if (!res.ok) {
                 if (res.status === 403) {
-                    alert('You do not have permission to update instructor roles. Only organization owners/admins can manage instructors.');
+                    alert('You do not have permission to update instructor roles. Only organisations owners/admins can manage instructors.');
                 } else {
                     alert('Failed to update role');
                 }
@@ -311,29 +352,33 @@ const EditCourse = () => {
             }
             
             fetchCourseData();
+            alert('Instructor role updated successfully!');
         } catch (err: any) {
             console.error('Error updating role:', err);
-            alert('Failed to update role');
+            alert('Failed to update role: ' + err.message);
         }
     };
 
     const saveChanges = async () => {
         try {
+            const token = localStorage.getItem('access_token');
+            
             // Update course
             const courseRes = await fetch(`/api/courses/${id}`, {
                 method: 'PUT',
                 headers: { 
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Authorization': `Bearer ${token || ''}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(course)
             });
             
             if (!courseRes.ok) {
+                const errorData = await courseRes.json();
                 if (courseRes.status === 403) {
-                    setError('You do not have permission to update this course. Only organization owners/admins can update courses.');
+                    setError('You do not have permission to update this course. Only organisations owners/admins can update courses.');
                 } else {
-                    setError('Failed to save course changes');
+                    setError('Failed to save course changes: ' + (errorData.error || errorData.message));
                 }
                 return;
             }
@@ -343,7 +388,7 @@ const EditCourse = () => {
                 const lessonRes = await fetch(`/api/lessons/${lesson.id}`, {
                     method: 'PUT',
                     headers: { 
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Authorization': `Bearer ${token || ''}`,
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(lesson)
@@ -354,11 +399,11 @@ const EditCourse = () => {
                 }
             }
             
-            alert('Course updated successfully');
+            alert('Course updated successfully!');
             router.push('/dashboard/instructor/courses');
         } catch (err: any) {
             console.error('Error saving changes:', err);
-            setError('Failed to save changes');
+            setError('Failed to save changes: ' + err.message);
         }
     };
 
@@ -370,10 +415,21 @@ const EditCourse = () => {
     if (loading) return (
         <div className={styles.loadingContainer}>
             <Spinner animation="border" variant="primary" />
+            <p className="mt-3">Loading course data...</p>
         </div>
     );
     
-    if (error) return <Alert variant="danger">{error}</Alert>;
+    if (error) return (
+        <div className="container mt-5">
+            <Alert variant="danger">
+                <Alert.Heading>Error Loading Course</Alert.Heading>
+                <p>{error}</p>
+                <Button variant="outline-danger" onClick={() => router.push('/dashboard/instructor/courses')}>
+                    Back to Courses
+                </Button>
+            </Alert>
+        </div>
+    );
 
     return (
         <div className={styles.editCoursePage}>
@@ -383,6 +439,12 @@ const EditCourse = () => {
                     <FaSave /> Save All Changes
                 </Button>
             </div>
+
+            {uploadProgress && (
+                <Alert variant="info" className="mb-3">
+                    {uploadProgress}
+                </Alert>
+            )}
 
             <Row className="g-4">
                 <Col lg={8}>
@@ -419,6 +481,7 @@ const EditCourse = () => {
                                         accept="image/*" 
                                         onChange={handleThumbnailUpload}
                                         className={styles.fileInput}
+                                        disabled={uploading}
                                     />
                                     {course?.thumbnail_url && (
                                         <div className={styles.thumbnailPreview}>
@@ -437,6 +500,8 @@ const EditCourse = () => {
                                                 value={course?.price || ''} 
                                                 onChange={handleCourseChange}
                                                 className={styles.input}
+                                                step="0.01"
+                                                min="0"
                                             />
                                         </Form.Group>
                                     </Col>
@@ -564,6 +629,7 @@ const EditCourse = () => {
                                                 accept="video/*" 
                                                 onChange={handleNewLessonVideoUpload}
                                                 className={styles.fileInput}
+                                                disabled={uploading}
                                             />
                                             {newLesson.content_url && (
                                                 <Alert variant="success" className="mt-2">
@@ -719,7 +785,7 @@ const EditCourse = () => {
             {uploading && (
                 <div className={styles.uploadingOverlay}>
                     <Spinner animation="border" variant="light" />
-                    <p>Uploading...</p>
+                    <p>{uploadProgress || 'Uploading...'}</p>
                 </div>
             )}
         </div>
