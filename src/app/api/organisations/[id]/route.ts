@@ -49,6 +49,10 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
 		const data = await response.json();
 
+		console.log('fetching the organisation by ID response:', response); // Debug log
+		console.log('fetching the organisation by ID data:', data); // Debug log
+		
+
 		if (!response.ok) {
 			return NextResponse.json(data, { status: response.status });
 		}

@@ -41,8 +41,6 @@ const EditCourse = () => {
             setLoading(true);
 			const token = localStorage.getItem('access_token');
 
-			
-
             const courseRes = await fetch(`/api/courses/${id}`, {
                 headers: { 
                     'Authorization': `Bearer ${token || ''}`,
@@ -55,46 +53,46 @@ const EditCourse = () => {
             setCourse(courseData.data);
             setNewLesson({ ...newLesson, order: courseData.data.lessons?.length + 1 || 1 });
 
-            // // Fetch lessons for this course
-            // const lessonsRes = await fetch(`/api/lessons/course/${id}`, {
-            //     headers: { 
-            //         'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            //         'Content-Type': 'application/json'
-            //     },
-            // });
+            // Fetch lessons for this course
+            const lessonsRes = await fetch(`/api/lessons/course/${id}`, {
+                headers: { 
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json'
+                },
+            });
             
-            // if (lessonsRes.ok) {
-            //     const lessonsData = await lessonsRes.json();
-            //     setLessons(lessonsData.data || []);
-            // }
+            if (lessonsRes.ok) {
+                const lessonsData = await lessonsRes.json();
+                setLessons(lessonsData.data || []);
+            }
 
-            // // Fetch organization members if course belongs to an organization
-            // if (courseData.data.organizationId) {
-            //     const membersRes = await fetch(`/api/organizations/${courseData.data.organizationId}/members`, {
-            //         headers: { 
-            //             'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            //             'Content-Type': 'application/json'
-            //         },
-            //     });
+            // Fetch organization members if course belongs to an organization
+            if (courseData.data.organizationId) {
+                const membersRes = await fetch(`/api/organizations/${courseData.data.organizationId}/members`, {
+                    headers: { 
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
+                    },
+                });
                 
-            //     if (membersRes.ok) {
-            //         const membersData = await membersRes.json();
-            //         setMembers(membersData.data || []);
-            //     }
-            // }
+                if (membersRes.ok) {
+                    const membersData = await membersRes.json();
+                    setMembers(membersData.data || []);
+                }
+            }
 
-            // // Fetch course instructors
-            // const instructorsRes = await fetch(`/api/courses/${id}/instructors`, {
-            //     headers: { 
-            //         'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            //         'Content-Type': 'application/json'
-            //     },
-            // });
+            // Fetch course instructors
+            const instructorsRes = await fetch(`/api/courses/${id}/instructors`, {
+                headers: { 
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json'
+                },
+            });
             
-            // if (instructorsRes.ok) {
-            //     const instructorsData = await instructorsRes.json();
-            //     setInstructors(instructorsData.data || []);
-            // }
+            if (instructorsRes.ok) {
+                const instructorsData = await instructorsRes.json();
+                setInstructors(instructorsData.data || []);
+            }
         } catch (err: any) {
             setError('Failed to load course data: ' + err.message);
             console.error(err);
@@ -236,6 +234,7 @@ const EditCourse = () => {
         }
     };
 
+    // ================ Instructor Management =================
     const addInstructor = async (userId: number) => {
         try {
             const res = await fetch(`/api/courses/${id}/instructors`, {

@@ -7,7 +7,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Row, Col, Card, Button, Spinner, Alert, Badge } from 'react-bootstrap';
-import { FaPlus, FaBuilding, FaUsers } from 'react-icons/fa'; // Using react-icons for consistency
+import { FaPlus, FaBuilding, FaUsers, FaEye, FaEdit } from 'react-icons/fa'; // Using react-icons for consistency
 // import styles from '../../../_styles/MyOrganisations.module.scss'; // New SCSS module
 // import styles from '../_styles/InstructorOrganisations.module.scss'; // New SCSS module
 import styles from '../_styles/InstructorOrganisations.module.scss'; // New SCSS module
@@ -224,7 +224,7 @@ const MyOrganisations = ({
 								<Col key={org.id} md={6} lg={4}>
 									<Card
 										className={styles.orgCard}
-										onClick={() => handleOrgClick(org.id)}
+										// onClick={() => handleOrgClick(org.id)}
 									>
 										<div
 											className={styles.orgBanner}
@@ -259,6 +259,29 @@ const MyOrganisations = ({
 												)}
 											</div>
 										</Card.Body>
+
+										<Card.Footer className={styles.orgFooter}>
+											<div className={styles.actions}>
+												{org.id}
+												<Button
+													className={styles.editBtn}
+													onClick={() =>
+														router.push(
+															`/dashboard/instructor/organisations/${org.id}/edit`
+														)
+													}
+												>
+													<FaEdit /> Edit
+												</Button>
+												{/* <Button
+													className={styles.viewBtn}
+													onClick={() => router.push(`/organisations/${org.id}`)}
+												>
+													<FaEye /> View
+												</Button> */}
+												
+											</div>
+										</Card.Footer>
 									</Card>
 								</Col>
 							);
@@ -266,12 +289,19 @@ const MyOrganisations = ({
 					</Row>
 				</div>
 			)}
-
+{/* 
 			{ownedOrgs.length === 0 && memberOrgs.length === 0 && (
 				<div className={styles.emptyState}>
 					<p>No organisations found. Create one to get started!</p>
 				</div>
-			)}
+			)} */}
+			{
+				memberOrgs.length === 0 && (
+					<div className={styles.emptyState}>
+						<p>You are not a member of any organisations. Join one to see it here!</p>
+					</div>
+				)
+			}
 		</div>
 	);
 };
