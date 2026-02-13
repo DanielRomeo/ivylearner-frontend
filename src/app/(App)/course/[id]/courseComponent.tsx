@@ -6,6 +6,7 @@ import { Container, Row, Col, Card, Button, Badge, ListGroup, Spinner, Alert } f
 import { FaPlay, FaClock, FaUsers, FaStar, FaLock, FaUnlock, FaChalkboardTeacher } from 'react-icons/fa';
 // import styles from './_styles/CourseDetail.module.scss';
 import styles from '../../_styles/course/courseComponent.module.scss';
+import ModernNavbar from '../../_components/MainNavbar';
 
 const CourseDetailPage = () => {
     const { id } = useParams();
@@ -110,6 +111,7 @@ const CourseDetailPage = () => {
 
     return (
         <div className={styles.courseDetailPage}>
+            <ModernNavbar />
             {/* Hero Section */}
             <div className={styles.heroSection}>
                 <Container>

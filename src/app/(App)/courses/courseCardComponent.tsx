@@ -60,7 +60,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
 			? instructor.profilePicture
 			: 'https://i.pravatar.cc/150?img=1';
 
-	const courseLink = slug ? `/courses/${slug}` : id ? `/courses/${id}` : '#';
+	const courseLink = slug ? `/course/${slug}` : id ? `/course/${id}` : '#';
 
 	return (
 		<Link href={courseLink} className={styles.courseCardLink}>
