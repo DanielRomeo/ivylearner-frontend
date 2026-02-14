@@ -171,7 +171,9 @@ const EditCourse = () => {
         if (e.target.files?.[0]) {
             const url = await uploadToCloudinary(e.target.files[0], 'image');
             if (url) {
-                setCourse({ ...course, thumbnail_url: url });
+                setCourse({ ...course, thumbnail_url: url,
+                     thumbnailUrl: url     // For backend update -- because we have different field names in frontend and backend, we set both to ensure it works regardless of which one the backend expects
+                 });
             }
         }
     };
@@ -374,6 +376,19 @@ const EditCourse = () => {
         try {
             const token = localStorage.getItem('access_token');
             
+            // Only send fields that can be updated (exclude read-only fields)
+            const updateData = {
+                title: course?.title,
+                description: course?.description,
+                shortDescription: course?.shortDescription,
+                price: course?.price,
+                thumbnailUrl: course?.thumbnailUrl || course?.thumbnail_url,
+                durationWeeks: course?.durationWeeks,
+                isPublished: course?.isPublished || course?.status === 'published',
+            };
+
+            console.log('Updating course with data:', updateData);
+            
             // Update course
             const courseRes = await fetch(`/api/courses/${id}`, {
                 method: 'PUT',
@@ -381,7 +396,7 @@ const EditCourse = () => {
                     'Authorization': `Bearer ${token || ''}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(course)
+                body: JSON.stringify(updateData)
             });
             
             if (!courseRes.ok) {
@@ -396,13 +411,23 @@ const EditCourse = () => {
             
             // Update all lessons
             for (const lesson of lessons) {
+                // Transform lesson data to match backend DTO (camelCase)
+                const lessonUpdateData = {
+                    title: lesson.title,
+                    videoUrl: lesson.videoUrl || lesson.content_url,
+                    orderIndex: lesson.orderIndex || lesson.order,
+                    durationMinutes: lesson.durationMinutes || lesson.duration_minutes,
+                    isFreePreview: lesson.isFreePreview !== undefined ? lesson.isFreePreview : lesson.is_free_preview,
+                    contentType: lesson.contentType || 'video'
+                };
+
                 const lessonRes = await fetch(`/api/lessons/${lesson.id}`, {
                     method: 'PUT',
                     headers: { 
                         'Authorization': `Bearer ${token || ''}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(lesson)
+                    body: JSON.stringify(lessonUpdateData)
                 });
                 
                 if (!lessonRes.ok) {
@@ -496,7 +521,7 @@ const EditCourse = () => {
                                     />
                                     {course?.thumbnail_url && (
                                         <div className={styles.thumbnailPreview}>
-                                            <img src={course.thumbnail_url} alt="Thumbnail" />
+                                            <img src={course.thumbnailUrl || course.thumbnail_url} alt="Thumbnail" />
                                         </div>
                                     )}
                                 </Form.Group>

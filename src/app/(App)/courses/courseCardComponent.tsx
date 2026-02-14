@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Clock, Award, BookOpen, Users, Star } from 'lucide-react';
 import styles from '../_styles/courses/courseCardComponent.module.scss';
 
@@ -18,7 +17,7 @@ interface CourseCardProps {
 		  }
 		| string;
 	price?: number;
-	level: string;
+	level?: string;
 	tags?: string[];
 	certificateAvailable?: boolean;
 	language?: string;
@@ -35,25 +34,24 @@ const CourseCard: React.FC<CourseCardProps> = ({
 	duration,
 	instructor,
 	price = 0,
-	level,
+	level = 'beginner',
 	tags = [],
-	certificateAvailable,
-	language,
+	certificateAvailable = false,
+	language = 'English',
 	enrollmentCount = 0,
-	rating = 0,
+	rating = 4.5,
 	thumbnailUrl,
 	slug,
 }) => {
-	const isFree = price === 0;
+	const isFree = price === 0 || !price;
 	const numericRating = typeof rating === 'string' ? parseFloat(rating) : rating;
-	const filledStars = Math.floor(numericRating);
 
 	const instructorName =
 		typeof instructor === 'string'
 			? instructor
 			: instructor
 				? `${instructor.firstName} ${instructor.lastName}`
-				: 'Unknown Instructor';
+				: 'Expert Instructor';
 
 	const instructorImage =
 		typeof instructor === 'object' && instructor?.profilePicture
@@ -61,6 +59,9 @@ const CourseCard: React.FC<CourseCardProps> = ({
 			: 'https://i.pravatar.cc/150?img=1';
 
 	const courseLink = slug ? `/course/${slug}` : id ? `/course/${id}` : '#';
+
+	// Format price for South African Rand
+	const formattedPrice = isFree ? 'Free' : `R${price}`;
 
 	return (
 		<Link href={courseLink} className={styles.courseCardLink}>
@@ -76,7 +77,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
 					)}
 					<div className={styles.badge}>
 						<span className={isFree ? styles.freeBadge : styles.paidBadge}>
-							{isFree ? 'Free' : `$${price}`}
+							{formattedPrice}
 						</span>
 					</div>
 				</div>
@@ -84,7 +85,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
 				{/* Card Content */}
 				<div className={styles.content}>
 					<div className={styles.header}>
-						<span className={`${styles.levelBadge} ${styles[level]}`}>
+						<span className={`${styles.levelBadge} ${styles[level.toLowerCase()]}`}>
 							{level.charAt(0).toUpperCase() + level.slice(1)}
 						</span>
 						{language && <span className={styles.language}>🌐 {language}</span>}
@@ -92,7 +93,14 @@ const CourseCard: React.FC<CourseCardProps> = ({
 
 					<h3 className={styles.title}>{title}</h3>
 
-					{shortDescription && <p className={styles.description}>{shortDescription}</p>}
+					{shortDescription && (
+						<p className={styles.description}>
+							{shortDescription.length > 100 
+								? `${shortDescription.substring(0, 100)}...` 
+								: shortDescription
+							}
+						</p>
+					)}
 
 					{/* Instructor Info */}
 					<div className={styles.instructorInfo}>
@@ -121,7 +129,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
 					</div>
 
 					{/* Tags */}
-					{tags.length > 0 && (
+					{tags && tags.length > 0 && (
 						<div className={styles.tags}>
 							{tags.slice(0, 3).map((tag, index) => (
 								<span key={index} className={styles.tag}>
@@ -135,7 +143,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
 					<div className={styles.footer}>
 						<div className={styles.enrolled}>
 							<Users size={16} />
-							<span>{enrollmentCount.toLocaleString()}</span>
+							<span>{enrollmentCount.toLocaleString()} students</span>
 						</div>
 						<div className={styles.rating}>
 							<Star size={16} className={styles.starIcon} />

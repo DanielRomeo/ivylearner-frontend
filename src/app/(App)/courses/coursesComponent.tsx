@@ -2,19 +2,17 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Form, InputGroup, Button } from 'react-bootstrap';
 import { Search, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
-// import ModernNavbar from '../_components/ModernNavbar';
 import ModernNavbar from '../_components/MainNavbar';
 import CourseCard from './courseCardComponent';
 import styles from '../_styles/courses/coursesComponent.module.scss';
-import axios from 'axios';
 
-const ITEMS_PER_PAGE = 9;
+const ITEMS_PER_PAGE = 3; // Changed from 9 to 3
 
 const CoursesPage: React.FC = () => {
 	const [courses, setCourses] = useState<any[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [searchTerm, setSearchTerm] = useState('');
-	const [selectedLevel, setSelectedLevel] = useState('all');
+	const [selectedFilter, setSelectedFilter] = useState('all'); // Changed from selectedLevel
 	const [currentPage, setCurrentPage] = useState(1);
 
 	// Fetch courses on mount
@@ -25,49 +23,48 @@ const CoursesPage: React.FC = () => {
 	const fetchCourses = async () => {
 		try {
 			setLoading(true);
-			// TODO: Replace with actual API call
-			// const response = await axios.get('/api/courses/published');
-			// setCourses(response.data.data);
-
-			// Mock data for now
-			const mockCourses = Array.from({ length: 24 }, (_, i) => ({
-				id: i + 1,
-				title: `Course ${i + 1}: ${['Web Development', 'Data Science', 'Mobile Apps', 'UI/UX Design', 'Machine Learning'][i % 5]}`,
-				shortDescription:
-					'Learn the fundamentals and advanced concepts with hands-on projects and real-world examples.',
-				duration: `${Math.floor(Math.random() * 10) + 5} hours`,
-				instructor: {
-					firstName: ['John', 'Jane', 'Mike', 'Sarah', 'David'][i % 5],
-					lastName: ['Doe', 'Smith', 'Johnson', 'Williams', 'Brown'][i % 5],
-					profilePicture: `https://i.pravatar.cc/150?img=${(i % 20) + 1}`,
+			
+			// Fetch real courses from API
+			const response = await fetch('/api/courses', {
+				headers: {
+					'Content-Type': 'application/json',
 				},
-				thumbnailUrl: `https://picsum.photos/seed/${i}/400/250`,
-				price: Math.random() > 0.3 ? Math.floor(Math.random() * 100) + 29 : 0,
-				level: ['beginner', 'intermediate', 'advanced'][i % 3],
-				certificateAvailable: Math.random() > 0.3,
-				language: 'English',
-				rating: (Math.random() * 2 + 3).toFixed(1),
-				enrollmentCount: Math.floor(Math.random() * 1000) + 50,
-				tags: ['Programming', 'Web', 'Backend', 'Frontend'].slice(
-					0,
-					Math.floor(Math.random() * 3) + 1
-				),
-			}));
-			setCourses(mockCourses);
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to fetch courses');
+			}
+
+			const data = await response.json();
+			const coursesList = data.data || data || [];
+			
+			console.log('Fetched courses:', coursesList);
+			setCourses(coursesList);
 		} catch (error) {
 			console.error('Error fetching courses:', error);
+			setCourses([]); // Set empty array on error
 		} finally {
 			setLoading(false);
 		}
 	};
 
-	// Filter courses based on search and level
+	// Filter courses based on search and price filter
 	const filteredCourses = courses.filter((course) => {
 		const matchesSearch =
-			course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-			course.shortDescription.toLowerCase().includes(searchTerm.toLowerCase());
-		const matchesLevel = selectedLevel === 'all' || course.level === selectedLevel;
-		return matchesSearch && matchesLevel;
+			course.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+			course.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+			course.shortDescription?.toLowerCase().includes(searchTerm.toLowerCase());
+		
+		// Filter by price (free vs paid)
+		let matchesFilter = true;
+		if (selectedFilter === 'free') {
+			matchesFilter = course.price === 0 || !course.price;
+		} else if (selectedFilter === 'paid') {
+			matchesFilter = course.price > 0;
+		}
+		// 'all' means no filter
+		
+		return matchesSearch && matchesFilter;
 	});
 
 	// Pagination logic
@@ -79,7 +76,7 @@ const CoursesPage: React.FC = () => {
 	// Reset to page 1 when filters change
 	useEffect(() => {
 		setCurrentPage(1);
-	}, [searchTerm, selectedLevel]);
+	}, [searchTerm, selectedFilter]);
 
 	const handlePageChange = (page: number) => {
 		setCurrentPage(page);
@@ -119,14 +116,13 @@ const CoursesPage: React.FC = () => {
 						</Col>
 						<Col md={4}>
 							<Form.Select
-								value={selectedLevel}
-								onChange={(e) => setSelectedLevel(e.target.value)}
+								value={selectedFilter}
+								onChange={(e) => setSelectedFilter(e.target.value)}
 								className={styles.filterSelect}
 							>
-								<option value="all">All Levels</option>
-								<option value="beginner">Beginner</option>
-								<option value="intermediate">Intermediate</option>
-								<option value="advanced">Advanced</option>
+								<option value="all">All Courses</option>
+								<option value="free">Free Courses</option>
+								<option value="paid">Paid Courses</option>
 							</Form.Select>
 						</Col>
 					</Row>
@@ -153,7 +149,26 @@ const CoursesPage: React.FC = () => {
 							<Row className="g-4">
 								{currentCourses.map((course) => (
 									<Col key={course.id} lg={4} md={6} sm={12}>
-										<CourseCard {...course} />
+										<CourseCard
+											id={course.id}
+											title={course.title}
+											shortDescription={course.shortDescription || course.description}
+											duration={course.durationWeeks ? `${course.durationWeeks} weeks` : undefined}
+											instructor={{
+												firstName: 'Course',
+												lastName: 'Instructor',
+												profilePicture: undefined
+											}}
+											price={course.price || 0}
+											level={course.level || 'beginner'}
+											tags={course.tags ? JSON.parse(course.tags) : []}
+											certificateAvailable={course.certificateAvailable || false}
+											language={course.language || 'English'}
+											enrollmentCount={course.enrollmentCount || 0}
+											rating={course.rating || 4.5}
+											thumbnailUrl={course.thumbnailUrl}
+											slug={course.slug}
+										/>
 									</Col>
 								))}
 							</Row>

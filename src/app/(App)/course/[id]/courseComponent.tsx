@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Container, Row, Col, Card, Button, Badge, ListGroup, Spinner, Alert } from 'react-bootstrap';
-import { FaPlay, FaClock, FaUsers, FaStar, FaLock, FaUnlock, FaChalkboardTeacher } from 'react-icons/fa';
-// import styles from './_styles/CourseDetail.module.scss';
+import { FaPlay, FaClock, FaUsers, FaStar, FaLock, FaUnlock, FaChalkboardTeacher, FaCheckCircle } from 'react-icons/fa';
 import styles from '../../_styles/course/courseComponent.module.scss';
 import ModernNavbar from '../../_components/MainNavbar';
 
@@ -17,6 +16,7 @@ const CourseDetailPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isEnrolled, setIsEnrolled] = useState(false);
+    const [enrolling, setEnrolling] = useState(false);
 
     useEffect(() => {
         fetchCourseData();
@@ -31,9 +31,12 @@ const CourseDetailPage = () => {
             const courseRes = await fetch(`/api/courses/${id}`, {
                 headers: token ? { 'Authorization': `Bearer ${token}` } : {},
             });
+
+            // console.log('Course response status:', courseRes);
             
             if (!courseRes.ok) throw new Error('Failed to fetch course');
             const courseData = await courseRes.json();
+            console.log('Course data:', courseData);
             setCourse(courseData.data || courseData);
 
             // Fetch lessons
@@ -58,8 +61,22 @@ const CourseDetailPage = () => {
 
             // Check if user is enrolled (if logged in)
             if (token) {
-                // You can add enrollment check here
-                // const enrollmentRes = await fetch(`/api/enrollments/check/${id}`, {...});
+                try {
+                    const enrollmentRes = await fetch('/api/enrollments/my-enrollments', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    
+                    if (enrollmentRes.ok) {
+                        const enrollmentData = await enrollmentRes.json();
+                        const enrollments = enrollmentData.data || enrollmentData || [];
+                        const enrolled = enrollments.some((e: any) => 
+                            e.courseId === parseInt(id as string) || e.courseId === id
+                        );
+                        setIsEnrolled(enrolled);
+                    }
+                } catch (err) {
+                    console.error('Error checking enrollment:', err);
+                }
             }
         } catch (err: any) {
             setError('Failed to load course: ' + err.message);
@@ -68,20 +85,76 @@ const CourseDetailPage = () => {
         }
     };
 
-    const handleEnroll = () => {
+    const handleEnroll = async () => {
         const token = localStorage.getItem('access_token');
         if (!token) {
             router.push('/login');
             return;
         }
-        // Handle enrollment logic
-        router.push(`/checkout/${id}`);
+
+        // If already enrolled, go to first lesson
+        if (isEnrolled) {
+            const firstLesson = lessons.find(l => l.orderIndex === 1 || l.order === 1) || lessons[0];
+            if (firstLesson) {
+                router.push(`/lesson/${firstLesson.id}`);
+            }
+            return;
+        }
+
+        // For free courses (R0), enroll directly
+        if (course?.price === 0 || !course?.price) {
+            setEnrolling(true);
+            try {
+                const response = await fetch('/api/enrollments', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        courseId: parseInt(id as string)
+                    })
+                });
+
+                if (response.ok) {
+                    setIsEnrolled(true);
+                    alert('Successfully enrolled! 🎉');
+                    // Refresh to update UI
+                    fetchCourseData();
+                } else {
+                    const errorData = await response.json();
+                    alert('Enrollment failed: ' + (errorData.error || 'Unknown error'));
+                }
+            } catch (err: any) {
+                console.error('Enrollment error:', err);
+                alert('Failed to enroll: ' + err.message);
+            } finally {
+                setEnrolling(false);
+            }
+        } else {
+            // For paid courses, go to checkout
+            router.push(`/checkout/${id}`);
+        }
     };
 
     const handleLessonClick = (lessonId: number, isFreePreview: boolean) => {
+        const token = localStorage.getItem('access_token');
+        
+        // Free preview lessons - anyone can access
         if (isFreePreview) {
             router.push(`/lesson/${lessonId}`);
-        } else if (isEnrolled) {
+            return;
+        }
+
+        // Must be logged in
+        if (!token) {
+            alert('Please log in to access this lesson');
+            router.push('/login');
+            return;
+        }
+
+        // Must be enrolled
+        if (isEnrolled) {
             router.push(`/lesson/${lessonId}`);
         } else {
             alert('Please enroll in this course to access this lesson');
@@ -120,6 +193,11 @@ const CourseDetailPage = () => {
                             <Badge bg="success" className={styles.categoryBadge}>
                                 {course?.category || 'Course'}
                             </Badge>
+                            {isEnrolled && (
+                                <Badge bg="primary" className="ms-2">
+                                    <FaCheckCircle /> Enrolled
+                                </Badge>
+                            )}
                             <h1 className={styles.courseTitle}>{course?.title}</h1>
                             <p className={styles.courseDescription}>
                                 {course?.shortDescription || course?.description}
@@ -168,20 +246,35 @@ const CourseDetailPage = () => {
                                 </div>
                                 <Card.Body>
                                     <div className={styles.priceSection}>
-                                        <h2 className={styles.price}>
-                                            ${course?.price || 0}
-                                        </h2>
-                                        {course?.price > 0 && (
-                                            <span className={styles.originalPrice}>$199.99</span>
+                                        {course?.price === 0 || !course?.price ? (
+                                            <h2 className={styles.price}>Free</h2>
+                                        ) : (
+                                            <>
+                                                <h2 className={styles.price}>R{course?.price}</h2>
+                                                <span className={styles.originalPrice}>R{(course?.price * 1.5).toFixed(2)}</span>
+                                            </>
                                         )}
                                     </div>
                                     <Button 
-                                        variant="success" 
+                                        variant={isEnrolled ? "outline-success" : "success"} 
                                         size="lg" 
                                         className={styles.enrollBtn}
                                         onClick={handleEnroll}
+                                        disabled={enrolling}
                                     >
-                                        {isEnrolled ? 'Go to Course' : 'Enroll Now'}
+                                        {enrolling ? (
+                                            <>
+                                                <Spinner size="sm" animation="border" /> Enrolling...
+                                            </>
+                                        ) : isEnrolled ? (
+                                            <>
+                                                <FaCheckCircle /> Already Enrolled - Continue Learning
+                                            </>
+                                        ) : course?.price === 0 || !course?.price ? (
+                                            'Enroll for Free'
+                                        ) : (
+                                            'Buy Now'
+                                        )}
                                     </Button>
                                     <div className={styles.includes}>
                                         <h6>This course includes:</h6>
@@ -241,9 +334,7 @@ const CourseDetailPage = () => {
                                         >
                                             <div className={styles.lessonInfo}>
                                                 <div className={styles.lessonNumber}>
-                                                    {lesson.isFreePreview ? (
-                                                        <FaPlay className={styles.playIcon} />
-                                                    ) : isEnrolled ? (
+                                                    {lesson.isFreePreview || isEnrolled ? (
                                                         <FaPlay className={styles.playIcon} />
                                                     ) : (
                                                         <FaLock className={styles.lockIcon} />
@@ -255,6 +346,11 @@ const CourseDetailPage = () => {
                                                     {lesson.isFreePreview && (
                                                         <Badge bg="success" className={styles.previewBadge}>
                                                             Free Preview
+                                                        </Badge>
+                                                    )}
+                                                    {isEnrolled && !lesson.isFreePreview && (
+                                                        <Badge bg="primary" className={styles.previewBadge}>
+                                                            Unlocked
                                                         </Badge>
                                                     )}
                                                 </div>

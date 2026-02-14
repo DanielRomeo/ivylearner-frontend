@@ -2,21 +2,23 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Row, Col, Card, Button, Badge, Form, InputGroup, Alert } from 'react-bootstrap';
+import { Row, Col, Card, Button, Badge, Form, InputGroup, Alert, Spinner } from 'react-bootstrap';
 import {
 	FaPlus,
 	FaEdit,
 	FaTrash,
 	FaUsers,
-	FaStar,
 	FaDollarSign,
 	FaEye,
 	FaSearch,
 	FaChartLine,
 	FaClock,
+	FaChevronLeft,
+	FaChevronRight,
 } from 'react-icons/fa';
 import styles from '../_styles/InstructorCourses.module.scss';
-import axios from 'axios';
+
+const ITEMS_PER_PAGE = 6;
 
 interface InstructorCoursesProps {
 	sidebarOpen?: boolean;
@@ -28,8 +30,10 @@ const InstructorCourses = ({ sidebarOpen, isMobile }: InstructorCoursesProps) =>
 	const [searchQuery, setSearchQuery] = useState('');
 	const [filterStatus, setFilterStatus] = useState('all');
 	const [courses, setCourses] = useState<any[]>([]);
+	const [enrollments, setEnrollments] = useState<any[]>([]);
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(true);
+	const [currentPage, setCurrentPage] = useState(1);
 
 	useEffect(() => {
 		fetchCourses();
@@ -40,24 +44,42 @@ const InstructorCourses = ({ sidebarOpen, isMobile }: InstructorCoursesProps) =>
 			setLoading(true);
 			const token = localStorage.getItem('access_token');
 
-			const response = await fetch('/api/courses/mycourses', {
+			// Fetch instructor's courses
+			const response = await fetch('/api/courses/my-courses', {
 				headers: {
 					Authorization: `Bearer ${token || ''}`,
 				},
 			});
-			if (response.ok) {
-				// console.log('Courses fetched successfully');
-				// console.log('Response:', response);
-				const data = await response.json();
-				// console.log('Data:', data);
-				setCourses(data.data || []);
-			} else {
+
+			if (!response.ok) {
 				throw new Error('Failed to fetch courses');
 			}
+
+			const data = await response.json();
+			const coursesList = data.data || data || [];
+			setCourses(coursesList);
+
+			// Fetch all enrollments to calculate stats
+			try {
+				const enrollmentsRes = await fetch('/api/enrollments/my-enrollments', {
+					headers: {
+						Authorization: `Bearer ${token || ''}`,
+					},
+				});
+				
+				if (enrollmentsRes.ok) {
+					const enrollData = await enrollmentsRes.json();
+					setEnrollments(enrollData.data || enrollData || []);
+				}
+			} catch (err) {
+				console.error('Error fetching enrollments:', err);
+			}
+
 		} catch (err) {
-			setLoading(false);
 			console.error('Error fetching courses:', err);
 			setError('Failed to load courses');
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -68,38 +90,87 @@ const InstructorCourses = ({ sidebarOpen, isMobile }: InstructorCoursesProps) =>
 	const handleDelete = async (id: number) => {
 		if (confirm('Are you sure you want to delete this course?')) {
 			try {
-				await axios.delete(`/api/courses/${id}`, {
+				const token = localStorage.getItem('access_token');
+				const response = await fetch(`/api/courses/${id}`, {
+					method: 'DELETE',
 					headers: {
-						Authorization: `Bearer ${localStorage.getItem('token')}`,
+						Authorization: `Bearer ${token || ''}`,
 					},
 				});
-				setCourses(courses.filter((course) => course.id !== id));
+
+				if (response.ok) {
+					setCourses(courses.filter((course) => course.id !== id));
+					alert('Course deleted successfully!');
+				} else {
+					const errorData = await response.json();
+					if (response.status === 403) {
+						alert('You do not have permission to delete this course. Only the organization owner can delete courses.');
+					} else {
+						alert('Failed to delete course: ' + (errorData.error || 'Unknown error'));
+					}
+				}
 			} catch (err: any) {
 				console.error('Error deleting course:', err);
-				if (err.response?.status === 403) {
-					alert(
-						'You do not have permission to delete this course. Only the organization owner can delete courses.'
-					);
-				} else {
-					alert('Failed to delete course');
-				}
+				alert('Failed to delete course');
 			}
 		}
 	};
 
+	// Filter courses
 	const filteredCourses = courses.filter((course) => {
 		const matchesSearch =
-			course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			course.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
 			(course.category || '').toLowerCase().includes(searchQuery.toLowerCase());
-		const matchesFilter = filterStatus === 'all' || course.status === filterStatus;
+		
+		let matchesFilter = true;
+		if (filterStatus === 'published') {
+			matchesFilter = course.isPublished === true || course.status === 'published';
+		} else if (filterStatus === 'draft') {
+			matchesFilter = course.isPublished === false || course.status === 'draft';
+		}
+		
 		return matchesSearch && matchesFilter;
 	});
 
-	const totalStudents = courses.reduce((sum, course) => sum + (course.students || 0), 0);
-	// const totalRevenue = courses.reduce((sum, course) => sum + (course.revenue || 0), 0);
-	const avgRating =
-		courses.reduce((sum, course) => sum + (course.rating || 0), 0) /
-			courses.filter((c) => c.rating > 0).length || 0;
+	// Pagination
+	const totalPages = Math.ceil(filteredCourses.length / ITEMS_PER_PAGE);
+	const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+	const endIndex = startIndex + ITEMS_PER_PAGE;
+	const currentCourses = filteredCourses.slice(startIndex, endIndex);
+
+	// Reset to page 1 when filters change
+	useEffect(() => {
+		setCurrentPage(1);
+	}, [searchQuery, filterStatus]);
+
+	const handlePageChange = (page: number) => {
+		setCurrentPage(page);
+		window.scrollTo({ top: 0, behavior: 'smooth' });
+	};
+
+	// Calculate stats dynamically
+	const getStudentCount = (courseId: number) => {
+		return enrollments.filter(e => e.courseId === courseId).length;
+	};
+
+	const totalStudents = enrollments.length;
+	const totalRevenue = courses.reduce((sum, course) => {
+		const studentCount = getStudentCount(course.id);
+		const coursePrice = course.price || 0;
+		return sum + (studentCount * coursePrice);
+	}, 0);
+
+	const publishedCount = courses.filter(c => c.isPublished || c.status === 'published').length;
+	const draftCount = courses.filter(c => !c.isPublished || c.status === 'draft').length;
+
+	if (loading) {
+		return (
+			<div className={styles.loadingContainer}>
+				<Spinner animation="border" variant="success" />
+				<p>Loading your courses...</p>
+			</div>
+		);
+	}
 
 	return (
 		<div
@@ -119,7 +190,7 @@ const InstructorCourses = ({ sidebarOpen, isMobile }: InstructorCoursesProps) =>
 
 			{/* Stats Overview */}
 			<Row className="g-4 mb-4">
-				<Col md={3}>
+				<Col md={4}>
 					<Card className={styles.statCard}>
 						<Card.Body>
 							<div
@@ -131,13 +202,13 @@ const InstructorCourses = ({ sidebarOpen, isMobile }: InstructorCoursesProps) =>
 								<FaUsers />
 							</div>
 							<div className={styles.statContent}>
-								{/* <h3>{totalStudents}</h3> */}
+								<h3>{totalStudents}</h3>
 								<p>Total Students</p>
 							</div>
 						</Card.Body>
 					</Card>
 				</Col>
-				<Col md={3}>
+				<Col md={4}>
 					<Card className={styles.statCard}>
 						<Card.Body>
 							<div
@@ -149,31 +220,13 @@ const InstructorCourses = ({ sidebarOpen, isMobile }: InstructorCoursesProps) =>
 								<FaDollarSign />
 							</div>
 							<div className={styles.statContent}>
-								{/* <h3>${totalRevenue.toLocaleString()}</h3> */}
+								<h3>R{totalRevenue.toLocaleString()}</h3>
 								<p>Total Revenue</p>
 							</div>
 						</Card.Body>
 					</Card>
 				</Col>
-				<Col md={3}>
-					<Card className={styles.statCard}>
-						<Card.Body>
-							<div
-								className={styles.statIcon}
-								style={{
-									background: 'linear-gradient(135deg, #f9c80e 0%, #d4a807 100%)',
-								}}
-							>
-								<FaStar />
-							</div>
-							<div className={styles.statContent}>
-								{/* <h3>{avgRating.toFixed(1)}</h3> */}
-								<p>Average Rating</p>
-							</div>
-						</Card.Body>
-					</Card>
-				</Col>
-				<Col md={3}>
+				<Col md={4}>
 					<Card className={styles.statCard}>
 						<Card.Body>
 							<div
@@ -185,7 +238,7 @@ const InstructorCourses = ({ sidebarOpen, isMobile }: InstructorCoursesProps) =>
 								<FaChartLine />
 							</div>
 							<div className={styles.statContent}>
-								{/* <h3>{courses.length}</h3> */}
+								<h3>{courses.length}</h3>
 								<p>Total Courses</p>
 							</div>
 						</Card.Body>
@@ -214,147 +267,217 @@ const InstructorCourses = ({ sidebarOpen, isMobile }: InstructorCoursesProps) =>
 						<Col md={6}>
 							<div className={styles.filterBtns}>
 								<Button
-									variant={
-										filterStatus === 'all' ? 'primary' : 'outline-secondary'
-									}
+									variant={filterStatus === 'all' ? 'success' : 'outline-secondary'}
 									onClick={() => setFilterStatus('all')}
 									className={styles.filterBtn}
 								>
-									All
+									All ({courses.length})
 								</Button>
 								<Button
-									variant={
-										filterStatus === 'published'
-											? 'primary'
-											: 'outline-secondary'
-									}
+									variant={filterStatus === 'published' ? 'success' : 'outline-secondary'}
 									onClick={() => setFilterStatus('published')}
 									className={styles.filterBtn}
 								>
-									Published
+									Published ({publishedCount})
 								</Button>
 								<Button
-									variant={
-										filterStatus === 'draft' ? 'primary' : 'outline-secondary'
-									}
+									variant={filterStatus === 'draft' ? 'success' : 'outline-secondary'}
 									onClick={() => setFilterStatus('draft')}
 									className={styles.filterBtn}
 								>
-									Drafts
-								</Button>
-								<Button
-									variant={
-										filterStatus === 'archived'
-											? 'primary'
-											: 'outline-secondary'
-									}
-									onClick={() => setFilterStatus('archived')}
-									className={styles.filterBtn}
-								>
-									Archived
+									Drafts ({draftCount})
 								</Button>
 							</div>
 						</Col>
 					</Row>
+					<div className={styles.resultsInfo}>
+						<p>
+							Showing <strong>{currentCourses.length}</strong> of{' '}
+							<strong>{filteredCourses.length}</strong> courses
+						</p>
+					</div>
 				</Card.Body>
 			</Card>
 
 			{/* Courses Grid */}
-			 <Row className="g-4">
-				{filteredCourses.map((course) => (
-					<Col key={course.id} md={6} lg={4}>
-						<Card className={styles.courseCard}>
-							<div className={styles.thumbnailContainer}>
-								<img
-									src={
-										course.thumbnail_url ||
-										'https://placehold.co/600x400/pink/black?text=image+here'
-									}
-									alt={course.title}
-									className={styles.thumbnail}
-								/>
-								<Badge className={`${styles.statusBadge} ${styles[course.status]}`}>
-									{course.status}
-								</Badge>
-							</div>
-							<Card.Body>
-								<div className={styles.courseHeader}>
-									<Badge className={styles.categoryBadge}>
-										{course.category || 'Uncategorized'}
-									</Badge>
-									<span className={styles.duration}>
-										<FaClock /> {course.duration || 'N/A'}
-									</span>
-								</div>
+			{currentCourses.length > 0 ? (
+				<>
+					<Row className="g-4">
+						{currentCourses.map((course) => {
+							const isFree = course.price === 0 || !course.price;
+							const studentCount = getStudentCount(course.id);
+							const revenue = studentCount * (course.price || 0);
 
-								<h3 className={styles.courseTitle}>{course.title}</h3>
-
-								<div className={styles.courseStats}>
-									<div className={styles.statItem}>
-										<FaUsers />
-										<span>{course.students || 0} students</span>
-									</div>
-									{course.rating > 0 && (
-										<div className={styles.statItem}>
-											<FaStar />
-											<span>
-												{course.rating} ({course.reviews || 0})
-											</span>
+							return (
+								<Col key={course.id} md={6} lg={4}>
+									<Card className={styles.courseCard}>
+										<div className={styles.thumbnailContainer}>
+											<img
+												src={
+													course.thumbnailUrl ||
+													course.thumbnail_url ||
+													'https://placehold.co/600x400/00bf63/white?text=No+Image'
+												}
+												alt={course.title}
+												className={styles.thumbnail}
+											/>
+											<Badge
+												className={`${styles.statusBadge} ${
+													course.isPublished || course.status === 'published'
+														? styles.published
+														: styles.draft
+												}`}
+											>
+												{course.isPublished || course.status === 'published'
+													? 'Published'
+													: 'Draft'}
+											</Badge>
+											<Badge
+												className={`${styles.priceBadge} ${
+													isFree ? styles.free : styles.paid
+												}`}
+											>
+												{isFree ? 'Free' : `R${course.price}`}
+											</Badge>
 										</div>
-									)}
-								</div>
+										<Card.Body>
+											<div className={styles.courseHeader}>
+												<Badge className={styles.categoryBadge}>
+													{course.category || 'Uncategorized'}
+												</Badge>
+												{course.durationWeeks && (
+													<span className={styles.duration}>
+														<FaClock /> {course.durationWeeks} weeks
+													</span>
+												)}
+											</div>
 
-								<div className={styles.revenue}>
-									<FaDollarSign />
-									<span>${(course.revenue || 0).toLocaleString()}</span>
-								</div>
+											<h3 className={styles.courseTitle}>{course.title}</h3>
 
-								<div className={styles.lastUpdated}>
-									Last updated: {new Date(course.updated_at).toLocaleDateString()}
-								</div>
+											<p className={styles.courseDescription}>
+												{course.shortDescription || course.description
+													? (course.shortDescription || course.description).substring(0, 80) + '...'
+													: 'No description available'}
+											</p>
 
-								<div className={styles.actions}>
+											<div className={styles.courseStats}>
+												<div className={styles.statItem}>
+													<FaUsers />
+													<span>{studentCount} students</span>
+												</div>
+											</div>
+
+											{!isFree && (
+												<div className={styles.revenue}>
+													<FaDollarSign />
+													<span>R{revenue.toLocaleString()} revenue</span>
+												</div>
+											)}
+
+											<div className={styles.lastUpdated}>
+												Last updated:{' '}
+												{course.updatedAt || course.updated_at
+													? new Date(
+															course.updatedAt || course.updated_at
+													  ).toLocaleDateString()
+													: 'N/A'}
+											</div>
+
+											<div className={styles.actions}>
+												<Button
+													className={styles.editBtn}
+													onClick={() =>
+														router.push(
+															`/dashboard/instructor/courses/${course.id}/edit`
+														)
+													}
+												>
+													<FaEdit /> Edit
+												</Button>
+												<Button
+													className={styles.viewBtn}
+													onClick={() =>
+														router.push(`/course/${course.id}`)
+													}
+												>
+													<FaEye /> View
+												</Button>
+												<Button
+													className={styles.deleteBtn}
+													onClick={() => handleDelete(course.id)}
+												>
+													<FaTrash />
+												</Button>
+											</div>
+										</Card.Body>
+									</Card>
+								</Col>
+							);
+						})}
+					</Row>
+
+					{/* Pagination */}
+					{totalPages > 1 && (
+						<div className={styles.pagination}>
+							<Button
+								variant="outline-secondary"
+								disabled={currentPage === 1}
+								onClick={() => handlePageChange(currentPage - 1)}
+								className={styles.paginationButton}
+							>
+								<FaChevronLeft size={16} />
+								Previous
+							</Button>
+
+							<div className={styles.pageNumbers}>
+								{Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
 									<Button
-										className={styles.editBtn}
-										onClick={() =>
-											router.push(
-												`/dashboard/instructor/courses/${course.id}/edit`
-											)
-										}
+										key={page}
+										variant={currentPage === page ? 'success' : 'outline-secondary'}
+										onClick={() => handlePageChange(page)}
+										className={styles.pageNumber}
 									>
-										<FaEdit /> Edit
+										{page}
 									</Button>
-									<Button
-										className={styles.viewBtn}
-										onClick={() => router.push(`/courses/${course.id}`)}
-									>
-										<FaEye /> View
-									</Button>
-									<Button
-										className={styles.deleteBtn}
-										onClick={() => handleDelete(course.id)}
-									>
-										<FaTrash />
-									</Button>
-								</div>
-							</Card.Body>
-						</Card>
-					</Col>
-				))}
-			</Row> 
+								))}
+							</div>
 
-			{/* {filteredCourses.length === 0 && (
-				<div className={styles.noCourses}>
-					<h3>No courses found</h3>
-					<p>Try adjusting your search or filters</p>
-				</div>
-			)} */}
+							<Button
+								variant="outline-secondary"
+								disabled={currentPage === totalPages}
+								onClick={() => handlePageChange(currentPage + 1)}
+								className={styles.paginationButton}
+							>
+								Next
+								<FaChevronRight size={16} />
+							</Button>
+						</div>
+					)}
+				</>
+			) : (
+				<Card className={styles.emptyState}>
+					<Card.Body className="text-center py-5">
+						<FaChartLine size={64} style={{ color: '#00bf63', marginBottom: '1rem' }} />
+						<h3>No courses found</h3>
+						<p>
+							{searchQuery || filterStatus !== 'all'
+								? 'Try adjusting your search or filter'
+								: "You haven't created any courses yet"}
+						</p>
+						{!searchQuery && filterStatus === 'all' && (
+							<Button
+								variant="success"
+								onClick={handleCreateNew}
+								className="mt-3"
+							>
+								<FaPlus /> Create Your First Course
+							</Button>
+						)}
+					</Card.Body>
+				</Card>
+			)}
 		</div>
 	);
 };
 
 export default InstructorCourses;
-
-function setLoading(arg0: boolean) {
-	throw new Error('Function not implemented.');
-}
