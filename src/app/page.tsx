@@ -1,6 +1,8 @@
 import React from 'react';
 import { Metadata } from 'next';
-// import HomeComponent from './homeComponent';
+import HomeComponent from './(App)/home/homeComponent';
+import MainFooter from './(App)/_components/MainFooter';
+
 
 export const metadata: Metadata = {
 	title: 'Ivy Learner Home',
@@ -10,9 +12,8 @@ export const metadata: Metadata = {
 const HomePage = () => {
 	return (
 		<div>
-			{/* <HomeComponent></HomeComponent>
-			 */}
-			hello worls
+			<HomeComponent></HomeComponent>
+			<MainFooter></MainFooter>
 		</div>
 	);
 };
