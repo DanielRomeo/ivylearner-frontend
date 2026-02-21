@@ -41,7 +41,7 @@ return (
 									<a href="/courses">All Courses</a>
 								</li>
 								<li>
-									<a href="/tutors">Find Tutors</a>
+									<a href="/">Find Tutors - Coming soon.</a>
 								</li>
 								<li>
 									<a href="/pricing">Pricing</a>
@@ -53,16 +53,16 @@ return (
 						<Col lg={2} md={6} sm={6} className={styles.footerLinks}>
 							<h4>Resources</h4>
 							<ul>
-								<li>
+								{/* <li>
 									<a href="/blog">Blog</a>
-								</li>
+								</li> */}
 								<li>
-									<a href="/tutorials">Tutorials</a>
+									<a href="/courses">Tutorials</a>
 								</li>
 								<li>{/* <a href="/webinars">Webinars</a> */}</li>
-								<li>
+								{/* <li>
 									<a href="/community">Community</a>
-								</li>
+								</li> */}
 							</ul>
 						</Col>
 
@@ -72,9 +72,9 @@ return (
 								<li>
 									<a href="/about">About Us</a>
 								</li>
-								<li>
+								{/* <li>
 									<a href="/careers">Careers</a>
-								</li>
+								</li> */}
 								<li>{/* <a href="/press">Press</a> */}</li>
 								<li>
 									<a href="/contact">Contact Us</a>
@@ -91,9 +91,9 @@ return (
 								<li>
 									<a href="/privacy">Privacy Policy</a>
 								</li>
-								<li>
+								{/* <li>
 									<a href="/cookies">Cookie Policy</a>
-								</li>
+								</li> */}
 								<li>{/* <a href="/accessibility">Accessibility</a> */}</li>
 							</ul>
 						</Col>
