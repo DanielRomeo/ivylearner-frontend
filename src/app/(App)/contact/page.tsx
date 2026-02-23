@@ -3,8 +3,8 @@ import ModernNavbar from '../_components/MainNavbar';
 import MainFooter from '../_components/MainFooter';
 import ContactComponent from './contactComponent';
 export const metadata: Metadata = {
-	title: 'Contact Us — IvyLearner',
-	description: 'Get in touch with the IvyLearner team.',
+	title: 'Contact Us — IvyBrilliance',
+	description: 'Get in touch with the IvyBrilliance team.',
 };
 
 const ContactPage = () => {

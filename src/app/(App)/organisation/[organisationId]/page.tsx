@@ -3,8 +3,8 @@ import { Container } from 'react-bootstrap';
 import OrganisationIdComponent from './organisationIdComponent';
 
 export const metadata: Metadata = {
-	title: 'Lesson',
-	description: 'Lesson page',
+	title: 'Organisations — IvyBrilliance',
+	description: 'Read the IvyBrilliance Privacy Policy.',
 };
 
 const OrganisationPage = () => {

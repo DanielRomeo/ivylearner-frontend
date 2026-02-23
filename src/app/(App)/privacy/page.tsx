@@ -4,8 +4,8 @@ import MainFooter from '../_components/MainFooter';
 import PrivacyComponent from './privacyComponent';
 
 export const metadata: Metadata = {
-	title: 'Privacy Policy — IvyLearner',
-	description: 'Read the IvyLearner Privacy Policy.',
+	title: 'Privacy Policy — IvyBrilliance',
+	description: 'Read the IvyBrilliance Privacy Policy.',
 };
 
 const PrivacyPage = () => {

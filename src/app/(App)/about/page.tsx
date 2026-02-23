@@ -4,8 +4,8 @@ import AboutComponent from './aboutComponent';
 import MainFooter from '../_components/MainFooter';
 
 export const metadata: Metadata = {
-	title: 'About Us — IvyLearner',
-	description: 'Learn about IvyLearner\'s mission, team, and values.',
+	title: 'About Us — IvyBrilliance',
+	description: 'Learn about IvyBrilliance\'s mission, team, and values.',
 };
 
 const AboutPage = () => {

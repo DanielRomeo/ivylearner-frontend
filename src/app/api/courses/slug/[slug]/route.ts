@@ -1,24 +1,48 @@
-////////////////////////////////////////////////////////////////////////////////////////
-
-/////////////////////////////// DOESNT WORK YET ///////////////////////////////
+// src/app/api/courses/slug/[slug]/route.ts
 import { NextResponse } from 'next/server';
 
-export async function POST(request: Request) {
-	const authHeader = request.headers.get('Authorization');
+export async function GET(
+	request: Request,
+	{ params }: { params: { slug: string } }
+) {
+	try {
+		const authHeader = request.headers.get('Authorization');
+		const slug = params.slug;
 
-	const body = await request.json();
-	console.log('body is ');
-	console.log(body);
+		if (!slug) {
+			return NextResponse.json(
+				{ error: 'Slug is required' },
+				{ status: 400 }
+			);
+		}
 
-	const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/courses/create`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: authHeader || '',
-		},
-		body: JSON.stringify(body),
-	});
+		const response = await fetch(
+			`${process.env.NEXT_PRIVATE_API_URL}/api/courses/slug/${slug}`,
+			{
+				headers: {
+					Authorization: authHeader || '',
+					'Content-Type': 'application/json',
+				},
+			}
+		);
 
-	const data = await response.json();
-	return NextResponse.json(data);
+		if (!response.ok) {
+			const errorMessage = await response.text();
+			return NextResponse.json(
+				{ error: `Error fetching course: ${errorMessage}` },
+				{ status: response.status }
+			);
+		}
+
+		const data = await response.json();
+		return NextResponse.json(data);
+	} catch (error: any) {
+		return NextResponse.json(
+			{
+				error: 'Internal Server Error',
+				details: error.message,
+			},
+			{ status: 500 }
+		);
+	}
 }

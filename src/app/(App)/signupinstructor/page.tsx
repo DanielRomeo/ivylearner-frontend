@@ -2,8 +2,8 @@ import { Metadata } from 'next';
 import SignupComponent from './signupComponent';
 
 export const metadata: Metadata = {
-	title: 'SignUp to Ivylearner',
-	description: 'SignUp to access your Ivylearner.',
+	title: 'SignUp to IvyBrilliance',
+	description: 'SignUp to access your IvyBrilliance.',
 };
 
 const SignupPage = () => {
