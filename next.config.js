@@ -2,7 +2,7 @@
 const nextConfig = {
 	reactStrictMode: true,
 	images: {
-		domains: ['your-domain.com', 's3-alpha-sig.figma.com', 'pexels.com', 'images.pexels.com'],
+		domains: ['your-domain.com', 's3-alpha-sig.figma.com', 'pexels.com', 'images.pexels.com', 'res.cloudinary.com'],
 	},
 	trailingSlash: false,
 	// experimental: {
