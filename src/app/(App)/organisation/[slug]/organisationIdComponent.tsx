@@ -294,7 +294,7 @@ const OrganisationComponent = () => {
 										enrollmentCount={
 											course.enrollmentCount || 0
 										}
-										rating={course.rating || 4.5}
+										// rating={course.rating || 4.5}
 										thumbnailUrl={course.thumbnailUrl}
 										slug={course.slug}
 									/>
