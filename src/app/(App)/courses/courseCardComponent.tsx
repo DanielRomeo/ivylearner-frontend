@@ -1,28 +1,31 @@
 'use client';
 import React from 'react';
 import Link from 'next/link';
-import { Clock, Award, BookOpen, Users, Star } from 'lucide-react';
+import { Clock, Award, BookOpen, Users } from 'lucide-react';
+import { FaUser } from 'react-icons/fa';
 import styles from '../_styles/courses/courseCardComponent.module.scss';
+
+interface Instructor {
+	firstName: string;
+	lastName: string;
+	profilePictureUrl?: string | null;
+	// legacy field name support
+	profilePicture?: string | null;
+}
 
 interface CourseCardProps {
 	id?: number;
 	title: string;
 	shortDescription?: string;
 	duration?: string;
-	instructor?:
-		| {
-				firstName: string;
-				lastName: string;
-				profilePicture?: string;
-		  }
-		| string;
+	// Can be a single instructor object, an array of instructors, or a name string
+	instructor?: Instructor | Instructor[] | string;
 	price?: number;
 	level?: string;
 	tags?: string[];
 	certificateAvailable?: boolean;
 	language?: string;
 	enrollmentCount?: number;
-	rating?: number | string;
 	thumbnailUrl?: string;
 	slug?: string;
 }
@@ -39,34 +42,37 @@ const CourseCard: React.FC<CourseCardProps> = ({
 	certificateAvailable = false,
 	language = 'English',
 	enrollmentCount = 0,
-	rating = 4.5,
 	thumbnailUrl,
 	slug,
 }) => {
 	const isFree = price === 0 || !price;
-	const numericRating = typeof rating === 'string' ? parseFloat(rating) : rating;
-
-	const instructorName =
-		typeof instructor === 'string'
-			? instructor
-			: instructor
-				? `${instructor.firstName} ${instructor.lastName}`
-				: 'Expert Instructor';
-
-	const instructorImage =
-		typeof instructor === 'object' && instructor?.profilePicture
-			? instructor.profilePicture
-			: 'https://i.pravatar.cc/150?img=1';
-
 	const courseLink = slug ? `/course/${slug}` : id ? `/course/${id}` : '#';
-
-	// Format price for South African Rand
 	const formattedPrice = isFree ? 'Free' : `R${price}`;
+
+	// Normalise instructor(s) into an array
+	const instructorList: Instructor[] = (() => {
+		if (!instructor) return [];
+		if (typeof instructor === 'string') return [{ firstName: instructor, lastName: '' }];
+		if (Array.isArray(instructor)) return instructor;
+		return [instructor];
+	})();
+
+	// Pick picture from first instructor (support both field names)
+	const primaryInstructor = instructorList[0];
+	const primaryPic = primaryInstructor
+		? (primaryInstructor.profilePictureUrl || primaryInstructor.profilePicture || null)
+		: null;
+	const primaryName = primaryInstructor
+		? `${primaryInstructor.firstName} ${primaryInstructor.lastName}`.trim()
+		: 'Expert Instructor';
+
+	// If multiple instructors, show stacked avatars
+	const extraCount = instructorList.length - 1;
 
 	return (
 		<Link href={courseLink} className={styles.courseCardLink}>
 			<div className={styles.courseCard}>
-				{/* Course Image */}
+				{/* Thumbnail */}
 				<div className={styles.imageContainer}>
 					{thumbnailUrl ? (
 						<img src={thumbnailUrl} alt={title} className={styles.courseImage} />
@@ -82,10 +88,10 @@ const CourseCard: React.FC<CourseCardProps> = ({
 					</div>
 				</div>
 
-				{/* Card Content */}
+				{/* Content */}
 				<div className={styles.content}>
 					<div className={styles.header}>
-						<span className={`${styles.levelBadge} ${styles[level.toLowerCase()]}`}>
+						<span className={`${styles.levelBadge} ${styles[level.toLowerCase()] || ''}`}>
 							{level.charAt(0).toUpperCase() + level.slice(1)}
 						</span>
 						{language && <span className={styles.language}>🌐 {language}</span>}
@@ -95,34 +101,50 @@ const CourseCard: React.FC<CourseCardProps> = ({
 
 					{shortDescription && (
 						<p className={styles.description}>
-							{shortDescription.length > 100 
-								? `${shortDescription.substring(0, 100)}...` 
-								: shortDescription
-							}
+							{shortDescription.length > 100
+								? `${shortDescription.substring(0, 100)}…`
+								: shortDescription}
 						</p>
 					)}
 
-					{/* Instructor Info */}
-					<div className={styles.instructorInfo}>
-						<img
-							src={instructorImage}
-							alt={instructorName}
-							className={styles.instructorAvatar}
-						/>
-						<span className={styles.instructorName}>{instructorName}</span>
-					</div>
+					{/* Instructor row */}
+					{instructorList.length > 0 && (
+						<div className={styles.instructorInfo}>
+							{/* Avatar stack */}
+							<div className={styles.avatarStack}>
+								{/* Primary */}
+								<div className={styles.avatarCircle}>
+									{primaryPic ? (
+										<img src={primaryPic} alt={primaryName} />
+									) : (
+										<FaUser />
+									)}
+								</div>
+								{/* Extra count bubble */}
+								{extraCount > 0 && (
+									<div className={`${styles.avatarCircle} ${styles.extraCount}`}>
+										+{extraCount}
+									</div>
+								)}
+							</div>
+							<span className={styles.instructorName}>
+								{primaryName}
+								{extraCount > 0 && ` +${extraCount} more`}
+							</span>
+						</div>
+					)}
 
-					{/* Course Meta */}
+					{/* Meta */}
 					<div className={styles.meta}>
 						{duration && (
 							<div className={styles.metaItem}>
-								<Clock size={16} />
+								<Clock size={14} />
 								<span>{duration}</span>
 							</div>
 						)}
 						{certificateAvailable && (
 							<div className={styles.metaItem}>
-								<Award size={16} />
+								<Award size={14} />
 								<span>Certificate</span>
 							</div>
 						)}
@@ -131,23 +153,17 @@ const CourseCard: React.FC<CourseCardProps> = ({
 					{/* Tags */}
 					{tags && tags.length > 0 && (
 						<div className={styles.tags}>
-							{tags.slice(0, 3).map((tag, index) => (
-								<span key={index} className={styles.tag}>
-									{tag}
-								</span>
+							{tags.slice(0, 3).map((tag, i) => (
+								<span key={i} className={styles.tag}>{tag}</span>
 							))}
 						</div>
 					)}
 
-					{/* Footer */}
+					{/* Footer - enrollment count only, no rating */}
 					<div className={styles.footer}>
 						<div className={styles.enrolled}>
-							<Users size={16} />
+							<Users size={14} />
 							<span>{enrollmentCount.toLocaleString()} students</span>
-						</div>
-						<div className={styles.rating}>
-							<Star size={16} className={styles.starIcon} />
-							<span className={styles.ratingValue}>{numericRating.toFixed(1)}</span>
 						</div>
 					</div>
 				</div>
