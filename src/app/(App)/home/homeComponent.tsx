@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import ModernNavbar from '../_components/MainNavbar';
-import { Container, Navbar, Nav, Button, Row, Col, Card } from 'react-bootstrap';
+import { Container, Navbar, Nav, Button, Row, Col, Card , Spinner} from 'react-bootstrap';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -95,9 +95,7 @@ export default function HomeComponent() {
 			if (!response.ok) throw new Error('Failed to fetch featured courses');
 			const data = await response.json();
 			console.log(data);
-			// if (Array.isArray(data.data)) {
-			setFeaturedCourses(data.data);
-			// }
+			setFeaturedCourses(Array.isArray(data) ? data : []);
 		} catch (err: any) {
 			setError('Failed to load featured courses: ' + err.message);
 			console.error(err);
@@ -220,13 +218,19 @@ export default function HomeComponent() {
 						variants={staggerChildren}
 					>
 						<Row className="g-4">
+							
 							{loadingCourses
-								? // Skeleton placeholders while loading
-								 <>loading</>
-								: featuredCourses.length > 0
-								?  featuredCourses.map((course) => (
+								? 
+								 <div className={styles.loadingContainer}>
+									<Spinner animation="border" variant="primary" />
+								</div> :<></>
+							}
+							{
+							 !loadingCourses && featuredCourses.length > 0 ?
+								  featuredCourses.map((course) => (
+									
 										<Col md={4} key={course.id}>
-											<motion.div variants={fadeIn}>
+											{/* <motion.div variants={fadeIn}> */}
 												<Card className={styles.courseCard}>
 													<div className={styles.courseImageContainer}>
 														<ResponsiveImage
@@ -274,68 +278,12 @@ export default function HomeComponent() {
 														</div>
 													</Card.Body>
 												</Card>
-											</motion.div>
+											{/* </motion.div> */}
 										</Col>
 								  ))
 								: // Fallback if no courses returned yet
-								  [
-										{
-											title: 'Web Development Masterclass',
-											instructor: 'Expert Instructor',
-											students: 12453,
-											slug: null,
-										},
-										{
-											title: 'Data Science & Machine Learning',
-											instructor: 'Expert Instructor',
-											students: 9872,
-											slug: null,
-										},
-										{
-											title: 'Financial Literacy Fundamentals',
-											instructor: 'Expert Instructor',
-											students: 7623,
-											slug: null,
-										},
-								  ].map((course, index) => (
-										<Col md={4} key={index}>
-											<motion.div variants={fadeIn}>
-												<Card className={styles.courseCard}>
-													<div className={styles.courseImageContainer}>
-														<ResponsiveImage
-															src="/pictureOfTeacher.jpg"
-															alt={course.title}
-															height={400}
-															width={100}
-														/>
-														<div className={styles.courseOverlay}>
-															<Button variant="light" className={styles.previewBtn}>
-																Preview
-															</Button>
-														</div>
-													</div>
-													<Card.Body>
-														<div className={styles.courseRating}>
-															<span className={styles.studentCount}>
-																({course.students.toLocaleString()} students)
-															</span>
-														</div>
-														<Card.Title>{course.title}</Card.Title>
-														<Card.Text>Instructor: {course.instructor}</Card.Text>
-														<div className={styles.cardFooter}>
-															<Button
-																variant="outline-success"
-																className={styles.courseBtn}
-																onClick={() => router.push('/courses')}
-															>
-																Learn More
-															</Button>
-														</div>
-													</Card.Body>
-												</Card>
-											</motion.div>
-										</Col>
-								  ))}
+								  <>No courses available</>
+							}
 						</Row>
 					</motion.div>
 

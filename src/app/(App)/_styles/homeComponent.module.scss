@@ -332,7 +332,7 @@ $gradient-end: #24570f;
 	background-color: $gray-light;
 
 	.courseCard {
-		border: none;
+		border: 1px solid rgba(0, 0, 0, 0.05);
 		border-radius: 12px;
 		overflow: hidden;
 		transition: all 0.3s ease;

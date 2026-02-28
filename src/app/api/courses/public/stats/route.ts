@@ -38,10 +38,10 @@ export async function GET(request: Request) {
 		// Make the request to the backend API
 		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/courses/public/stats`, {
 			method: 'GET',
-			// headers: {
-			// 	'Content-Type': 'application/json',
-			// 	Authorization: authHeader || '',
-			// },
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: authHeader || '',
+			},
 		});
 
 		if (!response.ok) {
