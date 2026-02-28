@@ -39,7 +39,11 @@ const CoursesPage: React.FC = () => {
 			const coursesList = data.data || data || [];
 			
 			console.log('Fetched courses:', coursesList);
-			setCourses(coursesList);
+
+			// filter courses by isPublished; only show published courses:
+			const publishedCourses = coursesList.filter((course: any) => course.isPublished);
+			
+			setCourses(publishedCourses);
 		} catch (error) {
 			console.error('Error fetching courses:', error);
 			setCourses([]); // Set empty array on error

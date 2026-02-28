@@ -50,8 +50,6 @@ export default function HomeComponent() {
 	};
 
 	
-
-
 	useEffect(() => {
 		console.log('HomeComponent mounted, fetching data...');
 		 fetchfeaturedCourses();
