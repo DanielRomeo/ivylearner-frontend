@@ -1,0 +1,199 @@
+// createLiveRoom.module.scss — IvyLearner
+
+$primary-green: #00bf63;
+$dark-green: #24570f;
+$text-dark: #1a1a1a;
+$text-light: #ffffff;
+$gray-light: #f5f7fa;
+$gray-medium: #e2e8f0;
+$gray-dark: #718096;
+$red: #e53e3e;
+
+// Override Bootstrap modal backdrop
+// :global(.modal-backdrop) {
+//     background: rgba(0, 0, 0, 0.7);
+//     backdrop-filter: blur(4px);
+// }
+
+// :global(.modal-dialog) {
+//     max-width: 480px;
+// }
+
+// :global(.modal-content) {
+//     background: transparent;
+//     border: none;
+//     box-shadow: none;
+// }
+
+.modal {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.modalContent {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+}
+
+// ── Header ─────────────────────────────────────────────────────────
+.header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 28px 28px 0;
+    margin-bottom: 24px;
+
+    h3 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: $text-dark;
+        margin: 0 0 4px;
+    }
+
+    p {
+        font-size: 0.85rem;
+        color: $gray-dark;
+        margin: 0;
+    }
+}
+
+.headerIcon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, $primary-green, $dark-green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $text-light;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    box-shadow: 0 8px 20px rgba($primary-green, 0.3);
+}
+
+// ── Body ───────────────────────────────────────────────────────────
+.body {
+    padding: 0 28px 24px;
+}
+
+.label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: $text-dark;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.input {
+    background: $gray-light;
+    border: 1.5px solid $gray-medium;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    color: $text-dark;
+    width: 100%;
+    transition: all 0.2s ease;
+    font-family: inherit;
+
+    &:focus {
+        outline: none;
+        border-color: $primary-green;
+        box-shadow: 0 0 0 3px rgba($primary-green, 0.1);
+        background: #fff;
+    }
+}
+
+.infoBox {
+    background: $gray-light;
+    border: 1px solid $gray-medium;
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-top: 16px;
+
+    ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        li {
+            font-size: 0.82rem;
+            color: $gray-dark;
+            line-height: 1.4;
+        }
+    }
+}
+
+.error {
+    background: rgba($red, 0.08);
+    border: 1px solid rgba($red, 0.25);
+    color: $red;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.83rem;
+    margin-top: 12px;
+}
+
+// ── Footer ─────────────────────────────────────────────────────────
+.footer {
+    display: flex;
+    gap: 10px;
+    padding: 0 28px 28px;
+    justify-content: flex-end;
+}
+
+.cancelBtn {
+    background: $gray-light;
+    border: 1px solid $gray-medium;
+    color: $gray-dark;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+
+    &:hover:not(:disabled) {
+        background: $gray-medium;
+        color: $text-dark;
+    }
+
+    &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+.startBtn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: $primary-green;
+    border: none;
+    color: $text-light;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+
+    &:hover:not(:disabled) {
+        background-color: darken($primary-green, 8%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba($primary-green, 0.3);
+    }
+
+    &:disabled { opacity: 0.65; cursor: not-allowed; transform: none; box-shadow: none; }
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}

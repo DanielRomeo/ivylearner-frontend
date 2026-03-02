@@ -18,6 +18,8 @@ import {
 	FaFileAlt,
 	FaBuilding,
 } from 'react-icons/fa';
+import { FaVideo } from "react-icons/fa";
+
 import { useAuth } from '@/app/contexts/auth-context';
 import styles from '../_styles/DashboardLayout.module.scss';
 
@@ -103,11 +105,11 @@ const DashboardLayout = ({ children, userRole = 'student' }: DashboardLayoutProp
 		//     icon: <FaUsers />,
 		//     path: '/dashboard/instructor/students',
 		// },
-		// {
-		//     name: 'Analytics',
-		//     icon: <FaChartLine />,
-		//     path: '/dashboard/instructor/analytics',
-		// },
+		{
+		    name: 'Online Classes',
+		    icon: <FaVideo />,
+		    path: '/dashboard/instructor/online-classes',
+		},
 		{
 			name: 'Organistion',
 			icon: <FaBuilding />,
