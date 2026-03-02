@@ -82,14 +82,9 @@ const MyOrganisations = ({
 					Authorization: `Bearer ${token || ''}`,
 				},
 			});
-
-			console.log('Fetch organisations response:', response); // Debug log
-			//   console.log(response.data)
-
 			if (response.ok) {
 				const data = await response.json();
-				console.log('Organisations data:', data); // Debug log
-				console.log('Organisations data:', data.data); // Debug log
+				
 				setOwnedOrgs(data || []);
 				setMemberOrgs(data.data);
 			} else {
