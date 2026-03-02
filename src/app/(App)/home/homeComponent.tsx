@@ -148,7 +148,7 @@ export default function HomeComponent() {
 										variant="outline-light"
 										size="lg"
 										className={styles.secondaryBtn}
-										onClick={() => router.push('/signup')}
+										onClick={() => router.push('/tutor')}
 									>
 										Become a Tutor
 									</Button>
@@ -358,7 +358,7 @@ export default function HomeComponent() {
 				</Container>
 			</section>
 
-			{/* Become a Tutor Section */}
+			{/* Become a course instructor */}
 			<section className={styles.becomeInstructorSection}>
 				<Container>
 					<Row className="align-items-center">
@@ -387,7 +387,7 @@ export default function HomeComponent() {
 								className={styles.instructorContent}
 							>
 								<h2>Share Your Knowledge</h2>
-								<h3>Become an Instructor</h3>
+								<h3>Become A Course Instructor</h3>
 								<p>
 									Join our community of expert instructors and share your
 									knowledge with students worldwide. Create engaging courses,
@@ -416,6 +416,70 @@ export default function HomeComponent() {
 								>
 									Apply as Instructor
 								</Button>
+							</motion.div>
+						</Col>
+					</Row>
+				</Container>
+			</section>
+
+			{/* Become a Tutor Section */}
+			<section className={styles.becomeTutorSection}>
+				<Container>
+					<Row className="align-items-center">
+						
+						<Col lg={6}>
+							<motion.div
+								initial={{ opacity: 0, x: 50 }}
+								whileInView={{ opacity: 1, x: 0 }}
+								viewport={{ once: true, amount: 0.2 }}
+								transition={{ duration: 0.6 }}
+								className={styles.tutorContent}
+							>
+								<h2>Share Your Knowledge In Real Time</h2>
+								<h3>Become a Tutor</h3>
+								<p>
+									Join us as a tutor and provide personalized, real-time support to students. Help them overcome challenges,
+									 deepen their understanding, and achieve their learning goals through one-on-one sessions while earning competitive compensation and flexible scheduling.
+								</p>
+
+								<div className={styles.tutorBenefits}>
+									{[
+										'Make a direct impact on student success',
+										'Flexible hours that fit your schedule',
+										'Competitive pay for your expertise',
+										'Supportive community of educators',
+									].map((benefit, index) => (
+										<div key={index} className={styles.benefitItem}>
+											<span className={styles.checkIcon}>✓</span>
+											{benefit}
+										</div>
+									))}
+								</div>
+
+								<Button
+									variant="success"
+									size="lg"
+									className={styles.tutorCta}
+									onClick={() => router.push('/tutor')}
+								>
+									Apply as Tutor
+								</Button>
+							</motion.div>
+						</Col>
+						<Col lg={6}>
+							<motion.div
+								initial={{ opacity: 0, x: -50 }}
+								whileInView={{ opacity: 1, x: 0 }}
+								viewport={{ once: true, amount: 0.2 }}
+								transition={{ duration: 0.6 }}
+								className={styles.tutorImageContainer}
+							>
+								<ResponsiveImage
+									src="/teacher.png"
+									alt={`New Arrival`}
+									height={550}
+									width={450}
+								/>
 							</motion.div>
 						</Col>
 					</Row>

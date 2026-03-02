@@ -1,5 +1,8 @@
 // homeComponent.module.scss
 
+// ===============================
+// GREEN /  THEME (INSTRUCTOR)
+// ===============================
 // Colors
 $primary-green: #00bf63;
 $blue: #5271ff;
@@ -19,6 +22,35 @@ $gray-medium: #e2e8f0;
 $gray-dark: #718096;
 $gradient-start: #00bf63;
 $gradient-end: #24570f;
+
+// ===============================
+// PINK / PURPLE THEME (Tutor)
+// ===============================
+
+// Core Colors
+$primary-purple: #7c3aed;     // Vibrant purple
+$soft-purple: #a78bfa;        // Lighter purple
+$pink: #ec4899;               // Strong pink
+$hot-pink: #db2777;           // Deeper pink
+$dark-purple: #3b0764;        // Deep background purple
+
+// Custom Brand Colors
+$primary: $primary-purple;
+$secondary: $pink;
+$accent: $hot-pink;
+
+$text-dark: #1a1a1a;
+$text-light: #ffffff;
+
+$gray-light: #f8f7ff;         // Slight purple tint
+$gray-medium: #e9e6ff;
+$gray-dark: #6b7280;
+
+// Gradient
+$gradient-start: #7c3aed;
+$gradient-end: #db2777;
+
+// ===============================
 
 .partnerLogo .partnersLogo {
 	background-color: #00bf63;
@@ -138,6 +170,7 @@ $gradient-end: #24570f;
 	}
 
 	.heroContent {
+		position: relative;
 		h1 {
 			font-size: 3.5rem;
 			font-weight: 800;
@@ -197,7 +230,18 @@ $gradient-end: #24570f;
 				transition: all 0.3s ease;
 
 				&:hover {
-					background-color: rgba(255, 255, 255, 0.1);
+					background: linear-gradient(
+						135deg,
+						$gradient-start,
+						$gradient-end
+					);
+					transform: translateY(-2px);
+					// border: none;
+					// padding: 12px 30px;
+					// font-weight: 600;
+					// border-radius: 8px;
+					color: $text-light;
+					// transition: all 0.3s ease;
 					border-color: white;
 				}
 			}
@@ -577,6 +621,104 @@ $gradient-end: #24570f;
 				background-color: darken($primary-green, 8%);
 				transform: translateY(-3px);
 				box-shadow: 0 10px 25px rgba(0, 191, 99, 0.3);
+			}
+		}
+	}
+}
+
+// Become a TUTOR Section ( PURPLE / PINK THEME )
+.becomeTutorSection {
+	padding: 100px 0;
+	background-color: $gray-light;
+
+	.tutorImageContainer {
+		position: relative;
+		border-radius: 20px;
+		overflow: hidden;
+		box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+
+		img {
+			width: 100%;
+			height: auto;
+			display: block;
+		}
+
+		&::after {
+			content: '';
+			position: absolute;
+			top: 30px;
+			left: 30px;
+			width: 100%;
+			height: 100%;
+			border: 4px solid $primary-purple;
+			border-radius: 20px;
+			z-index: -1;
+		}
+	}
+
+	.tutorContent {
+		padding: 20px 0 20px 30px;
+
+		h2 {
+			font-size: 1.8rem;
+			color: $primary-purple;
+			margin-bottom: 0.5rem;
+			font-weight: 700;
+		}
+
+		h3 {
+			font-size: 2.5rem;
+			font-weight: 800;
+			margin-bottom: 1.5rem;
+			color: $text-dark;
+		}
+
+		p {
+			font-size: 1.1rem;
+			line-height: 1.7;
+			color: $gray-dark;
+			margin-bottom: 2rem;
+		}
+
+		.tutorBenefits {
+			margin-bottom: 2.5rem;
+
+			.benefitItem {
+				display: flex;
+				align-items: center;
+				margin-bottom: 1rem;
+				font-size: 1.05rem;
+
+				.checkIcon {
+					color: $pink;
+					font-weight: bold;
+					margin-right: 10px;
+					font-size: 1.2rem;
+				}
+			}
+		}
+
+		.tutorCta {
+			background: linear-gradient(
+				135deg,
+				$gradient-start,
+				$gradient-end
+			);
+			border: none;
+			padding: 12px 30px;
+			font-weight: 600;
+			border-radius: 8px;
+			color: $text-light;
+			transition: all 0.3s ease;
+
+			&:hover {
+				background: linear-gradient(
+					135deg,
+					darken($gradient-start, 8%),
+					darken($gradient-end, 8%)
+				);
+				transform: translateY(-3px);
+				box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);
 			}
 		}
 	}
