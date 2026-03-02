@@ -108,7 +108,7 @@ const DashboardLayout = ({ children, userRole = 'student' }: DashboardLayoutProp
 		{
 		    name: 'Online Classes',
 		    icon: <FaVideo />,
-		    path: '/dashboard/instructor/online-classes',
+		    path: '/dashboard/instructor/live-classes',
 		},
 		{
 			name: 'Organistion',

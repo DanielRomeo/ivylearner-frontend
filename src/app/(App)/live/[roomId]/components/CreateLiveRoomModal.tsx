@@ -2,10 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Modal, Form } from 'react-bootstrap';
-import { FaVideo, FaSpinner, FaBroadcastTower } from 'react-icons/fa';
-// import styles from '../../_styles/CreateLiveRoomModal.module.scss';
-import styles from '../../../_styles/live/createliveRoomModal.module.scss';
+import { FaVideo, FaSpinner, FaBroadcastTower, FaTimes, FaShieldAlt, FaDesktop, FaComments } from 'react-icons/fa';
+import styles from '../../../_styles/live/createLiveRoomModal.module.scss';
 
 interface Props {
     courseId: number;
@@ -20,8 +18,11 @@ export default function CreateLiveRoomModal({ courseId, courseTitle, show, onHid
     const [creating, setCreating] = useState(false);
     const [error, setError] = useState('');
 
+    if (!show) return null;
+
     const handleCreate = async () => {
         if (!title.trim()) { setError('Please enter a session title'); return; }
+        if (!courseId) { setError('No course selected'); return; }
         setError('');
         setCreating(true);
 
@@ -38,12 +39,11 @@ export default function CreateLiveRoomModal({ courseId, courseTitle, show, onHid
 
             if (!res.ok) {
                 const d = await res.json();
-                throw new Error(d.error || 'Failed to create room');
+                throw new Error(d.message || d.error || 'Failed to create room');
             }
 
             const room = await res.json();
             onHide();
-            // Navigate to the live room as host
             router.push(`/live/${room.id}?mode=host`);
         } catch (e: any) {
             setError(e.message);
@@ -53,56 +53,71 @@ export default function CreateLiveRoomModal({ courseId, courseTitle, show, onHid
     };
 
     return (
-        <Modal show={show} onHide={onHide} centered className={styles.modal}>
-            <div className={styles.modalContent}>
+        <div className={styles.backdrop} onClick={(e) => { if (e.target === e.currentTarget) onHide(); }}>
+            <div className={styles.modal}>
+
+                {/* Close */}
+                <button className={styles.closeBtn} onClick={onHide}>
+                    <FaTimes />
+                </button>
+
                 {/* Header */}
                 <div className={styles.header}>
+                    <div className={styles.headerGlow} />
                     <div className={styles.headerIcon}>
                         <FaBroadcastTower />
                     </div>
-                    <div>
-                        <h3>Start a Live Class</h3>
-                        <p>Students will join via a shareable link</p>
+                    <h2>Start a Live Class</h2>
+                    <p>for <span className={styles.courseName}>{courseTitle}</span></p>
+                </div>
+
+                {/* Feature pills */}
+                <div className={styles.features}>
+                    <div className={styles.feature}>
+                        <FaDesktop /> Screen Share
+                    </div>
+                    <div className={styles.feature}>
+                        <FaComments /> Live Chat
+                    </div>
+                    <div className={styles.feature}>
+                        <FaShieldAlt /> Up to 200 students
                     </div>
                 </div>
 
                 {/* Form */}
                 <div className={styles.body}>
-                    <Form.Group className="mb-3">
-                        <Form.Label className={styles.label}>Session Title</Form.Label>
-                        <Form.Control
-                            type="text"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            className={styles.input}
-                            placeholder="e.g. Week 3 — React Hooks Deep Dive"
-                        />
-                    </Form.Group>
+                    <label className={styles.label}>Session Title</label>
+                    <input
+                        type="text"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        className={styles.input}
+                        placeholder="e.g. Week 3 — Deep Dive into React Hooks"
+                        disabled={creating}
+                    />
 
-                    <div className={styles.infoBox}>
-                        <ul>
-                            <li>📹 Your camera &amp; mic will be available immediately</li>
-                            <li>🖥️ Screen sharing is enabled</li>
-                            <li>🔗 Copy the student link from the top bar once inside</li>
-                            <li>⏹️ Click "End Class" when you're done — it disconnects everyone</li>
-                        </ul>
+                    <div className={styles.hint}>
+                        Once live, copy the student link from the top bar and share it however you like.
                     </div>
 
-                    {error && <div className={styles.error}>{error}</div>}
+                    {error && (
+                        <div className={styles.error}>{error}</div>
+                    )}
                 </div>
 
-                {/* Footer */}
+                {/* Actions */}
                 <div className={styles.footer}>
                     <button className={styles.cancelBtn} onClick={onHide} disabled={creating}>
                         Cancel
                     </button>
                     <button className={styles.startBtn} onClick={handleCreate} disabled={creating}>
                         {creating
-                            ? <><FaSpinner className={styles.spin} /> Creating room…</>
-                            : <><FaVideo /> Go Live</>}
+                            ? <><FaSpinner className={styles.spin} /> Creating…</>
+                            : <><FaVideo /> Go Live Now</>
+                        }
                     </button>
                 </div>
             </div>
-        </Modal>
+        </div>
     );
 }

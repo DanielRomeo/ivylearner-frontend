@@ -1,140 +1,217 @@
-// createLiveRoom.module.scss — IvyLearner
+// createLiveRoomModal.module.scss — Purple premium modal
 
-$primary-green: #00bf63;
-$dark-green: #24570f;
-$text-dark: #1a1a1a;
-$text-light: #ffffff;
-$gray-light: #f5f7fa;
-$gray-medium: #e2e8f0;
-$gray-dark: #718096;
-$red: #e53e3e;
+$purple: #7c3aed;
+$purple-light: #a78bfa;
+$purple-glow: rgba(124, 58, 237, 0.4);
+$purple-soft: rgba(124, 58, 237, 0.1);
+$purple-border: rgba(124, 58, 237, 0.3);
+$indigo: #4338ca;
+$red: #ef4444;
+$green: #10b981;
 
-// Override Bootstrap modal backdrop
-// :global(.modal-backdrop) {
-//     background: rgba(0, 0, 0, 0.7);
-//     backdrop-filter: blur(4px);
-// }
+$bg: #0f0f1a;
+$surface: #16162a;
+$surface2: #1e1e35;
+$border: rgba(255, 255, 255, 0.08);
+$text: #f1f0ff;
+$text-mid: #a09cc0;
+$text-dim: #6b6896;
 
-// :global(.modal-dialog) {
-//     max-width: 480px;
-// }
+$font: 'DM Sans', 'Inter', system-ui, sans-serif;
 
-// :global(.modal-content) {
-//     background: transparent;
-//     border: none;
-//     box-shadow: none;
-// }
-
-.modal {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+// ── Backdrop ─────────────────────────────────────────────────────
+.backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 5, 15, 0.85);
+    backdrop-filter: blur(6px);
+    z-index: 1050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.2s ease;
 }
 
-.modalContent {
-    background: #fff;
-    border-radius: 16px;
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+// ── Modal ─────────────────────────────────────────────────────────
+.modal {
+    background: $surface;
+    border: 1px solid $purple-border;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 460px;
+    position: relative;
     overflow: hidden;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 60px rgba(124, 58, 237, 0.15);
+    animation: slideUp 0.25s ease;
+    font-family: $font;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+}
+
+// ── Close button ──────────────────────────────────────────────────
+.closeBtn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid $border;
+    color: $text-mid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+    z-index: 2;
+
+    &:hover { background: rgba(255,255,255,0.12); color: $text; }
 }
 
 // ── Header ─────────────────────────────────────────────────────────
 .header {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 28px 28px 0;
-    margin-bottom: 24px;
+    position: relative;
+    text-align: center;
+    padding: 44px 32px 28px;
+    overflow: hidden;
 
-    h3 {
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: $text-dark;
-        margin: 0 0 4px;
+    h2 {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: $text;
+        margin: 16px 0 6px;
     }
 
     p {
         font-size: 0.85rem;
-        color: $gray-dark;
+        color: $text-mid;
         margin: 0;
     }
 }
 
+.headerGlow {
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 260px;
+    height: 260px;
+    background: radial-gradient(circle, rgba(124, 58, 237, 0.2) 0%, transparent 70%);
+    pointer-events: none;
+}
+
 .headerIcon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, $primary-green, $dark-green);
+    position: relative;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, $purple, $indigo);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: $text-light;
-    font-size: 1.2rem;
-    flex-shrink: 0;
-    box-shadow: 0 8px 20px rgba($primary-green, 0.3);
+    font-size: 1.4rem;
+    color: #fff;
+    margin: 0 auto;
+    box-shadow: 0 8px 28px $purple-glow;
 }
 
-// ── Body ───────────────────────────────────────────────────────────
+.courseName {
+    color: $purple-light;
+    font-weight: 600;
+}
+
+// ── Feature pills ─────────────────────────────────────────────────
+.features {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 24px 24px;
+    flex-wrap: wrap;
+}
+
+.feature {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: $purple-soft;
+    border: 1px solid $purple-border;
+    color: $purple-light;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+
+    svg { font-size: 0.65rem; }
+}
+
+// ── Body ──────────────────────────────────────────────────────────
 .body {
     padding: 0 28px 24px;
 }
 
 .label {
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: $text-dark;
-    margin-bottom: 6px;
     display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: $text-mid;
+    margin-bottom: 8px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
 }
 
 .input {
-    background: $gray-light;
-    border: 1.5px solid $gray-medium;
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 0.9rem;
-    color: $text-dark;
     width: 100%;
-    transition: all 0.2s ease;
-    font-family: inherit;
+    background: $surface2;
+    border: 1.5px solid $border;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    color: $text;
+    font-family: $font;
+    transition: all 0.2s;
+    outline: none;
 
     &:focus {
-        outline: none;
-        border-color: $primary-green;
-        box-shadow: 0 0 0 3px rgba($primary-green, 0.1);
-        background: #fff;
+        border-color: $purple;
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+        background: darken($surface2, 3%);
     }
+
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    &::placeholder { color: $text-dim; }
 }
 
-.infoBox {
-    background: $gray-light;
-    border: 1px solid $gray-medium;
-    border-radius: 10px;
-    padding: 16px 18px;
-    margin-top: 16px;
-
-    ul {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-
-        li {
-            font-size: 0.82rem;
-            color: $gray-dark;
-            line-height: 1.4;
-        }
-    }
+.hint {
+    margin-top: 12px;
+    font-size: 0.78rem;
+    color: $text-dim;
+    line-height: 1.5;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid $border;
+    border-radius: 8px;
 }
 
 .error {
+    margin-top: 12px;
+    padding: 10px 14px;
     background: rgba($red, 0.08);
     border: 1px solid rgba($red, 0.25);
-    color: $red;
     border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 0.83rem;
-    margin-top: 12px;
+    color: #fca5a5;
+    font-size: 0.82rem;
 }
 
 // ── Footer ─────────────────────────────────────────────────────────
@@ -142,51 +219,50 @@ $red: #e53e3e;
     display: flex;
     gap: 10px;
     padding: 0 28px 28px;
-    justify-content: flex-end;
 }
 
 .cancelBtn {
-    background: $gray-light;
-    border: 1px solid $gray-medium;
-    color: $gray-dark;
-    padding: 10px 22px;
-    border-radius: 8px;
-    font-size: 0.88rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-family: inherit;
-
-    &:hover:not(:disabled) {
-        background: $gray-medium;
-        color: $text-dark;
-    }
-
-    &:disabled { opacity: 0.6; cursor: not-allowed; }
-}
-
-.startBtn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background-color: $primary-green;
-    border: none;
-    color: $text-light;
-    padding: 10px 24px;
-    border-radius: 8px;
+    flex: 1;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid $border;
+    color: $text-mid;
+    padding: 12px 20px;
+    border-radius: 10px;
     font-size: 0.88rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: inherit;
+    transition: all 0.2s;
+    font-family: $font;
+
+    &:hover:not(:disabled) { background: rgba(255,255,255,0.1); color: $text; }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.startBtn {
+    flex: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, $purple, $indigo);
+    border: none;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: $font;
+    box-shadow: 0 4px 16px $purple-glow;
+    letter-spacing: 0.01em;
 
     &:hover:not(:disabled) {
-        background-color: darken($primary-green, 8%);
         transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba($primary-green, 0.3);
+        box-shadow: 0 8px 28px $purple-glow;
     }
 
-    &:disabled { opacity: 0.65; cursor: not-allowed; transform: none; box-shadow: none; }
+    &:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
 }
 
 .spin {
