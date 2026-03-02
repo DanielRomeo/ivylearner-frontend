@@ -371,7 +371,7 @@ export default function HomeComponent() {
 								className={styles.instructorImageContainer}
 							>
 								<ResponsiveImage
-									src="/pictureOfTeacher.jpg"
+									src="/classroom.jpg"
 									alt={`New Arrival`}
 									height={550}
 									width={450}
