@@ -47,6 +47,7 @@ export default function LiveClasses() {
                     headers: { Authorization: `Bearer ${token()}` },
                 });
                 const data = await res.json();
+                console.log('Fetched courses for live rooms:', data);
                 const list: Course[] = Array.isArray(data) ? data : (data.data || []);
                 setCourses(list);
 

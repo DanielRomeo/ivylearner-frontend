@@ -14,7 +14,8 @@ import {
     FaChalkboardTeacher,
     FaExclamationTriangle,
 } from 'react-icons/fa';
-import styles from '../../../_styles/live/liveRoom.module.scss';
+// import styles from '../../../_styles/live/liveRoom.module.scss';
+import styles from '../../_styles/live/liveRoom.module.scss';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Room {
