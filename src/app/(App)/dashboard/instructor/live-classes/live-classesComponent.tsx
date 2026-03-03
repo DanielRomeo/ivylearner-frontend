@@ -9,7 +9,7 @@ import {
 } from 'react-icons/fa';
 import CreateLiveRoomModal from '../../../live/[roomId]/components/CreateLiveRoomModal';
 // import styles from '../../../_styles/dashboard/liveClasses.module.scss';
-import styles from '../../_styles/liveclassesComponent.module.scss';
+import styles from '../../_styles/liveClassesComponent.module.scss';
 
 
 interface Course {
