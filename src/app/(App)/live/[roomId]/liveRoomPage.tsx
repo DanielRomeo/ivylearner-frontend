@@ -15,7 +15,9 @@ import {
     FaExclamationTriangle,
 } from 'react-icons/fa';
 // import styles from '../../../_styles/live/liveRoom.module.scss';
-import styles from '../../_styles/live/liveRoom.module.scss';
+// import styles from '../../_styles/live/liveRoom.module.scss';
+// import styles from '@_styles/live/liveRoom.module.scss';
+import styles from '@/app/(App)/_styles/live/liveRoom.module.scss';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Room {
