@@ -71,7 +71,7 @@ export default function HomeComponent() {
 
 			if (!stats.ok) throw new Error('Failed to fetch statistics');
 			const statsData = await stats.json();
-			// console.log('Stats data:', statsData);
+			console.log('Stats data:', statsData);
 
 
 			setStats(statsData.body);
