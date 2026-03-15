@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+	output: 'export',  // This enables static export
 	reactStrictMode: true,
 	images: {
+		unoptimized: true, // Needed for static export
 		domains: ['your-domain.com', 's3-alpha-sig.figma.com', 'pexels.com', 'images.pexels.com'],
 	},
 	trailingSlash: false,
