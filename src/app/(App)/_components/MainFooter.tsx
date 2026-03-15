@@ -41,11 +41,11 @@ return (
 									<a href="/courses">All Courses</a>
 								</li>
 								<li>
-									<a href="/">Find Tutors - Coming soon.</a>
+									<a href="/tutoring">Tutoring</a>
 								</li>
-								<li>
+								{/* <li>
 									<a href="/pricing">Pricing</a>
-								</li>
+								</li> */}
 								<li>{/* <a href="/enterprise">For Enterprise</a> */}</li>
 							</ul>
 						</Col>

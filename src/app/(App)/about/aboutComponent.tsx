@@ -31,10 +31,10 @@ const values = [
 ];
 
 const team = [
-	{ emoji: '🧠', name: 'Tetelo MMMM', role: 'Co-Founder & CEO', bio: 'Former educator turned EdTech entrepreneur. Passionate about democratizing high-quality learning.' },
-	{ emoji: '⚙️', name: 'Daniel Mamphekgo', role: 'CTO', bio: 'Full-stack engineer with a love for scalable systems. Leads our engineering guild with precision.' },
-	{ emoji: '🎨', name: 'Noah Osei', role: 'Head of Design', bio: 'Crafts experiences that feel effortless. Believes great design is invisible but deeply felt.' },
-	{ emoji: '📊', name: 'Sara Kim', role: 'Head of Curriculum', bio: '10+ years in instructional design. Ensures every course on IvyBrilliance delivers real value.' },
+	{ emoji: '🧠', name: 'Tetelo Hamese', role: 'Co-Founder & CEO', bio: 'Former educator turned EdTech entrepreneur. Passionate about democratizing high-quality learning.' },
+	{ emoji: '⚙️', name: 'Daniel Mamphekgo', role: 'Co-Founder & CTO', bio: 'Full-stack engineer with a love for scalable systems. Leads our engineering guild with precision.' },
+	// { emoji: '🎨', name: 'Noah Osei', role: 'Head of Design', bio: 'Crafts experiences that feel effortless. Believes great design is invisible but deeply felt.' },
+	// { emoji: '📊', name: 'Sara Kim', role: 'Head of Curriculum', bio: '10+ years in instructional design. Ensures every course on IvyBrilliance delivers real value.' },
 ];
 
 const AboutComponent = () => {
@@ -101,7 +101,7 @@ const AboutComponent = () => {
 					</div>
 					<Row className="g-4">
 						{team.map((t) => (
-							<Col key={t.name} sm={6} lg={3}>
+							<Col key={t.name} sm={12} lg={6}>
 								<div className={styles.teamCard}>
 									<div className={styles.teamAvatar}>{t.emoji}</div>
 									<div className={styles.teamBody}>

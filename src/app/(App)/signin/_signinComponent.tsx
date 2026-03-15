@@ -10,6 +10,7 @@ import { Lock, Mail, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../../contexts/auth-context';
 
 import styles from '../_styles/signinComponent.module.scss';
+import ModernNavbar from '../_components/MainNavbar';
 
 const schema = yup.object().shape({
 	email: yup.string().email('Invalid email').required('Email is required.'),
@@ -48,6 +49,7 @@ const SigninComponent = () => {
 
 	return (
 		<div className={styles.main}>
+			<ModernNavbar></ModernNavbar>
 			<Container className={styles.mainContainer}>
 				<div className={styles.box}>
 					<Row>
@@ -133,11 +135,11 @@ const SigninComponent = () => {
 								</p>
 							</Link>
 
-							<Link href="signup-tutor">
+							{/* <Link href="signup-tutor">
 								<p className={styles.tutorLink}>
 									Want to become an instructor? <span>Join as teacher</span>
 								</p>
-							</Link>
+							</Link> */}
 						</form>
 					</Row>
 				</div>

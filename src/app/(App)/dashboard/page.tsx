@@ -22,10 +22,8 @@ export default function DashboardPage() {
 	}
 
 	if (!user) {
-		console.log('No user found after loading');
+		// console.log('No user found after loading');
 		return null;
-	} else {
-		console.log('User found:', user);
 	}
 
 	// Determine which dashboard to show based on user role

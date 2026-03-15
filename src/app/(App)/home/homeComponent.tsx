@@ -1,15 +1,38 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import ModernNavbar from '../_components/MainNavbar';
-import { Container, Navbar, Nav, Button, Row, Col, Card } from 'react-bootstrap';
+import { Container, Navbar, Nav, Button, Row, Col, Card , Spinner} from 'react-bootstrap';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-// import styles from './homeComponent.module.scss';
 import styles from '../_styles/homeComponent.module.scss';
 import ResponsiveImage from '../_components/ResponsiveImage';
 
+interface FeaturedCourse {
+	id: number;
+	title: string;
+	slug: string;
+	shortDescription: string | null;
+	thumbnailUrl: string | null;
+	instructorFirstName: string | null;
+	instructorLastName: string | null;
+	enrollmentCount: number;
+}
+
+interface PublicStats {
+	totalCourses: number;
+	totalStudents: number;
+}
+
 export default function HomeComponent() {
+	const router = useRouter();
+	const [stats, setStats] = useState<PublicStats>({ totalCourses: 200, totalStudents: 50000 });
+	const [featuredCourses, setFeaturedCourses] = useState<FeaturedCourse[]>([]);
+	const [loadingStats, setLoadingStats] = useState(true);
+	const [loadingCourses, setLoadingCourses] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+
 	// Animation variants
 	const fadeIn = {
 		hidden: { opacity: 0, y: 20 },
@@ -26,39 +49,70 @@ export default function HomeComponent() {
 		},
 	};
 
+	
+	useEffect(() => {
+		console.log('HomeComponent mounted, fetching data...');
+		 fetchfeaturedCourses();
+		 fetchStatistics();
+	}, []);
+
+	const fetchStatistics = async () => {
+		try {
+            setLoadingStats(true);
+            const token = localStorage.getItem('access_token');
+
+            // Fetch statistics 
+            const stats = await fetch('/api/courses/public/stats', {
+                headers: { 
+                    'Authorization': `Bearer ${token || ''}`,
+                },
+            });
+			// console.log('Stats response:', stats);
+
+			if (!stats.ok) throw new Error('Failed to fetch statistics');
+			const statsData = await stats.json();
+			console.log('Stats data:', statsData);
+
+
+			setStats(statsData.body);
+		} catch (err: any) {
+			setError('Failed to load statistics: ' + err.message);
+			console.error(err);
+		} finally {
+			setLoadingStats(false);
+		}
+	}
+	const fetchfeaturedCourses = async () => {
+		try {			setLoadingCourses(true);
+			const token = localStorage.getItem('access_token');
+			const response = await fetch('/api/courses/public/featured', {
+				headers: { 
+					'Authorization': `Bearer ${token || ''}`,
+				},
+			});
+			if (!response.ok) throw new Error('Failed to fetch featured courses');
+			const data = await response.json();
+			console.log(data);
+			setFeaturedCourses(Array.isArray(data) ? data : []);
+		} catch (err: any) {
+			setError('Failed to load featured courses: ' + err.message);
+			console.error(err);
+		} finally {
+			setLoadingCourses(false);
+		}
+	}
+
+
+
+	// Format numbers nicely
+	const formatStat = (n: number): string => {
+		if (n >= 1000) return `${Math.floor(n / 1000)}k+`;
+		return `${n}+`;
+	};
+
 	return (
 		<div className={styles.container}>
-			{/* Navigation Bar */}
-			{/* <Navbar expand="lg" className={styles.navbar} fixed="top">
-				<Container>
-					<Navbar.Brand href="/">
-						<span className={styles.logoText}>IvyBrilliance</span>
-					</Navbar.Brand>
-					<Navbar.Toggle aria-controls="main-navbar" />
-					<Navbar.Collapse id="main-navbar">
-						<Nav className="ms-auto">
-							<Nav.Link href="/courses">Courses</Nav.Link>
-							<Nav.Link href="/tutors">Find Tutors</Nav.Link>
-							<Nav.Link href="/about">About Us</Nav.Link>
-							<Nav.Link href="/blog">Blog</Nav.Link>
-						</Nav>
-						<div className={styles.navButtons}>
-							<Button
-								variant="outline-light"
-								className={styles.loginBtn}
-								href="/signin"
-							>
-								Log In
-							</Button>
-							<Button variant="success" className={styles.signupBtn} href="/signup">
-								Sign Up Free
-							</Button>
-						</div>
-					</Navbar.Collapse>
-				</Container>
-			</Navbar> */}
-
-			{/* Import the navbar */}
+			
 			<ModernNavbar></ModernNavbar>
 
 			{/* Hero Section */}
@@ -86,6 +140,7 @@ export default function HomeComponent() {
 										variant="success"
 										size="lg"
 										className={styles.primaryBtn}
+										onClick={() => router.push('/courses')}
 									>
 										Explore Courses
 									</Button>
@@ -93,17 +148,22 @@ export default function HomeComponent() {
 										variant="outline-light"
 										size="lg"
 										className={styles.secondaryBtn}
+										onClick={() => router.push('/tutor')}
 									>
 										Become a Tutor
 									</Button>
 								</div>
 								<div className={styles.statBadges}>
 									<div className={styles.statItem}>
-										<span className={styles.statNumber}>200+</span>
+										<span className={styles.statNumber}>
+											{/* {loadingStats ? '...' : formatStat(stats.totalCourses)} */}
+										</span>
 										<span className={styles.statLabel}>Courses</span>
 									</div>
 									<div className={styles.statItem}>
-										<span className={styles.statNumber}>50k+</span>
+										<span className={styles.statNumber}>
+											{/* {loadingStats ? '...' : formatStat(stats.totalStudents)} */}
+										</span>
 										<span className={styles.statLabel}>Students</span>
 									</div>
 									<div className={styles.statItem}>
@@ -121,7 +181,6 @@ export default function HomeComponent() {
 								className={styles.heroImageContainer}
 							>
 								<div className={styles.heroImage}>
-									{/* Replace with your actual image path */}
 									<ResponsiveImage
 										src="/pictureOfTeacher.jpg"
 										alt={`New Arrival`}
@@ -129,16 +188,7 @@ export default function HomeComponent() {
 										width={100}
 									/>
 								</div>
-								{/* <div className={styles.floatingCard}>
-									<div className={styles.progressIndicator}>
-										<div className={styles.progressBar}>
-											<div className={styles.progressFill}></div>
-										</div>
-										<span>75% Complete</span>
-									</div>
-									<h4>Introduction to Data Science</h4>
-									<p>Next: Statistical Analysis Fundamentals</p>
-								</div> */}
+								
 							</motion.div>
 						</Col>
 					</Row>
@@ -166,90 +216,81 @@ export default function HomeComponent() {
 						variants={staggerChildren}
 					>
 						<Row className="g-4">
-							{[
-								{
-									title: 'Web Development Masterclass',
-									instructor: 'Sarah Johnson',
-									rating: 4.9,
-									students: 12453,
-									image: '/images/course-web.png',
-								},
-								{
-									title: 'Data Science & Machine Learning',
-									instructor: 'Michael Chang',
-									rating: 4.8,
-									students: 9872,
-									image: '/images/course-data.png',
-								},
-								{
-									title: 'Financial Literacy Fundamentals',
-									instructor: 'Jessica Williams',
-									rating: 4.7,
-									students: 7623,
-									image: '/images/course-finance.png',
-								},
-							].map((course, index) => (
-								<Col md={4} key={index}>
-									<motion.div variants={fadeIn}>
-										<Card className={styles.courseCard}>
-											<div className={styles.courseImageContainer}>
-												{/* <Image
-													src={course.image}
-													alt={course.title}
-													width={350}
-													height={200}
-													className={styles.courseImage}
-												/> */}
-												<ResponsiveImage
-													src="/pictureOfTeacher.jpg"
-													alt={`New Arrival`}
-													height={400}
-													width={100}
-												/>
-												<div className={styles.courseOverlay}>
-													<Button
-														variant="light"
-														className={styles.previewBtn}
-													>
-														Preview
-													</Button>
-												</div>
-											</div>
-											<Card.Body>
-												<div className={styles.courseRating}>
-													<span className={styles.ratingStars}>
-														★★★★★
-													</span>
-													<span className={styles.ratingNumber}>
-														{course.rating}
-													</span>
-													<span className={styles.studentCount}>
-														({course.students.toLocaleString()}{' '}
-														students)
-													</span>
-												</div>
-												<Card.Title>{course.title}</Card.Title>
-												<Card.Text>
-													Instructor: {course.instructor}
-												</Card.Text>
-												<div className={styles.cardFooter}>
-													<Button
-														variant="outline-success"
-														className={styles.courseBtn}
-													>
-														Learn More
-													</Button>
-												</div>
-											</Card.Body>
-										</Card>
-									</motion.div>
-								</Col>
-							))}
+							
+							{loadingCourses
+								? 
+								 <div className={styles.loadingContainer}>
+									<Spinner animation="border" variant="primary" />
+								</div> :<></>
+							}
+							{
+							 !loadingCourses && featuredCourses.length > 0 ?
+								  featuredCourses.map((course) => (
+									
+										<Col md={4} key={course.id}>
+											{/* <motion.div variants={fadeIn}> */}
+												<Card className={styles.courseCard}>
+													<div className={styles.courseImageContainer}>
+														<ResponsiveImage
+															src={course.thumbnailUrl || '/pictureOfTeacher.jpg'}
+															alt={course.title}
+															height={400}
+															width={100}
+														/>
+														<div className={styles.courseOverlay}>
+															<Button
+																variant="light"
+																className={styles.previewBtn}
+																onClick={() =>
+																	router.push(`/course/${course.slug || course.id}`)
+																}
+															>
+																Preview
+															</Button>
+														</div>
+													</div>
+													<Card.Body>
+														<div className={styles.courseRating}>
+															<span className={styles.studentCount}>
+																({(course.enrollmentCount || 0).toLocaleString()}{' '}
+																students)
+															</span>
+														</div>
+														<Card.Title>{course.title}</Card.Title>
+														<Card.Text>
+															Instructor:{' '}
+															{course.instructorFirstName && course.instructorLastName
+																? `${course.instructorFirstName} ${course.instructorLastName}`
+																: 'IvyBrilliance Instructor'}
+														</Card.Text>
+														<div className={styles.cardFooter}>
+															<Button
+																variant="outline-success"
+																className={styles.courseBtn}
+																onClick={() =>
+																	router.push(`/course/${course.slug || course.id}`)
+																}
+															>
+																Learn More
+															</Button>
+														</div>
+													</Card.Body>
+												</Card>
+											{/* </motion.div> */}
+										</Col>
+								  ))
+								: // Fallback if no courses returned yet
+								  <>No courses available</>
+							}
 						</Row>
 					</motion.div>
 
 					<div className={styles.viewAllContainer}>
-						<Button variant="link" className={styles.viewAllBtn}>
+						<Button
+							variant="link"
+							className={styles.viewAllBtn}
+							onClick={() => router.push('/courses')}
+						>
 							View All Courses <span className={styles.arrowIcon}>→</span>
 						</Button>
 					</div>
@@ -317,7 +358,7 @@ export default function HomeComponent() {
 				</Container>
 			</section>
 
-			{/* Become a Tutor Section */}
+			{/* Become a course instructor */}
 			<section className={styles.becomeInstructorSection}>
 				<Container>
 					<Row className="align-items-center">
@@ -330,7 +371,7 @@ export default function HomeComponent() {
 								className={styles.instructorImageContainer}
 							>
 								<ResponsiveImage
-									src="/pictureOfTeacher.jpg"
+									src="/classroom.jpg"
 									alt={`New Arrival`}
 									height={550}
 									width={450}
@@ -346,7 +387,7 @@ export default function HomeComponent() {
 								className={styles.instructorContent}
 							>
 								<h2>Share Your Knowledge</h2>
-								<h3>Become an Instructor</h3>
+								<h3>Become A Course Instructor</h3>
 								<p>
 									Join our community of expert instructors and share your
 									knowledge with students worldwide. Create engaging courses,
@@ -371,6 +412,7 @@ export default function HomeComponent() {
 									variant="success"
 									size="lg"
 									className={styles.instructorCta}
+									onClick={() => router.push('/signup')}
 								>
 									Apply as Instructor
 								</Button>
@@ -380,75 +422,69 @@ export default function HomeComponent() {
 				</Container>
 			</section>
 
-			{/* Testimonials Section */}
-			{/* <section className={styles.testimonialsSection}>
+			{/* Become a Tutor Section */}
+			<section className={styles.becomeTutorSection}>
 				<Container>
-					<motion.div
-						initial="hidden"
-						whileInView="visible"
-						viewport={{ once: true, amount: 0.2 }}
-						variants={fadeIn}
-						className={styles.sectionHeader}
-					>
-						<h2>What Our Students Say</h2>
-						<p>Success stories from the IvyLearner community</p>
-					</motion.div>
+					<Row className="align-items-center">
+						
+						<Col lg={6}>
+							<motion.div
+								initial={{ opacity: 0, x: 50 }}
+								whileInView={{ opacity: 1, x: 0 }}
+								viewport={{ once: true, amount: 0.2 }}
+								transition={{ duration: 0.6 }}
+								className={styles.tutorContent}
+							>
+								<h2>Share Your Knowledge In Real Time</h2>
+								<h3>Become a Tutor</h3>
+								<p>
+									Join us as a tutor and provide personalized, real-time support to students. Help them overcome challenges,
+									 deepen their understanding, and achieve their learning goals through one-on-one sessions while earning competitive compensation and flexible scheduling.
+								</p>
 
-					<motion.div
-						initial="hidden"
-						whileInView="visible"
-						viewport={{ once: true, amount: 0.2 }}
-						variants={staggerChildren}
-					>
-						<Row className="g-4">
-							{[
-								{
-									name: 'Alex Morgan',
-									role: 'Software Developer',
-									avatar: '/images/testimonial1.png',
-									quote: "IvyLearner's web development course helped me transition from marketing to a full-stack developer role in just 6 months. The curriculum was comprehensive and the instructor support was exceptional.",
-								},
-								{
-									name: 'Priya Sharma',
-									role: 'Data Analyst',
-									avatar: '/images/testimonial2.png',
-									quote: 'The data science track provided me with practical skills I use every day. The projects were challenging but rewarding, and tracking my progress kept me motivated throughout the journey.',
-								},
-								{
-									name: 'James Wilson',
-									role: 'Startup Founder',
-									avatar: '/images/testimonial3.png',
-									quote: "As someone who needed flexible learning options, IvyLearner's platform was perfect. I could learn at my own pace while building my business, and the knowledge gained has been invaluable.",
-								},
-							].map((testimonial, index) => (
-								<Col md={4} key={index}>
-									<motion.div variants={fadeIn}>
-										<div className={styles.testimonialCard}>
-											<div className={styles.quoteIcon}>"</div>
-											<p className={styles.quote}>{testimonial.quote}</p>
-											<div className={styles.testimonialProfile}>
-												<div className={styles.avatarContainer}>
-													<Image
-														src={testimonial.avatar}
-														alt={testimonial.name}
-														width={50}
-														height={50}
-														className={styles.avatar}
-													/>
-												</div>
-												<div className={styles.profileInfo}>
-													<h4>{testimonial.name}</h4>
-													<p>{testimonial.role}</p>
-												</div>
-											</div>
+								<div className={styles.tutorBenefits}>
+									{[
+										'Make a direct impact on student success',
+										'Flexible hours that fit your schedule',
+										'Competitive pay for your expertise',
+										'Supportive community of educators',
+									].map((benefit, index) => (
+										<div key={index} className={styles.benefitItem}>
+											<span className={styles.checkIcon}>✓</span>
+											{benefit}
 										</div>
-									</motion.div>
-								</Col>
-							))}
-						</Row>
-					</motion.div>
+									))}
+								</div>
+
+								<Button
+									variant="success"
+									size="lg"
+									className={styles.tutorCta}
+									onClick={() => router.push('/tutor')}
+								>
+									Apply as Tutor
+								</Button>
+							</motion.div>
+						</Col>
+						<Col lg={6}>
+							<motion.div
+								initial={{ opacity: 0, x: -50 }}
+								whileInView={{ opacity: 1, x: 0 }}
+								viewport={{ once: true, amount: 0.2 }}
+								transition={{ duration: 0.6 }}
+								className={styles.tutorImageContainer}
+							>
+								<ResponsiveImage
+									src="/teacher.png"
+									alt={`New Arrival`}
+									height={550}
+									width={450}
+								/>
+							</motion.div>
+						</Col>
+					</Row>
 				</Container>
-			</section> */}
+			</section>
 
 			{/* Universities & Companies Section */}
 			<section className={styles.partnersSection}>
@@ -504,10 +540,20 @@ export default function HomeComponent() {
 						<h2>Ready to Start Your Learning Journey?</h2>
 						<p>Join thousands of students already learning on IvyBrilliance</p>
 						<div className={styles.ctaButtons}>
-							<Button variant="light" size="lg" className={styles.ctaBtn}>
+							<Button
+								variant="light"
+								size="lg"
+								className={styles.ctaBtn}
+								onClick={() => router.push('/courses')}
+							>
 								View All Courses
 							</Button>
-							<Button variant="success" size="lg" className={styles.ctaBtnPrimary}>
+							<Button
+								variant="success"
+								size="lg"
+								className={styles.ctaBtnPrimary}
+								onClick={() => router.push('/signup')}
+							>
 								Sign Up Free
 							</Button>
 						</div>
@@ -515,8 +561,7 @@ export default function HomeComponent() {
 				</Container>
 			</section>
 
-			{/* Footer */}
-			
 		</div>
 	);
 }
+

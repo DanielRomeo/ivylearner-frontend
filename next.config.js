@@ -29,6 +29,9 @@ const nextConfig = {
 					},
 				],
 			},
+			{ source: '/live/:path*', headers: [
+				{ key: 'Permissions-Policy', value: 'camera=*, microphone=*, display-capture=*' }
+			]}
 		];
 	},
 };

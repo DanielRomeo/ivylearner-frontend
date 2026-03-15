@@ -6,88 +6,70 @@ import ModernNavbar from '../_components/MainNavbar';
 import CourseCard from './courseCardComponent';
 import styles from '../_styles/courses/coursesComponent.module.scss';
 
-const ITEMS_PER_PAGE = 3; // Changed from 9 to 3
+const ITEMS_PER_PAGE = 9;
 
 const CoursesPage: React.FC = () => {
 	const [courses, setCourses] = useState<any[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [searchTerm, setSearchTerm] = useState('');
-	const [selectedFilter, setSelectedFilter] = useState('all'); // Changed from selectedLevel
+	const [selectedFilter, setSelectedFilter] = useState('all');
 	const [currentPage, setCurrentPage] = useState(1);
 
-	// Fetch courses on mount
-	useEffect(() => {
-		fetchCourses();
-	}, []);
+	useEffect(() => { fetchCourses(); }, []);
 
 	const fetchCourses = async () => {
 		try {
 			setLoading(true);
-			
-			// Fetch real courses from API
-			const response = await fetch('/api/courses', {
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			});
-
-			if (!response.ok) {
-				throw new Error('Failed to fetch courses');
-			}
-
+			const response = await fetch('/api/courses');
+			if (!response.ok) throw new Error('Failed to fetch courses');
 			const data = await response.json();
-			const coursesList = data.data || data || [];
-			
-			console.log('Fetched courses:', coursesList);
-			setCourses(coursesList);
+			// Backend already filters published — but keep client guard too
+			const list = (data.data || data || []).filter((c: any) => c.isPublished);
+			setCourses(list);
 		} catch (error) {
 			console.error('Error fetching courses:', error);
-			setCourses([]); // Set empty array on error
+			setCourses([]);
 		} finally {
 			setLoading(false);
 		}
 	};
 
-	// Filter courses based on search and price filter
 	const filteredCourses = courses.filter((course) => {
 		const matchesSearch =
 			course.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
 			course.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
 			course.shortDescription?.toLowerCase().includes(searchTerm.toLowerCase());
-		
-		// Filter by price (free vs paid)
+
 		let matchesFilter = true;
-		if (selectedFilter === 'free') {
-			matchesFilter = course.price === 0 || !course.price;
-		} else if (selectedFilter === 'paid') {
-			matchesFilter = course.price > 0;
-		}
-		// 'all' means no filter
-		
+		if (selectedFilter === 'free') matchesFilter = course.price === 0 || !course.price;
+		else if (selectedFilter === 'paid') matchesFilter = course.price > 0;
+
 		return matchesSearch && matchesFilter;
 	});
 
-	// Pagination logic
 	const totalPages = Math.ceil(filteredCourses.length / ITEMS_PER_PAGE);
-	const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-	const endIndex = startIndex + ITEMS_PER_PAGE;
-	const currentCourses = filteredCourses.slice(startIndex, endIndex);
+	const currentCourses = filteredCourses.slice(
+		(currentPage - 1) * ITEMS_PER_PAGE,
+		currentPage * ITEMS_PER_PAGE
+	);
 
-	// Reset to page 1 when filters change
-	useEffect(() => {
-		setCurrentPage(1);
-	}, [searchTerm, selectedFilter]);
+	useEffect(() => { setCurrentPage(1); }, [searchTerm, selectedFilter]);
 
 	const handlePageChange = (page: number) => {
 		setCurrentPage(page);
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	};
 
+	const parseTags = (tags: any): string[] => {
+		if (!tags) return [];
+		if (Array.isArray(tags)) return tags;
+		try { return JSON.parse(tags); } catch { return []; }
+	};
+
 	return (
 		<div className={styles.coursesPage}>
 			<ModernNavbar />
 
-			{/* Hero Section */}
 			<div className={styles.heroSection}>
 				<Container>
 					<div className={styles.heroContent}>
@@ -97,7 +79,6 @@ const CoursesPage: React.FC = () => {
 				</Container>
 			</div>
 
-			{/* Search and Filter Section */}
 			<div className={styles.filterSection}>
 				<Container>
 					<Row className="g-3">
@@ -126,7 +107,6 @@ const CoursesPage: React.FC = () => {
 							</Form.Select>
 						</Col>
 					</Row>
-
 					<div className={styles.resultsInfo}>
 						<p>
 							Showing <strong>{currentCourses.length}</strong> of{' '}
@@ -136,7 +116,6 @@ const CoursesPage: React.FC = () => {
 				</Container>
 			</div>
 
-			{/* Courses Grid */}
 			<div className={styles.coursesSection}>
 				<Container>
 					{loading ? (
@@ -154,18 +133,14 @@ const CoursesPage: React.FC = () => {
 											title={course.title}
 											shortDescription={course.shortDescription || course.description}
 											duration={course.durationWeeks ? `${course.durationWeeks} weeks` : undefined}
-											instructor={{
-												firstName: 'Course',
-												lastName: 'Instructor',
-												profilePicture: undefined
-											}}
+											// Pass the real instructors array from the backend
+											instructor={course.instructors || []}
 											price={course.price || 0}
 											level={course.level || 'beginner'}
-											tags={course.tags ? JSON.parse(course.tags) : []}
+											tags={parseTags(course.tags)}
 											certificateAvailable={course.certificateAvailable || false}
 											language={course.language || 'English'}
 											enrollmentCount={course.enrollmentCount || 0}
-											rating={course.rating || 4.5}
 											thumbnailUrl={course.thumbnailUrl}
 											slug={course.slug}
 										/>
@@ -173,7 +148,6 @@ const CoursesPage: React.FC = () => {
 								))}
 							</Row>
 
-							{/* Pagination */}
 							{totalPages > 1 && (
 								<div className={styles.pagination}>
 									<Button
@@ -182,27 +156,20 @@ const CoursesPage: React.FC = () => {
 										onClick={() => handlePageChange(currentPage - 1)}
 										className={styles.paginationButton}
 									>
-										<ChevronLeft size={20} />
-										Previous
+										<ChevronLeft size={20} /> Previous
 									</Button>
 
 									<div className={styles.pageNumbers}>
-										{Array.from({ length: totalPages }, (_, i) => i + 1).map(
-											(page) => (
-												<Button
-													key={page}
-													variant={
-														currentPage === page
-															? 'success'
-															: 'outline-secondary'
-													}
-													onClick={() => handlePageChange(page)}
-													className={styles.pageNumber}
-												>
-													{page}
-												</Button>
-											)
-										)}
+										{Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+											<Button
+												key={page}
+												variant={currentPage === page ? 'success' : 'outline-secondary'}
+												onClick={() => handlePageChange(page)}
+												className={styles.pageNumber}
+											>
+												{page}
+											</Button>
+										))}
 									</div>
 
 									<Button
@@ -211,8 +178,7 @@ const CoursesPage: React.FC = () => {
 										onClick={() => handlePageChange(currentPage + 1)}
 										className={styles.paginationButton}
 									>
-										Next
-										<ChevronRight size={20} />
+										Next <ChevronRight size={20} />
 									</Button>
 								</div>
 							)}
@@ -221,9 +187,7 @@ const CoursesPage: React.FC = () => {
 						<div className={styles.noResults}>
 							<Filter size={64} />
 							<h3>No courses found</h3>
-							<p>
-								Try adjusting your search or filter to find what you're looking for.
-							</p>
+							<p>Try adjusting your search or filter to find what you're looking for.</p>
 						</div>
 					)}
 				</Container>

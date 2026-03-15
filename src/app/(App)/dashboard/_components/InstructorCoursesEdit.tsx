@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { Row, Col, Card, Form, Button, Accordion, Alert, Spinner, ListGroup, InputGroup } from 'react-bootstrap';
 import { FaSave, FaUpload, FaTrash, FaSearch, FaPlus } from 'react-icons/fa';
 import styles from '../_styles/InstructorCoursesEdit.module.scss';
+import { Tag } from 'lucide-react';
 
 const EditCourse = () => {
     const { id } = useParams();
@@ -54,6 +55,7 @@ const EditCourse = () => {
             
             const courseData = await courseRes.json();
             setCourse(courseData.data || courseData);
+            console.log(courseData.data || courseData);
 
             // Fetch lessons for this course
             const lessonsRes = await fetch(`/api/lessons/course/${id}`, {
@@ -111,8 +113,8 @@ const EditCourse = () => {
     };
 
     const handlePublishToggle = async (checked: boolean) => {
-        if (checked && lessons.length < 5) {
-            alert('Cannot publish course with fewer than 5 lessons.');
+        if (checked && lessons.length < 2) {
+            alert('Cannot publish course with fewer than 2 lessons.');
             return;
         }
         setCourse({ ...course, status: checked ? 'published' : 'draft' });
@@ -488,29 +490,7 @@ const EditCourse = () => {
                         <Card.Body>
                             <h2 className={styles.sectionTitle}>Course Details</h2>
                             <Form>
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Title</Form.Label>
-                                    <Form.Control 
-                                        name="title" 
-                                        value={course?.title || ''} 
-                                        onChange={handleCourseChange} 
-                                        className={styles.input}
-                                    />
-                                </Form.Group>
-                                
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Description</Form.Label>
-                                    <Form.Control 
-                                        as="textarea" 
-                                        rows={4}
-                                        name="description" 
-                                        value={course?.description || ''} 
-                                        onChange={handleCourseChange}
-                                        className={styles.textarea}
-                                    />
-                                </Form.Group>
-                                
-                                <Form.Group className="mb-3">
+                                 <Form.Group className="mb-3">
                                     <Form.Label>Thumbnail</Form.Label>
                                     <Form.Control 
                                         type="file" 
@@ -524,6 +504,46 @@ const EditCourse = () => {
                                             <img src={course.thumbnailUrl || course.thumbnail_url} alt="Thumbnail" />
                                         </div>
                                     )}
+                                </Form.Group>
+
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Title</Form.Label>
+                                    <Form.Control 
+                                        name="title" 
+                                        value={course?.title || ''} 
+                                        onChange={handleCourseChange} 
+                                        className={styles.input}
+                                    />
+                                </Form.Group>
+
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Description</Form.Label>
+                                    <Form.Control 
+                                        as="textarea" 
+                                        rows={4}
+                                        name="description" 
+                                        value={course?.description || ''} 
+                                        onChange={handleCourseChange}
+                                        className={styles.textarea}
+                                    />
+                                </Form.Group>
+
+                                <Form.Group className="mb-3">
+                                    {/* A little message that tells user that this will appear everywhere where the course is in a card format */}
+                                    <br />
+
+                                    <Form.Label>Short Description</Form.Label><br />
+                                    <Form.Text className="text-muted">
+                                        This will be displayed in course cards and search results.
+                                    </Form.Text>
+                                    <Form.Control 
+                                        as="textarea" 
+                                        rows={4}
+                                        name="shortDescription" 
+                                        value={course?.shortDescription || ''} 
+                                        onChange={handleCourseChange}
+                                        className={styles.textarea}
+                                    />
                                 </Form.Group>
                                 
                                 <Row>
@@ -541,17 +561,7 @@ const EditCourse = () => {
                                             />
                                         </Form.Group>
                                     </Col>
-                                    <Col md={6}>
-                                        <Form.Group className="mb-3">
-                                            <Form.Label>Category</Form.Label>
-                                            <Form.Control 
-                                                name="category" 
-                                                value={course?.category || ''} 
-                                                onChange={handleCourseChange}
-                                                className={styles.input}
-                                            />
-                                        </Form.Group>
-                                    </Col>
+                                   
                                 </Row>
                                 
                                 <Form.Group className="mb-3">

@@ -10,6 +10,7 @@ import { Mail, Lock, User, ShieldCheck } from 'lucide-react';
 import axios from 'axios';
 
 import styles from '../_styles/signupComponent.module.scss';
+import ModernNavbar from '../_components/MainNavbar';
 
 // Validation schema
 const schema = yup.object().shape({
@@ -81,6 +82,7 @@ const SignupComponent = () => {
 
 	return (
 		<div className={styles.main}>
+			<ModernNavbar></ModernNavbar>
 			<Container className={styles.mainContainer}>
 				<div className={styles.box}>
 					{/* Header */}
