@@ -121,58 +121,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // -------------------------------------------------------------------------
     // Local email/password login
     // -------------------------------------------------------------------------
-    const login = async (email: string, password: string) => {
-        try {
-            const response = await axios.post(
-                '/api/auth/login',
-                { email, password },
-                { headers: { 'Content-Type': 'application/json' } }
-            );
+   const login = async (email: string, password: string) => {
+    try {
+        const response = await axios.post('/api/auth/login', { email, password });
+        const accessToken = response.data?.data?.access_token;
+        if (!accessToken) throw new Error('No access token received');
 
-            console.log(response.data.data);
+        localStorage.setItem('access_token', accessToken);
 
-            // Backend login response: { statusCode, message, data: { access_token, user } }
-            const accessToken = response.data?.data?.access_token;
-            if (!accessToken) {
-                throw new Error('No access token received from server');
-            }
+        const userData = await fetchUserData(accessToken);
+        if (!userData) throw new Error('Failed to fetch user data after login');
 
-            localStorage.setItem('access_token', accessToken);
+        setUser(userData);
+        router.push('/dashboard');
+    } catch (error) {
+        // ❌ REMOVE THIS LINE — it wipes a valid token on fetchUserData failure
+        // localStorage.removeItem('access_token');  
 
-            const userData = await fetchUserData(accessToken);
-            console.log('Fetched user data after login:', userData);
-            if (!userData) {
-                throw new Error('Failed to fetch user data after login');
-            }
-            console.log('User data fetched successfully:', userData);
-            setUser(userData);
-            router.push('/dashboard');
-        } catch (error) {
-            console.error('Login error:', error);
-            localStorage.removeItem('access_token');
-
-            if (axios.isAxiosError(error)) {
-                if (!error.response) {
-                    throw new Error('Network error - No server response');
-                }
-
-                const errorMessages: Record<number, string> = {
-                    401: 'Invalid email or password',
-                    404: 'Login service not found',
-                    422: 'Invalid input - Please check your email and password',
-                    500: 'Server error - Please try again later',
-                };
-
-                throw new Error(
-                    errorMessages[error.response.status] ||
-                        error.response.data?.message ||
-                        'Login failed'
-                );
-            }
-
-            throw new Error('An unexpected error occurred during login');
+        if (axios.isAxiosError(error)) {
+            if (!error.response) throw new Error('Network error - No server response');
+            const errorMessages: Record<number, string> = {
+                401: 'Invalid email or password',
+                404: 'Login service not found',
+                500: 'Server error - Please try again later',
+            };
+            throw new Error(errorMessages[error.response.status] || 'Login failed');
         }
-    };
+        throw new Error('An unexpected error occurred during login');
+    }
+};
 
     // -------------------------------------------------------------------------
     // Google OAuth login — redirects to backend which redirects to Google

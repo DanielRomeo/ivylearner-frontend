@@ -9,7 +9,7 @@ export async function GET() {
 			return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
 		}
 
-		const response = await fetch(`${apiBaseUrl}/api/courses/public/featured`, {
+		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/courses/public/featured`, {
 			headers: { 'Content-Type': 'application/json' },
 		});
 

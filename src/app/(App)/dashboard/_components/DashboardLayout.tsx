@@ -29,26 +29,17 @@ interface DashboardLayoutProps {
 }
 
 const DashboardLayout = ({ children, userRole = 'student' }: DashboardLayoutProps) => {
-	const [sidebarOpen, setSidebarOpen] = useState(true);
+	// FIX: start closed on ALL screen sizes — user opens with hamburger
+	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [isMobile, setIsMobile] = useState(false);
 	const { logout, user } = useAuth();
 	const router = useRouter();
 
 	useEffect(() => {
-		// console.log('User object:', user);
-		// console.log('User email:', user?.email);
-		// console.log('User role:', user?.role);
-	}, [user]);
-
-	useEffect(() => {
 		const handleResize = () => {
 			const mobile = window.innerWidth <= 1024;
 			setIsMobile(mobile);
-			if (mobile) {
-				setSidebarOpen(false);
-			} else {
-				setSidebarOpen(true);
-			}
+			// Never auto-open — always let user control it
 		};
 
 		handleResize();
@@ -57,84 +48,27 @@ const DashboardLayout = ({ children, userRole = 'student' }: DashboardLayoutProp
 	}, []);
 
 	const studentMenuItems = [
-		{
-			name: 'Dashboard',
-			icon: <FaHome />,
-			path: '/dashboard',
-		},
-		{
-			name: 'My Courses',
-			icon: <FaBook />,
-			path: '/dashboard/my-courses',
-		},
-		{
-			name: 'Progress',
-			icon: <FaChartLine />,
-			path: '/dashboard/progress',
-		},
-		// {
-		//     name: 'Certificates',
-		//     icon: <FaGraduationCap />,
-		//     path: '/dashboard/certificates',
-		// },
-		{
-			name: 'Profile',
-			icon: <FaUserCircle />,
-			path: '/dashboard/profile',
-		},
-		{
-			name: 'Settings',
-			icon: <FaCog />,
-			path: '/dashboard/settings',
-		},
+		{ name: 'Dashboard', icon: <FaHome />, path: '/dashboard' },
+		{ name: 'My Courses', icon: <FaBook />, path: '/dashboard/my-courses' },
+		{ name: 'Progress', icon: <FaChartLine />, path: '/dashboard/progress' },
+		{ name: 'Profile', icon: <FaUserCircle />, path: '/dashboard/profile' },
+		{ name: 'Settings', icon: <FaCog />, path: '/dashboard/settings' },
 	];
 
 	const instructorMenuItems = [
-		{
-			name: 'Dashboard',
-			icon: <FaHome />,
-			path: '/dashboard',
-		},
-		{
-			name: 'My Courses',
-			icon: <FaChalkboardTeacher />,
-			path: '/dashboard/instructor/courses',
-		},
-		// {
-		//     name: 'Students',
-		//     icon: <FaUsers />,
-		//     path: '/dashboard/instructor/students',
-		// },
-		{
-		    name: 'Online Classes',
-		    icon: <FaVideo />,
-		    path: '/dashboard/instructor/live-classes',
-		},
-		{
-			name: 'Organistion',
-			icon: <FaBuilding />,
-			path: '/dashboard/instructor/organisations',
-		},
-		{
-			name: 'Profile',
-			icon: <FaUserCircle />,
-			path: '/dashboard/instructor/profile',
-		},
-		{
-			name: 'Settings',
-			icon: <FaCog />,
-			path: '/dashboard/instructor/settings',
-		},
+		{ name: 'Dashboard', icon: <FaHome />, path: '/dashboard' },
+		{ name: 'My Courses', icon: <FaChalkboardTeacher />, path: '/dashboard/instructor/courses' },
+		{ name: 'Online Classes', icon: <FaVideo />, path: '/dashboard/instructor/live-classes' },
+		{ name: 'Organisation', icon: <FaBuilding />, path: '/dashboard/instructor/organisations' },
+		{ name: 'Profile', icon: <FaUserCircle />, path: '/dashboard/instructor/profile' },
+		{ name: 'Settings', icon: <FaCog />, path: '/dashboard/instructor/settings' },
 	];
 
 	const menuItems = userRole === 'instructor' ? instructorMenuItems : studentMenuItems;
 
 	const handleNavigation = (path: string) => {
 		router.push(path);
-		// Close sidebar on mobile after navigation
-		if (isMobile) {
-			setSidebarOpen(false);
-		}
+		setSidebarOpen(false); // Always close after navigation
 	};
 
 	const handleLogout = () => {
@@ -147,54 +81,39 @@ const DashboardLayout = ({ children, userRole = 'student' }: DashboardLayoutProp
 
 	return (
 		<div className={styles.dashboardContainer}>
-			{/* Mobile Overlay */}
-			{isMobile && sidebarOpen && (
+			{/* Overlay — shown on ALL screen sizes when sidebar is open */}
+			{sidebarOpen && (
 				<div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
 			)}
 
-			{/* Mobile Toggle Button */}
-			{isMobile && (
-				<button
-					className={styles.mobileToggle}
-					onClick={toggleSidebar}
-					aria-label="Toggle menu"
-				>
-					{sidebarOpen ? <FaTimes /> : <FaBars />}
-				</button>
-			)}
+			{/* Hamburger — always visible on ALL screen sizes */}
+			<button
+				className={styles.mobileToggle}
+				onClick={toggleSidebar}
+				aria-label="Toggle menu"
+			>
+				{sidebarOpen ? <FaTimes /> : <FaBars />}
+			</button>
 
-			{/* Sidebar */}
+			{/* Sidebar — slides in from left when open */}
 			<aside className={`${styles.sidebar} ${sidebarOpen ? styles.open : styles.closed}`}>
 				<div className={styles.sidebarHeader}>
 					<div className={styles.logoContainer}>
 						<h2 className={styles.logo}>IvyBrilliance</h2>
 					</div>
-
-					{/* I HAVE HID THE TOGGLE HAMBURGER MENU BUTTON FOR NOW */}
-
-					{/* {!isMobile && (
-                        <button
-                            className={styles.toggleBtn}
-                            onClick={toggleSidebar}
-                        >
-                            {sidebarOpen ? <FaTimes /> : <FaBars />}
-                        </button>
-                    )} */}
 				</div>
 
-				{sidebarOpen && (
-					<div className={styles.userInfo}>
-						<div className={styles.avatarCircle}>
-							<FaUserCircle size={48} />
-						</div>
-						<div className={styles.userDetails}>
-							<h4>{user?.email?.split('@')[0] || 'User'}</h4>
-							<p className={styles.userRole}>
-								{userRole === 'instructor' ? 'Instructor' : 'Student'}
-							</p>
-						</div>
+				<div className={styles.userInfo}>
+					<div className={styles.avatarCircle}>
+						<FaUserCircle size={48} />
 					</div>
-				)}
+					<div className={styles.userDetails}>
+						<h4>{user?.email?.split('@')[0] || 'User'}</h4>
+						<p className={styles.userRole}>
+							{userRole === 'instructor' ? 'Instructor' : 'Student'}
+						</p>
+					</div>
+				</div>
 
 				<nav className={styles.nav}>
 					<ul className={styles.navList}>
@@ -205,9 +124,7 @@ const DashboardLayout = ({ children, userRole = 'student' }: DashboardLayoutProp
 									onClick={() => handleNavigation(item.path)}
 								>
 									<span className={styles.navIcon}>{item.icon}</span>
-									{sidebarOpen && (
-										<span className={styles.navText}>{item.name}</span>
-									)}
+									<span className={styles.navText}>{item.name}</span>
 								</button>
 							</li>
 						))}
@@ -218,24 +135,16 @@ const DashboardLayout = ({ children, userRole = 'student' }: DashboardLayoutProp
 					<ul className={styles.navList}>
 						<li className={styles.navItem}>
 							<button className={styles.navLink} onClick={handleLogout}>
-								<span className={styles.navIcon}>
-									<FaSignOutAlt />
-								</span>
-								{sidebarOpen && <span className={styles.navText}>Logout</span>}
+								<span className={styles.navIcon}><FaSignOutAlt /></span>
+								<span className={styles.navText}>Logout</span>
 							</button>
 						</li>
 					</ul>
 				</nav>
 			</aside>
 
-			{/* Main Content */}
-			{/* <main className={`${styles.mainContent} ${sidebarOpen && !isMobile ? styles.shifted : ''}`}>
-                <div className={styles.contentWrapper}>{children}</div>
-            </main> */}
-			{/* Main Content */}
-			<main
-				className={`${styles.mainContent} ${sidebarOpen && !isMobile ? styles.shifted : ''}`}
-			>
+			{/* Main Content — always full width since sidebar is overlaid */}
+			<main className={styles.mainContent}>
 				<div className={styles.contentWrapper}>
 					{React.cloneElement(children as React.ReactElement, {
 						sidebarOpen,
