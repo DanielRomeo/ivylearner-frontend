@@ -131,7 +131,11 @@ const SigninComponent = () => {
                             </div>
 
                             {/* ── Google Sign In Button ────────────────────── */}
-                            <Button
+                            <Button style={
+								{
+									width: '100%'
+								}
+							}
                                 type="button"
                                 variant="outline-secondary"
                                 className={styles.googleButton}
@@ -166,8 +170,9 @@ const SigninComponent = () => {
                                 Continue with Google
                             </Button>
 
+                             {/* ── Divider ─────────────────────────────────── */}
                             <div className={styles.divider}>
-                                <span></span>
+                                <span>or</span>
                             </div>
 
                             <Link href="signup">
