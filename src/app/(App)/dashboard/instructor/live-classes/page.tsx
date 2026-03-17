@@ -2,5 +2,7 @@
 import LiveClasses from './live-classesComponent';
 
 export default function Page() {
-    return <LiveClasses />;
+    return (<div>aaa
+        <LiveClasses />
+    </div>);
 }

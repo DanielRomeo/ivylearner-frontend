@@ -5,7 +5,7 @@ import CreateCourse from '../../_components/CreateCourse';
 
 const HomePage = () => {
 	return (
-		<div>
+		<div >
 			<CreateCourse sidebarOpen={false} isMobile={false} />
 		</div>
 	);

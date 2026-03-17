@@ -24,6 +24,9 @@ $font: 'DM Sans', 'Inter', system-ui, sans-serif;
 
 // ── Page ────────────────────────────────────────────────────────
 .page {
+    // width: 10000px;
+    // width: auto;
+    width: 100%;
     min-height: 100vh;
     background: $bg;
     color: $text;
