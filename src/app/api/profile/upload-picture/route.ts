@@ -37,7 +37,7 @@ export async function POST(request: Request) {
 		const profilePictureUrl = cloudinaryData.secure_url;
 
 		// Now save the URL to the backend profile
-		const profileRes = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/profiles/me`, {
+		const profileRes = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/backend/profiles/me`, {
 			method: 'PATCH',
 			headers: {
 				Authorization: authHeader || '',

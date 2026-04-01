@@ -6,7 +6,7 @@ export async function GET(request: Request) {
 	try {
 		const authHeader = request.headers.get('Authorization');
 
-		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/profiles/me`, {
+		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/backend/profiles/me`, {
 			headers: {
 				Authorization: authHeader || '',
 				'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ export async function PATCH(request: Request) {
 		const authHeader = request.headers.get('Authorization');
 		const body = await request.json();
 
-		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/profiles/me`, {
+		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/backend/profiles/me`, {
 			method: 'PATCH',
 			headers: {
 				Authorization: authHeader || '',

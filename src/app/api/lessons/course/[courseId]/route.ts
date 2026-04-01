@@ -10,7 +10,7 @@ export async function GET(request: Request, { params }: { params: { courseId: st
 			return NextResponse.json({ error: 'Course ID is required' }, { status: 400 });
 		}
 
-		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/lessons/course/${courseId}`, {
+		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/backend/lessons/course/${courseId}`, {
 			headers: {
 				Authorization: authHeader || '',
 				'Content-Type': 'application/json',

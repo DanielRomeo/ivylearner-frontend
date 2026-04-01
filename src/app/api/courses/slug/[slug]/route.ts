@@ -17,7 +17,7 @@ export async function GET(
 		}
 
 		const response = await fetch(
-			`${process.env.NEXT_PRIVATE_API_URL}/api/courses/slug/${slug}`,
+			`${process.env.NEXT_PRIVATE_API_URL}/backend/courses/slug/${slug}`,
 			{
 				headers: {
 					Authorization: authHeader || '',

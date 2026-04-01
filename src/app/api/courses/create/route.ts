@@ -12,7 +12,7 @@ export async function POST(request: Request) {
 	console.log('📊 organizationId type:', typeof body.organizationId);
 
 	try {
-		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/courses`, {
+		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/backend/courses`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',

@@ -10,7 +10,7 @@ export async function POST(request: Request) {
 	console.log('body is:', body);
 	console.log('organizationId type:', typeof body.organizationId); // Check if it's a string
 
-	const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/courses`, {
+	const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/backend/courses`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -29,7 +29,7 @@ export async function GET(request: Request) {
     try {
         const authHeader = request.headers.get('Authorization');
         
-        const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/courses`, {
+        const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/backend/courses`, {
             headers: {
                 Authorization: authHeader || '',
                 'Content-Type': 'application/json',

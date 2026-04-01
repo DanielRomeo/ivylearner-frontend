@@ -12,7 +12,7 @@ export async function PUT(request: Request, { params }: { params: { id: string; 
 			return NextResponse.json({ error: 'Organization ID and User ID are required' }, { status: 400 });
 		}
 
-		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/organizations/${orgId}/members/${userId}`, {
+		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/backend/organizations/${orgId}/members/${userId}`, {
 			method: 'PUT',
 			headers: {
 				Authorization: authHeader || '',
@@ -49,7 +49,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
 			return NextResponse.json({ error: 'Organization ID and User ID are required' }, { status: 400 });
 		}
 
-		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/organizations/${orgId}/members/${userId}`, {
+		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/backend/organizations/${orgId}/members/${userId}`, {
 			method: 'DELETE',
 			headers: {
 				Authorization: authHeader || '',

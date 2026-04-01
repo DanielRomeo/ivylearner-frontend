@@ -11,7 +11,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 			return NextResponse.json({ error: 'Lesson ID is required' }, { status: 400 });
 		}
 
-		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/lessons/${lessonId}/progress`, {
+		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/backend/lessons/${lessonId}/progress`, {
 			method: 'PUT',
 			headers: {
 				Authorization: authHeader || '',
@@ -47,7 +47,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
 			return NextResponse.json({ error: 'Lesson ID is required' }, { status: 400 });
 		}
 
-		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/lessons/${lessonId}/progress`, {
+		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/backend/lessons/${lessonId}/progress`, {
 			headers: {
 				Authorization: authHeader || '',
 				'Content-Type': 'application/json',

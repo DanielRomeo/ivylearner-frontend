@@ -10,7 +10,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
 			return NextResponse.json({ error: 'Course ID is required' }, { status: 400 });
 		}
 
-		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/courses/${courseId}/instructors`, {
+		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/backend/courses/${courseId}/instructors`, {
 			headers: {
 				Authorization: authHeader || '',
 				'Content-Type': 'application/json',
@@ -45,7 +45,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
 			return NextResponse.json({ error: 'Course ID is required' }, { status: 400 });
 		}
 
-		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/courses/${courseId}/instructors`, {
+		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/backend/courses/${courseId}/instructors`, {
 			method: 'POST',
 			headers: {
 				Authorization: authHeader || '',

@@ -6,7 +6,7 @@ export async function POST(request: Request) {
         const authHeader = request.headers.get('Authorization');
         const body = await request.json();
 
-        const res = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/live-rooms`, {
+        const res = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/backend/live-rooms`, {
             method: 'POST',
             headers: {
                 Authorization: authHeader || '',

@@ -5,7 +5,7 @@ export async function GET(request: Request) {
 	try {
 		const authHeader = request.headers.get('Authorization');
 
-		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/users`, {
+		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/backend/users`, {
 			headers: {
 				Authorization: authHeader || '',
 				'Content-Type': 'application/json',

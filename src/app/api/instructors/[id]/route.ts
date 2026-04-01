@@ -19,7 +19,7 @@ export async function GET(
 		}
 
 		// Forward request to backend
-		const apiResponse = await fetch(`${apiBaseUrl}/api/instructors/${params.id}`, {
+		const apiResponse = await fetch(`${apiBaseUrl}/backend/instructors/${params.id}`, {
 			headers: {
 				Authorization: request.headers.get('Authorization') || '',
 			},

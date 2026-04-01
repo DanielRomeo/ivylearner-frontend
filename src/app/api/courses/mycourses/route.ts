@@ -5,7 +5,7 @@ export async function GET(request: Request) {
 		const authHeader = request.headers.get('Authorization');
 
 		// Make the request to the backend API
-		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/courses/my-courses`, {
+		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/backend/courses/my-courses`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',

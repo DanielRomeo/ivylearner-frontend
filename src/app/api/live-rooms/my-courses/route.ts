@@ -5,7 +5,7 @@ export async function GET(request: Request) {
     try {
         const authHeader = request.headers.get('Authorization');
         const res = await fetch(
-            `${process.env.NEXT_PRIVATE_API_URL}/api/live-rooms/my-courses`,
+            `${process.env.NEXT_PRIVATE_API_URL}/backend/live-rooms/my-courses`,
             {
                 headers: {
                     Authorization: authHeader || '',

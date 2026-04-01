@@ -9,7 +9,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
 		const body = await request.json();
 		const authHeader = request.headers.get('Authorization');
 		const response = await fetch(
-			`${process.env.NEXT_PRIVATE_API_URL}/api/organizations/${id}/members`,
+			`${process.env.NEXT_PRIVATE_API_URL}/backend/organizations/${id}/members`,
 			{
 				method: 'POST',
 				headers: {
@@ -38,7 +38,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
 		const { id } = params;
 		const authHeader = request.headers.get('Authorization');
 		const response = await fetch(
-			`${process.env.NEXT_PRIVATE_API_URL}/api/organizations/${id}/members`,
+			`${process.env.NEXT_PRIVATE_API_URL}/backend/organizations/${id}/members`,
 			{
 				method: 'GET',
 				headers: {

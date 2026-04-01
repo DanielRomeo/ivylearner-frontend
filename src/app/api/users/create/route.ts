@@ -6,7 +6,7 @@ export async function POST(request: Request) {
 		const authHeader = request.headers.get('Authorization');
 		const body = await request.json();
 
-		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/users/create`, {
+		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/backend/users/create`, {
 			method: 'POST',
 			headers: {
 				Authorization: authHeader || '',

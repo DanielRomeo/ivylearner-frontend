@@ -5,7 +5,7 @@ export async function POST(request: Request) {
 	try {
 		const body = await request.json();
 
-		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/users/create`, {
+		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/backend/users/create`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',

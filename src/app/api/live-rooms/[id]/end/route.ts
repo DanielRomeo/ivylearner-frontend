@@ -5,7 +5,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     try {
         const authHeader = request.headers.get('Authorization');
 
-        const res = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/live-rooms/${params.id}/end`, {
+        const res = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/backend/live-rooms/${params.id}/end`, {
             method: 'PATCH',
             headers: {
                 Authorization: authHeader || '',

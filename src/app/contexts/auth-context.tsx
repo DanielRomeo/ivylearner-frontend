@@ -17,6 +17,8 @@ interface User {
 interface AuthContextType {
     user: User | null;
     isAuthenticated: boolean;
+        isLoading: boolean; 
+
     getToken: () => Promise<string | null>;
     login: (email: string, password: string) => Promise<void>;
     loginWithGoogle: () => void;
@@ -28,6 +30,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    
     const router = useRouter();
 
     // -------------------------------------------------------------------------
@@ -41,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
-            console.log('Raw response from /api/auth/me:', response);
+            console.log('Raw response from /backend/auth/me:', response);
 
             // FIX: backend wraps response in { statusCode, data: {...} }
             const raw = response.data?.data ?? response.data;
@@ -158,7 +161,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // -------------------------------------------------------------------------
     const loginWithGoogle = () => {
         const backendUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
-        window.location.href = `${backendUrl}/api/auth/google`;
+        window.location.href = `${backendUrl}/backend/auth/google`;
     };
 
     const logout = () => {
@@ -176,6 +179,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             value={{
                 user,
                 isAuthenticated: !!user,
+                isLoading,
                 getToken,
                 login,
                 loginWithGoogle,

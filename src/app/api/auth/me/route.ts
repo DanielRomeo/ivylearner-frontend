@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {  // ← use NextRequest not Re
     }
 
     try {
-        const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/auth/me`, {
+        const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/backend/auth/me`, {
             headers: {
                 Authorization: authHeader,
             },

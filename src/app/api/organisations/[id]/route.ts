@@ -7,7 +7,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
 		const { id } = params;
 		const authHeader = request.headers.get('Authorization');
 		const response = await fetch(
-			`${process.env.NEXT_PRIVATE_API_URL}/api/organizations/${id}`,
+			`${process.env.NEXT_PRIVATE_API_URL}/backend/organizations/${id}`,
 			{
 				method: 'GET',
 				headers: {
@@ -36,7 +36,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 		const body = await request.json();
 		const authHeader = request.headers.get('Authorization');
 		const response = await fetch(
-			`${process.env.NEXT_PRIVATE_API_URL}/api/organizations/${id}`,
+			`${process.env.NEXT_PRIVATE_API_URL}/backend/organizations/${id}`,
 			{
 				method: 'PUT',
 				headers: {
@@ -69,7 +69,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
 		const { id } = params;
 		const authHeader = request.headers.get('Authorization');
 		const response = await fetch(
-			`${process.env.NEXT_PRIVATE_API_URL}/api/organizations/${id}`,
+			`${process.env.NEXT_PRIVATE_API_URL}/backend/organizations/${id}`,
 			{
 				method: 'DELETE',
 				headers: {

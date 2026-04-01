@@ -8,7 +8,7 @@ export async function GET(
 	try {
 		const authHeader = request.headers.get('Authorization');
 		const response = await fetch(
-			`${process.env.NEXT_PRIVATE_API_URL}/api/courses/${params.id}`,
+			`${process.env.NEXT_PRIVATE_API_URL}/backend/courses/${params.id}`,
 			{
 				method: 'GET',
 				headers: {
@@ -41,7 +41,7 @@ export async function PUT(
 		const body = await request.json();
 		
 		const response = await fetch(
-			`${process.env.NEXT_PRIVATE_API_URL}/api/courses/${params.id}`,
+			`${process.env.NEXT_PRIVATE_API_URL}/backend/courses/${params.id}`,
 			{
 				method: 'PUT',
 				headers: {
@@ -74,7 +74,7 @@ export async function DELETE(
 		const authHeader = request.headers.get('Authorization');
 		
 		const response = await fetch(
-			`${process.env.NEXT_PRIVATE_API_URL}/api/courses/${params.id}`,
+			`${process.env.NEXT_PRIVATE_API_URL}/backend/courses/${params.id}`,
 			{
 				method: 'DELETE',
 				headers: {

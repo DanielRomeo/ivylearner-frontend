@@ -10,7 +10,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
 			return NextResponse.json({ error: 'Lesson ID is required' }, { status: 400 });
 		}
 
-		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/lessons/${lessonId}`, {
+		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/backend/lessons/${lessonId}`, {
 			headers: {
 				Authorization: authHeader || '',
 				'Content-Type': 'application/json',
@@ -45,7 +45,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 			return NextResponse.json({ error: 'Lesson ID is required' }, { status: 400 });
 		}
 
-		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/lessons/${lessonId}`, {
+		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/backend/lessons/${lessonId}`, {
 			method: 'PUT',
 			headers: {
 				Authorization: authHeader || '',
@@ -81,7 +81,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
 			return NextResponse.json({ error: 'Lesson ID is required' }, { status: 400 });
 		}
 
-		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/lessons/${lessonId}`, {
+		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/backend/lessons/${lessonId}`, {
 			method: 'DELETE',
 			headers: {
 				Authorization: authHeader || '',

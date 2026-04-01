@@ -6,7 +6,7 @@ export async function POST(request: Request) {
 	try {
 		const body = await request.json();
 		const authHeader = request.headers.get('Authorization');
-		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/api/organizations`, {
+		const response = await fetch(`${process.env.NEXT_PRIVATE_API_URL}/backend/organizations`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
